@@ -404,10 +404,358 @@ study = StudyDefinition(
   #   (defined above)
   
   ### The patient does NOT have a history of advanced decompensated liver cirrhosis or stage 3-5 chronic kidney disease
-  #   (use renal and liver high rosk cohorts defined below)
-  
+  #   (OR also use renal and liver high rosk cohorts defined below)
+  #  advanced decompensated liver cirrhosis
+  advanced_decompensated_cirrhosis = patients.with_these_clinical_events(
+    advanced_decompensated_cirrhosis_snomed_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),
+
+  #  regular ascitic drainage (opcs4_codes in hospital??)
+  ascitic_drainage_snomed = patients.with_these_clinical_events(
+    ascitic_drainage_snomed_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),  
+  ascitic_drainage_snomed_pre = patients.with_these_clinical_events(
+    ascitic_drainage_snomed_codes,
+    on_or_before = "ascitic_drainage_snomed - 1 day",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),    
+
+  #  hospital admission with liver disease (see below?)
+
+  ## CKD DEFINITIONS - adapted from https://github.com/opensafely/risk-factors-research
+  #  recorded 3-5 CKD
+  ckd_stages_3_5 = patients.with_these_clinical_events(
+    chronic_kidney_disease_stages_3_5_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),
+  ckd_primis_stage=patients.with_these_clinical_events(
+        codelist=primis_ckd_stage,
+        on_or_before = "start_date",
+        returning="category",
+        find_last_match_in_period = True,
+        include_date_of_match=True,
+        date_format = "YYYY-MM-DD",
+        return_expectations={
+            "rate": "universal",
+            "category": {"ratios": {"1": 0.5, "2": 0.5}},
+        },
+  ),
+  ckd3_icd10 = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_diagnoses=codelist(["N183"], system="icd10"),
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),
+  ckd4_icd10 = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_diagnoses=codelist(["N184"], system="icd10"),
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),
+  ckd5_icd10 = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_diagnoses=codelist(["N185"], system="icd10"),
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),    
+
+  #  recorded dialysis
+  dialysis = patients.with_these_clinical_events(
+    dialysis_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),
+  dialysis_icd10 = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_diagnoses=dialysis_icd10_codelist,
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),
+  dialysis_procedure = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_procedures=dialysis_opcs4_codelist,
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),  
+
+  #  kidney transplant
+  kidney_transplant = patients.with_these_clinical_events(
+    kidney_transplant_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),
+  kidney_transplant_icd10 = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        with_these_diagnoses=kidney_tx_icd10_codelist,
+        date_format="YYYY-MM-DD",
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),
+  kidney_transplant_procedure = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_procedures=kidney_tx_opcs4_codelist,
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),
+
+  # RRT??
+  RRT=patients.with_these_clinical_events(
+    codelist=RRT_codelist,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+    return_expectations={
+            "incidence": 0.2,
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+    },
+  ),
+  RRT_icd10 = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_diagnoses=RRT_icd10_codelist,
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),
+  RRT_procedure = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_procedures=RRT_opcs4_codelist,
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),  
+
+  #  3-5 CKD based on recorded creatinine value
+  creatinine_ctv3 = patients.with_these_clinical_events(
+    creatinine_codes_ctv3,
+    find_last_match_in_period=True,
+    on_or_before = "start_date",
+    returning="numeric_value",
+    include_date_of_match=True,
+    date_format = "YYYY-MM-DD",
+    return_expectations={
+        "float": {"distribution": "normal", "mean": 60.0, "stddev": 15},
+        "incidence": 0.95,
+    },
+  ),
+  creatinine_operator_ctv3 = patients.comparator_from(
+    "creatinine_ctv3",
+    return_expectations={
+       "rate": "universal",
+       "category": {
+         "ratios": {  # ~, =, >=, >, <, <=
+            None: 0.10,
+            "~": 0.05,
+            "=": 0.65,
+            ">=": 0.05,
+            ">": 0.05,
+            "<": 0.05,
+            "<=": 0.05,
+         },
+       },
+       "incidence": 0.80,
+    },
+  ),
+  age_creatinine_ctv3 = patients.age_as_of(
+    "creatinine_ctv3_date",
+    return_expectations = {
+      "rate": "universal",
+      "int": {"distribution": "population_ages"},
+    },
+  ),
+  creatinine_snomed=patients.with_these_clinical_events(
+    codelist=creatinine_codes_snomed,
+    find_last_match_in_period=True,
+    on_or_before = "start_date",
+    returning="numeric_value",
+    include_date_of_match=True,
+    date_format = "YYYY-MM-DD",
+    return_expectations={
+            "float": {"distribution": "normal", "mean": 45.0, "stddev": 20},
+            "incidence": 0.5,
+    },
+  ),
+  creatinine_operator_snomed=patients.comparator_from(
+        "creatinine_snomed",
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {  # ~, =, >= , > , < , <=
+                    None: 0.10,
+                    "~": 0.05,
+                    "=": 0.65,
+                    ">=": 0.05,
+                    ">": 0.05,
+                    "<": 0.05,
+                    "<=": 0.05,
+                }
+            },
+            "incidence": 0.80,
+        },
+  ),  
+  age_creatinine_snomed = patients.age_as_of(
+    "creatinine_snomed_date",
+    return_expectations = {
+      "rate": "universal",
+      "int": {"distribution": "population_ages"},
+    },
+  ),  
+  creatinine_short_snomed=patients.with_these_clinical_events(
+    codelist=creatinine_codes_short_snomed,
+    find_last_match_in_period=True,
+    on_or_before = "start_date",
+    returning="numeric_value",
+    include_date_of_match=True,
+    date_format = "YYYY-MM-DD",
+    return_expectations={
+            "float": {"distribution": "normal", "mean": 45.0, "stddev": 20},
+            "incidence": 0.5,
+    },
+  ),
+  creatinine_operator_short_snomed=patients.comparator_from(
+        "creatinine_short_snomed",
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {  # ~, =, >= , > , < , <=
+                    None: 0.10,
+                    "~": 0.05,
+                    "=": 0.65,
+                    ">=": 0.05,
+                    ">": 0.05,
+                    "<": 0.05,
+                    "<=": 0.05,
+                }
+            },
+            "incidence": 0.80,
+        },
+  ),  
+  age_creatinine_short_snomed = patients.age_as_of(
+    "creatinine_short_snomed_date",
+    return_expectations = {
+      "rate": "universal",
+      "int": {"distribution": "population_ages"},
+    },
+  ),    
+  #  3-5 CKD based on recorded eGFR value
+  eGFR_record=patients.with_these_clinical_events(
+    codelist=eGFR_level_codelist,
+    find_last_match_in_period=True,
+    on_or_before = "start_date",
+    returning="numeric_value",
+    include_date_of_match=True,
+    date_format = "YYYY-MM-DD",
+    return_expectations={
+            "float": {"distribution": "normal", "mean": 70, "stddev": 30},
+            "incidence": 0.2,
+    },
+  ),
+  eGFR_operator=patients.comparator_from(
+        "eGFR_record",
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {  # ~, =, >= , > , < , <=
+                    None: 0.10,
+                    "~": 0.05,
+                    "=": 0.65,
+                    ">=": 0.05,
+                    ">": 0.05,
+                    "<": 0.05,
+                    "<=": 0.05,
+                }
+            },
+            "incidence": 0.80,
+        },
+  ),  
+
   ## Paxlovid - exclusion
-  
+  #  Solid organ transplant (plus solid_organ_transplant_nhsd_snomed defined below)
+  solid_organ_transplant_snomed = patients.with_these_clinical_events(
+    solid_organ_transplant_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),
+
+  ### contraindicated medication
+  # drugs do not use
+  drugs_do_not_use = patients.with_these_medications(
+    codelist = drugs_do_not_use_codes,
+    returning = "date",
+    on_or_before = "start_date",
+    find_last_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+  ),
+  # drugs considering risks and benefits
+  drugs_consider_risk = patients.with_these_medications(
+    codelist = drugs_consider_risk_codes,
+    returning = "date",
+    on_or_before = "start_date",
+    find_last_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+  ),
+
   ### Children aged less than 18 years
   #   (defined below)
   
@@ -1022,12 +1370,12 @@ study = StudyDefinition(
   
   ## Index of multiple deprivation
   imd = patients.categorised_as(
-    {"0": "DEFAULT",
-      "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
-      "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
-      "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
-      "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
-      "5": """index_of_multiple_deprivation >= 32844*4/5 """,
+    {     "0": "DEFAULT",
+          "1": "index_of_multiple_deprivation >= 0 AND index_of_multiple_deprivation < 32800*1/5",
+          "2": "index_of_multiple_deprivation >= 32800*1/5 AND index_of_multiple_deprivation < 32800*2/5",
+          "3": "index_of_multiple_deprivation >= 32800*2/5 AND index_of_multiple_deprivation < 32800*3/5",
+          "4": "index_of_multiple_deprivation >= 32800*3/5 AND index_of_multiple_deprivation < 32800*4/5",
+          "5": "index_of_multiple_deprivation >= 32800*4/5 AND index_of_multiple_deprivation <= 32800",
     },
     index_of_multiple_deprivation = patients.address_as_of(
       "start_date",
