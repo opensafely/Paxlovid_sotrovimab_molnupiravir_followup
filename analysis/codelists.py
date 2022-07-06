@@ -6,10 +6,105 @@ from cohortextractor import (codelist, codelist_from_csv, combine_codelists)
 
 
 # --- CODELISTS ---
-#SUS-HES mabs
+# SUS-HES mabs
 mabs_procedure_codes = codelist(
   ["X891", "X892"], system="opcs4"
 )
+# advanced decompensated liver cirrhosis
+advanced_decompensated_cirrhosis_snomed_codes = codelist_from_csv(
+    "codelists/user-speed-vm-condition-advanced-decompensated-cirrhosis-of-the-liver.csv",
+    system="snomed",
+    column="code"
+)
+# ascitic drainage
+ascitic_drainage_snomed_codes = codelist_from_csv(
+    "codelists/user-speed-vm-procedure-ascitic-drainage.csv",
+    system="snomed",
+    column="code"
+)
+# CKD 3-5
+chronic_kidney_disease_stages_3_5_codes = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-ckd35.csv",
+    system="snomed",
+    column="code",
+)
+primis_ckd_stage = codelist_from_csv(
+    "codelists/user-Louis-ckd-stage.csv",
+    system="snomed",
+    column="code",
+    category_column="stage"
+)
+# dialysis
+dialysis_codes = codelist_from_csv(
+  "codelists/opensafely-dialysis.csv",
+  system = "ctv3",
+  column = "CTV3ID"
+)
+dialysis_icd10_codelist = codelist_from_csv(
+    "codelists/ukrr-dialysis.csv",
+    system="icd10",
+    column="code"
+)
+dialysis_opcs4_codelist = codelist_from_csv(
+    "codelists/ukrr-dialysis-opcs-4.csv",
+    system="opcs4",
+    column="code"
+)
+# kidney transplant
+kidney_transplant_codes = codelist_from_csv(
+  "codelists/opensafely-kidney-transplant.csv",
+  system = "ctv3",
+  column = "CTV3ID"
+)
+kidney_tx_icd10_codelist=codelist(["Z940"], system="icd10")
+kidney_tx_opcs4_codelist = codelist_from_csv(
+    "codelists/user-viyaasan-kidney-transplant-opcs-4.csv",
+    system="opcs4",
+    column="code"
+)
+# RRT
+RRT_codelist = codelist_from_csv(
+    "codelists/opensafely-renal-replacement-therapy.csv",
+    system="ctv3",
+    column="CTV3ID"
+)
+RRT_icd10_codelist = combine_codelists(
+    kidney_tx_icd10_codelist,
+    dialysis_icd10_codelist,
+    codelist(["T861"], system="icd10")
+)
+RRT_opcs4_codelist = combine_codelists(
+    kidney_tx_opcs4_codelist,
+    dialysis_opcs4_codelist,
+    codelist(["M023", "M026", "M027", "X412"], system="opcs4")
+)
+# blood creatinine
+creatinine_codes_ctv3 = codelist(["XE2q5"], system="ctv3")
+creatinine_codes_snomed = codelist_from_csv(
+    "codelists/user-bangzheng-creatinine-value.csv", system="snomed", column="code"
+)
+creatinine_codes_short_snomed = codelist_from_csv(
+    "codelists/user-bangzheng-creatinine-value-shortlist.csv", system="snomed", column="code"
+)
+# eGFR
+eGFR_level_codelist = codelist_from_csv(
+    "codelists/user-ss808-estimated-glomerular-filtration-rate-egfr-values.csv",
+    system="snomed",
+    column="code",
+)
+
+# Paxlovid interactions
+drugs_do_not_use_codes = codelist_from_csv(
+  "codelists/opensafely-sps-paxlovid-interactions-do-not-use.csv", 
+  system = "snomed", 
+  column = "code"
+)
+drugs_consider_risk_codes = codelist_from_csv(
+  "codelists/opensafely-nirmatrelvir-drug-interactions.csv", 
+  system = "snomed", 
+  column = "code"
+)
+
 # Chronic cardiac disease
 chronic_cardiac_dis_codes = codelist_from_csv(
     "codelists/opensafely-chronic-cardiac-disease-snomed.csv",
@@ -225,6 +320,12 @@ hiv_aids_nhsd_icd10_codes = codelist_from_csv(
 )
 
 ## Solid organ transplant
+solid_organ_transplant_codes = codelist_from_csv(
+    "codelists/opensafely-solid-organ-transplantation-snomed.csv",
+    system = "snomed",
+    column = "id",
+)
+
 solid_organ_transplant_nhsd_snomed_codes = codelist_from_csv(
   "codelists/nhsd-transplant-spl-atriskv4-snomed-ct.csv",
   system = "snomed",
