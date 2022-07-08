@@ -11,6 +11,7 @@ ukrr/dialysis/66b8a243
 opensafely/solid-organ-transplantation-snomed/2020-04-10
 user/bangzheng/creatinine-value-shortlist/60eb1411
 user/bangzheng/creatinine-value/58285b97
+user/bangzheng/egfr-value-shortlist/1d0e46c5
 user/ss808/estimated-glomerular-filtration-rate-egfr-values/5d974480
 user/MillieGreen/covid-19-symptoms/0ca4c5ac
 opensafely/covid-identification/2020-06-03
