@@ -92,7 +92,11 @@ eGFR_level_codelist = codelist_from_csv(
     system="snomed",
     column="code",
 )
-
+eGFR_short_level_codelist = codelist_from_csv(
+    "codelists/user-bangzheng-egfr-value-shortlist.csv",
+    system="snomed",
+    column="code",
+)
 # Paxlovid interactions
 drugs_do_not_use_codes = codelist_from_csv(
   "codelists/opensafely-sps-paxlovid-interactions-do-not-use-58f87823-dmd.csv", 
