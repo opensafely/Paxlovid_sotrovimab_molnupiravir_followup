@@ -95,14 +95,14 @@ eGFR_level_codelist = codelist_from_csv(
 
 # Paxlovid interactions
 drugs_do_not_use_codes = codelist_from_csv(
-  "codelists/opensafely-sps-paxlovid-interactions-do-not-use.csv", 
+  "codelists/opensafely-sps-paxlovid-interactions-do-not-use-58f87823-dmd.csv", 
   system = "snomed", 
-  column = "code"
+  column = "dmd_id"
 )
 drugs_consider_risk_codes = codelist_from_csv(
-  "codelists/opensafely-nirmatrelvir-drug-interactions.csv", 
+  "codelists/opensafely-nirmatrelvir-drug-interactions-3d3644f8-dmd.csv", 
   system = "snomed", 
-  column = "code"
+  column = "dmd_id"
 )
 
 # Chronic cardiac disease
