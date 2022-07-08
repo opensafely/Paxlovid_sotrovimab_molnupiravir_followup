@@ -727,6 +727,36 @@ study = StudyDefinition(
             "incidence": 0.80,
         },
   ),  
+  eGFR_short_record=patients.with_these_clinical_events(
+    codelist=eGFR_short_level_codelist,
+    find_last_match_in_period=True,
+    on_or_before = "start_date",
+    returning="numeric_value",
+    include_date_of_match=True,
+    date_format = "YYYY-MM-DD",
+    return_expectations={
+            "float": {"distribution": "normal", "mean": 70, "stddev": 30},
+            "incidence": 0.2,
+    },
+  ),
+  eGFR_short_operator=patients.comparator_from(
+        "eGFR_short_record",
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {  # ~, =, >= , > , < , <=
+                    None: 0.10,
+                    "~": 0.05,
+                    "=": 0.65,
+                    ">=": 0.05,
+                    ">": 0.05,
+                    "<": 0.05,
+                    "<=": 0.05,
+                }
+            },
+            "incidence": 0.80,
+        },
+  ),  
 
   ## Paxlovid - exclusion
   #  Solid organ transplant (plus solid_organ_transplant_nhsd_snomed defined below)
