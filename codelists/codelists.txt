@@ -12,8 +12,6 @@ opensafely/solid-organ-transplantation-snomed/2020-04-10
 user/bangzheng/creatinine-value-shortlist/60eb1411
 user/bangzheng/creatinine-value/58285b97
 user/ss808/estimated-glomerular-filtration-rate-egfr-values/5d974480
-opensafely/sps-paxlovid-interactions-do-not-use/58f87823
-opensafely/nirmatrelvir-drug-interactions/3d3644f8
 user/MillieGreen/covid-19-symptoms/0ca4c5ac
 opensafely/covid-identification/2020-06-03
 primis-covid19-vacc-uptake/preg/v1
