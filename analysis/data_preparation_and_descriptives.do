@@ -1,16 +1,16 @@
 ********************************************************************************
 *
-*	Do-file:		data_preparation_and_descriptives_Paxlovid.do
+*	Do-file:		data_preparation_and_descriptives.do
 *
 *	Project:		sotrovimab-and-Paxlovid
 *
 *	Programmed by:	Bang Zheng
 *
-*	Data used:		output/Paxlovid/input_Paxlovid.csv
+*	Data used:		output/input.csv
 *
-*	Data created:	output/Paxlovid/main_Paxlovid.dta  (main analysis dataset)
+*	Data created:	output/main.dta  (main analysis dataset)
 *
-*	Other output:	logs/data_preparation_Paxlovid.log
+*	Other output:	logs/data_preparation.log
 *
 ********************************************************************************
 *
@@ -22,11 +22,11 @@
 
 * Open a log file
 cap log close
-log using ./logs/data_preparation_Paxlovid, replace t
+log using ./logs/data_preparation, replace t
 clear
 
 * import dataset
-import delimited ./output/Paxlovid/input_Paxlovid.csv, delimiter(comma) varnames(1) case(preserve) 
+import delimited ./output/input.csv, delimiter(comma) varnames(1) case(preserve) 
 describe
 codebook
 
@@ -49,7 +49,10 @@ foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeu
 	   covid_discharge_date0_not_pri covid_discharge_date1_not_pri covid_discharge_date2_not_pri death_with_covid_on_the_death_ce death_with_covid_underlying_date hospitalisation_outcome_date0 ///
 	   hospitalisation_outcome_date1 hospitalisation_outcome_date2 hosp_discharge_date0 hosp_discharge_date1 hosp_discharge_date2 covid_hosp_date_mabs_all_cause date_treated start_date ///
 	   downs_syndrome_nhsd haematological_disease_nhsd ckd_stage_5_nhsd liver_disease_nhsd hiv_aids_nhsd solid_organ_transplant_nhsd ///
-	   multiple_sclerosis_nhsd motor_neurone_disease_nhsd myasthenia_gravis_nhsd huntingtons_disease_nhsd sickle_cell_disease_nhsd {
+	   multiple_sclerosis_nhsd motor_neurone_disease_nhsd myasthenia_gravis_nhsd huntingtons_disease_nhsd sickle_cell_disease_nhsd advanced_decompensated_cirrhosis ascitic_drainage_snomed ///
+	   ascitic_drainage_snomed_pre ckd_stages_3_5 ckd_primis_stage ckd3_icd10 ckd4_icd10 ckd5_icd10 dialysis dialysis_icd10 dialysis_procedure kidney_transplant kidney_transplant_icd10 ///
+	   kidney_transplant_procedure RRT RRT_icd10 RRT_procedure creatinine_ctv3_date creatinine_snomed_date creatinine_short_snomed_date eGFR_record_date eGFR_short_record_date ///
+	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk  {
   capture confirm string variable `var'
   if _rc==0 {
   rename `var' a
@@ -83,7 +86,7 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,10,2022)&start_date<=mdy(05,13,2022)
+keep if start_date>=mdy(02,15,2022)&start_date<=mdy(05,08,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
 drop if sotrovimab_covid_therapeutics!=. & ( paxlovid_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
@@ -158,7 +161,7 @@ drop if start_date>=covid_hospitalisation_outcome_da| start_date>=death_with_cov
 
 
 *define outcome and follow-up time*
-gen study_end_date=mdy(05,14,2022)
+gen study_end_date=mdy(07,10,2022)
 gen start_date_29=start_date+28
 by drug, sort: count if covid_hospitalisation_outcome_da!=.
 by drug, sort: count if death_with_covid_on_the_death_ce!=.
@@ -359,6 +362,7 @@ tab drug covid_hospitalisation_critical_c if failure==1&covid_hospitalisation_ou
 *10 high risk groups: downs_syndrome, solid_cancer, haematological_disease, renal_disease, liver_disease, imid, 
 *immunosupression, hiv_aids, solid_organ_transplant, rare_neurological_conditions, high_risk_group_combined	
 tab high_risk_cohort_covid_therapeut,m
+tab drug high_risk_cohort_covid_therapeut,m
 gen downs_therapeutics= 1 if strpos(high_risk_cohort_covid_therapeut, "Downs syndrome")
 gen solid_cancer_therapeutics=1 if strpos(high_risk_cohort_covid_therapeut, "solid cancer")
 gen haema_disease_therapeutics=1 if strpos(high_risk_cohort_covid_therapeut, "haematological malignancies")
@@ -528,9 +532,77 @@ tab week_after_campaign,m
 
 
 *exclude those with contraindications for Pax*
-drop if renal_disease==1
-drop if liver_disease==1
-drop if solid_organ==1
+*solid organ transplant*
+tab drug if solid_organ==1|solid_organ_transplant_snomed<=start_date
+*liver*
+tab drug if advanced_decompensated_cirrhosis<=start_date
+tab drug if ascitic_drainage_snomed<=start_date
+tab drug if ascitic_drainage_snomed<=start_date&ascitic_drainage_snomed>=(start_date-3*365.25)
+tab drug if liver_disease_nhsd_icd10<=start_date
+*renal*
+tab drug if renal_disease==1
+tab drug if ckd_stages_3_5<=start_date
+tab drug ckd_primis_stage,row
+tab drug if ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
+tab drug if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
+tab drug if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
+*egfr: adapted from https://github.com/opensafely/COVID-19-vaccine-breakthrough/blob/updates-feb/analysis/data_process.R*
+tab creatinine_operator_ctv3,m
+tab creatinine_operator_ctv3 if creatinine_ctv3!=.,m
+replace creatinine_ctv3 = . if !inrange(creatinine_ctv3, 20, 3000)| creatinine_ctv3_date>start_date
+replace creatinine_ctv3 = creatinine_ctv3/88.4
+gen min_creatinine_ctv3=.
+replace min_creatinine_ctv3 = (creatinine_ctv3/0.7)^-0.329 if sex==1
+replace min_creatinine_ctv3 = (creatinine_ctv3/0.9)^-0.411 if sex==0
+replace min_creatinine_ctv3 = 1 if min_creatinine_ctv3<1
+gen max_creatinine_ctv3=.
+replace max_creatinine_ctv3 = (creatinine_ctv3/0.7)^-1.209 if sex==1
+replace max_creatinine_ctv3 = (creatinine_ctv3/0.9)^-1.209 if sex==0
+replace max_creatinine_ctv3 = 1 if max_creatinine_ctv3>1
+gen egfr_creatinine_ctv3 = (min_creatinine_ctv3*max_creatinine_ctv3*141*(0.993^age_creatinine_ctv3) if age_creatinine_ctv3>=0&age_creatinine_ctv3<=120
+replace egfr_creatinine_ctv3 = egfr_creatinine_ctv3*1.018 if sex==1
+
+tab creatinine_operator_snomed,m
+tab creatinine_operator_snomed if creatinine_snomed!=.,m
+replace creatinine_snomed = . if !inrange(creatinine_snomed, 20, 3000)| creatinine_snomed_date>start_date
+replace creatinine_snomed_date = creatinine_short_snomed_date if missing(creatinine_snomed)
+replace creatinine_operator_snomed = creatinine_operator_short_snomed if missing(creatinine_snomed)
+replace age_creatinine_snomed = age_creatinine_short_snomed if missing(creatinine_snomed)
+replace creatinine_snomed = creatinine_short_snomed if missing(creatinine_snomed)
+replace creatinine_snomed = . if !inrange(creatinine_snomed, 20, 3000)| creatinine_snomed_date>start_date
+replace creatinine_snomed = creatinine_snomed/88.4
+gen min_creatinine_snomed=.
+replace min_creatinine_snomed = (creatinine_snomed/0.7)^-0.329 if sex==1
+replace min_creatinine_snomed = (creatinine_snomed/0.9)^-0.411 if sex==0
+replace min_creatinine_snomed = 1 if min_creatinine_snomed<1
+gen max_creatinine_snomed=.
+replace max_creatinine_snomed = (creatinine_snomed/0.7)^-1.209 if sex==1
+replace max_creatinine_snomed = (creatinine_snomed/0.9)^-1.209 if sex==0
+replace max_creatinine_snomed = 1 if max_creatinine_snomed>1
+gen egfr_creatinine_snomed = (min_creatinine_snomed*max_creatinine_snomed*141*(0.993^age_creatinine_snomed) if age_creatinine_snomed>=0&age_creatinine_snomed<=120
+replace egfr_creatinine_snomed = egfr_creatinine_snomed*1.018 if sex==1
+
+tab eGFR_operator if eGFR_record!=.,m
+tab eGFR_short_operator if eGFR_short_record!=.,m
+tab drug if egfr_creatinine_ctv3<60|egfr_creatinine_snomed<60|eGFR_record<60|eGFR_short_record<60
+
+*drug interactions*
+tab drug if drugs_do_not_use<=start_date
+tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-3*365.25)
+tab drug if drugs_consider_risk<=start_date
+tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*365.25)
+
+drop if solid_organ==1|solid_organ_transplant_snomed<=start_date
+drop if advanced_decompensated_cirrhosis<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
+drop if renal_disease==1|ckd_stages_3_5<=start_date|ckd_primis_stage=="3"|ckd_primis_stage=="4"|ckd_primis_stage=="5"|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
+drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
+drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
+drop if egfr_creatinine_ctv3<60|egfr_creatinine_snomed<60|eGFR_record<60|eGFR_short_record<60
+
+tab drug if liver_disease_nhsd_snomed<=start_date
+tab drug if liver_disease==1
+
+
 
 *descriptives by drug groups*
 by drug,sort: sum age,de
@@ -613,74 +685,10 @@ count if drug==1&sotrovimab_covid_complete!=.
 count if drug==1&sotrovimab_covid_not_start!=.
 count if drug==1&sotrovimab_covid_stopped!=.
 
-*exclude those with no high risk cohort record*
-drop if high_risk_group==0
-
-*descriptives by drug groups*
-by drug,sort: sum age,de
-ttest age , by( drug )
-by drug,sort: sum bmi,de
-ttest bmi, by( drug )
-sum d_postest_treat ,de
-by drug,sort: sum d_postest_treat ,de
-ttest d_postest_treat , by( drug )
-ranksum d_postest_treat,by(drug)
-sum week_after_campaign,de
-by drug,sort: sum week_after_campaign,de
-ttest week_after_campaign , by( drug )
-ranksum week_after_campaign,by(drug)
-sum week_after_vaccinate,de
-by drug,sort: sum week_after_vaccinate,de
-ttest week_after_vaccinate , by( drug )
-ranksum week_after_vaccinate,by(drug)
-sum d_vaccinate_treat,de
-by drug,sort: sum d_vaccinate_treat,de
-ttest d_vaccinate_treat , by( drug )
-ranksum d_vaccinate_treat,by(drug)
-
-tab drug sex,row chi
-tab drug ethnicity,row chi
-tab drug imd,row chi
-ranksum imd,by(drug)
-tab drug region_nhs,row chi
-tab drug region_covid_therapeutics,row chi
-*need to address the error of "too many values"*
-tab stp if drug==0
-tab stp if drug==1
-tab drug age_group3 ,row chi
-tab drug d_postest_treat_g2 ,row chi
-tab drug d_postest_treat ,row
-tab drug downs_syndrome ,row chi
-tab drug solid_cancer ,row chi
-tab drug haema_disease ,row chi
-tab drug renal_disease ,row chi
-tab drug liver_disease ,row chi
-tab drug imid ,row chi
-tab drug immunosupression ,row chi
-tab drug hiv_aids ,row chi
-tab drug solid_organ ,row chi
-tab drug rare_neuro ,row chi
-tab drug high_risk_group ,row chi
-tab drug autism_nhsd ,row chi
-tab drug care_home_primis ,row chi
-tab drug dementia_nhsd ,row chi
-tab drug housebound_opensafely ,row chi
-tab drug learning_disability_primis ,row chi
-tab drug serious_mental_illness_nhsd ,row chi
-tab drug bmi_group4 ,row chi
-tab drug diabetes ,row chi
-tab drug chronic_cardiac_disease ,row chi
-tab drug hypertension ,row chi
-tab drug chronic_respiratory_disease ,row chi
-tab drug vaccination_status ,row chi
-tab drug month_after_vaccinate,row chi
-tab drug sgtf ,row chi
-tab drug sgtf_new ,row chi
-tab drug variant_recorded ,row chi
 
 
 
-save ./output/Paxlovid/main_Paxlovid.dta, replace
+save ./output/main.dta, replace
 
 log close
 
