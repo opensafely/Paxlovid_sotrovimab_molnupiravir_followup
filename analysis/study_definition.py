@@ -1647,6 +1647,7 @@ study = StudyDefinition(
       },
     },
   ),
+  # add 4th?
   # latest vaccination date
   last_vaccination_date = patients.with_tpp_vaccination_record(
       target_disease_matches = "SARS-2 CORONAVIRUS",
