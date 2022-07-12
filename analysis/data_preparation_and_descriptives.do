@@ -560,7 +560,7 @@ gen max_creatinine_ctv3=.
 replace max_creatinine_ctv3 = (creatinine_ctv3/0.7)^-1.209 if sex==1
 replace max_creatinine_ctv3 = (creatinine_ctv3/0.9)^-1.209 if sex==0
 replace max_creatinine_ctv3 = 1 if max_creatinine_ctv3>1
-gen egfr_creatinine_ctv3 = (min_creatinine_ctv3*max_creatinine_ctv3*141*(0.993^age_creatinine_ctv3) if age_creatinine_ctv3>0&age_creatinine_ctv3<=120
+gen egfr_creatinine_ctv3 = min_creatinine_ctv3*max_creatinine_ctv3*141*(0.993^age_creatinine_ctv3) if age_creatinine_ctv3>0&age_creatinine_ctv3<=120
 replace egfr_creatinine_ctv3 = egfr_creatinine_ctv3*1.018 if sex==1
 
 tab creatinine_operator_snomed,m
@@ -580,7 +580,7 @@ gen max_creatinine_snomed=.
 replace max_creatinine_snomed = (creatinine_snomed/0.7)^-1.209 if sex==1
 replace max_creatinine_snomed = (creatinine_snomed/0.9)^-1.209 if sex==0
 replace max_creatinine_snomed = 1 if max_creatinine_snomed>1
-gen egfr_creatinine_snomed = (min_creatinine_snomed*max_creatinine_snomed*141*(0.993^age_creatinine_snomed) if age_creatinine_snomed>0&age_creatinine_snomed<=120
+gen egfr_creatinine_snomed = min_creatinine_snomed*max_creatinine_snomed*141*(0.993^age_creatinine_snomed) if age_creatinine_snomed>0&age_creatinine_snomed<=120
 replace egfr_creatinine_snomed = egfr_creatinine_snomed*1.018 if sex==1
 
 tab eGFR_operator if eGFR_record!=.,m
