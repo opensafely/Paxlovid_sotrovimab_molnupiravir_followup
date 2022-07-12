@@ -2,7 +2,7 @@
 *
 *	Do-file:		cox.do
 *
-*	Project:		sotrovimab-and-molnupiravir
+*	Project:		sotrovimab-and-Paxlovid
 *
 *	Programmed by:	Bang Zheng
 *
