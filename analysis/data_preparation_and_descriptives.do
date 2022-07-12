@@ -362,7 +362,7 @@ tab drug covid_hospitalisation_critical_c if failure==1&covid_hospitalisation_ou
 *10 high risk groups: downs_syndrome, solid_cancer, haematological_disease, renal_disease, liver_disease, imid, 
 *immunosupression, hiv_aids, solid_organ_transplant, rare_neurological_conditions, high_risk_group_combined	
 tab high_risk_cohort_covid_therapeut,m
-tab drug high_risk_cohort_covid_therapeut,m
+by drug,sort: tab high_risk_cohort_covid_therapeut,m
 gen downs_therapeutics= 1 if strpos(high_risk_cohort_covid_therapeut, "Downs syndrome")
 gen solid_cancer_therapeutics=1 if strpos(high_risk_cohort_covid_therapeut, "solid cancer")
 gen haema_disease_therapeutics=1 if strpos(high_risk_cohort_covid_therapeut, "haematological malignancies")
@@ -543,13 +543,14 @@ tab drug if liver_disease_nhsd_icd10<=start_date
 tab drug if renal_disease==1
 tab drug if ckd_stages_3_5<=start_date
 tab drug ckd_primis_stage,row
+replace ckd_primis_stage=. if ckd_primis_stage_date>start_date
 tab drug if ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
 tab drug if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
 tab drug if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
 *egfr: adapted from https://github.com/opensafely/COVID-19-vaccine-breakthrough/blob/updates-feb/analysis/data_process.R*
 tab creatinine_operator_ctv3,m
-tab creatinine_operator_ctv3 if creatinine_ctv3!=.,m
 replace creatinine_ctv3 = . if !inrange(creatinine_ctv3, 20, 3000)| creatinine_ctv3_date>start_date
+tab creatinine_operator_ctv3 if creatinine_ctv3!=.,m
 replace creatinine_ctv3 = creatinine_ctv3/88.4
 gen min_creatinine_ctv3=.
 replace min_creatinine_ctv3 = (creatinine_ctv3/0.7)^-0.329 if sex==1
@@ -559,7 +560,7 @@ gen max_creatinine_ctv3=.
 replace max_creatinine_ctv3 = (creatinine_ctv3/0.7)^-1.209 if sex==1
 replace max_creatinine_ctv3 = (creatinine_ctv3/0.9)^-1.209 if sex==0
 replace max_creatinine_ctv3 = 1 if max_creatinine_ctv3>1
-gen egfr_creatinine_ctv3 = (min_creatinine_ctv3*max_creatinine_ctv3*141*(0.993^age_creatinine_ctv3) if age_creatinine_ctv3>=0&age_creatinine_ctv3<=120
+gen egfr_creatinine_ctv3 = (min_creatinine_ctv3*max_creatinine_ctv3*141*(0.993^age_creatinine_ctv3) if age_creatinine_ctv3>0&age_creatinine_ctv3<=120
 replace egfr_creatinine_ctv3 = egfr_creatinine_ctv3*1.018 if sex==1
 
 tab creatinine_operator_snomed,m
@@ -579,28 +580,34 @@ gen max_creatinine_snomed=.
 replace max_creatinine_snomed = (creatinine_snomed/0.7)^-1.209 if sex==1
 replace max_creatinine_snomed = (creatinine_snomed/0.9)^-1.209 if sex==0
 replace max_creatinine_snomed = 1 if max_creatinine_snomed>1
-gen egfr_creatinine_snomed = (min_creatinine_snomed*max_creatinine_snomed*141*(0.993^age_creatinine_snomed) if age_creatinine_snomed>=0&age_creatinine_snomed<=120
+gen egfr_creatinine_snomed = (min_creatinine_snomed*max_creatinine_snomed*141*(0.993^age_creatinine_snomed) if age_creatinine_snomed>0&age_creatinine_snomed<=120
 replace egfr_creatinine_snomed = egfr_creatinine_snomed*1.018 if sex==1
 
 tab eGFR_operator if eGFR_record!=.,m
 tab eGFR_short_operator if eGFR_short_record!=.,m
-tab drug if egfr_creatinine_ctv3<60|egfr_creatinine_snomed<60|eGFR_record<60|eGFR_short_record<60
+tab drug if egfr_creatinine_ctv3<60|egfr_creatinine_snomed<60|(eGFR_record<60&eGFR_record>0)|(eGFR_short_record<60&eGFR_short_record>0)
 
 *drug interactions*
 tab drug if drugs_do_not_use<=start_date
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-3*365.25)
+tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 tab drug if drugs_consider_risk<=start_date
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*365.25)
+tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 
 drop if solid_organ==1|solid_organ_transplant_snomed<=start_date
 drop if advanced_decompensated_cirrhosis<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
 drop if renal_disease==1|ckd_stages_3_5<=start_date|ckd_primis_stage=="3"|ckd_primis_stage=="4"|ckd_primis_stage=="5"|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
 drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
 drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
-drop if egfr_creatinine_ctv3<60|egfr_creatinine_snomed<60|eGFR_record<60|eGFR_short_record<60
+drop if egfr_creatinine_ctv3<60|egfr_creatinine_snomed<60|(eGFR_record<60&eGFR_record>0)|(eGFR_short_record<60&eGFR_short_record>0)
+drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
+drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 
 tab drug if liver_disease_nhsd_snomed<=start_date
 tab drug if liver_disease==1
+tab drug if drugs_do_not_use<=start_date
+tab drug if drugs_consider_risk<=start_date
 
 
 
