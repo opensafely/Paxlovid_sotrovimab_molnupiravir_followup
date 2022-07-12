@@ -50,7 +50,7 @@ foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeu
 	   hospitalisation_outcome_date1 hospitalisation_outcome_date2 hosp_discharge_date0 hosp_discharge_date1 hosp_discharge_date2 covid_hosp_date_mabs_all_cause date_treated start_date ///
 	   downs_syndrome_nhsd haematological_disease_nhsd ckd_stage_5_nhsd liver_disease_nhsd hiv_aids_nhsd solid_organ_transplant_nhsd ///
 	   multiple_sclerosis_nhsd motor_neurone_disease_nhsd myasthenia_gravis_nhsd huntingtons_disease_nhsd sickle_cell_disease_nhsd advanced_decompensated_cirrhosis ascitic_drainage_snomed ///
-	   ascitic_drainage_snomed_pre ckd_stages_3_5 ckd_primis_stage ckd3_icd10 ckd4_icd10 ckd5_icd10 dialysis dialysis_icd10 dialysis_procedure kidney_transplant kidney_transplant_icd10 ///
+	   ascitic_drainage_snomed_pre ckd_stages_3_5 ckd_primis_stage_date ckd3_icd10 ckd4_icd10 ckd5_icd10 dialysis dialysis_icd10 dialysis_procedure kidney_transplant kidney_transplant_icd10 ///
 	   kidney_transplant_procedure RRT RRT_icd10 RRT_procedure creatinine_ctv3_date creatinine_snomed_date creatinine_short_snomed_date eGFR_record_date eGFR_short_record_date ///
 	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk  {
   capture confirm string variable `var'
@@ -518,8 +518,8 @@ gen month_after_vaccinate=ceil(d_vaccinate_treat/30)
 tab month_after_vaccinate,m
 gen week_after_vaccinate=ceil(d_vaccinate_treat/7)
 tab week_after_vaccinate,m
-*combine month5 and over due to small N*
-replace month_after_vaccinate=5 if month_after_vaccinate>=5&month_after_vaccinate!=.
+*combine month6 and over due to small N*
+replace month_after_vaccinate=6 if month_after_vaccinate>=6&month_after_vaccinate!=.
 gen month_after_vaccinate_missing=month_after_vaccinate
 replace month_after_vaccinate_missing=99 if month_after_vaccinate_missing==.
 *calendar time*
