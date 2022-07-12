@@ -585,22 +585,24 @@ replace egfr_creatinine_snomed = egfr_creatinine_snomed*1.018 if sex==1
 
 tab eGFR_operator if eGFR_record!=.,m
 tab eGFR_short_operator if eGFR_short_record!=.,m
-tab drug if egfr_creatinine_ctv3<60|egfr_creatinine_snomed<60|(eGFR_record<60&eGFR_record>0)|(eGFR_short_record<60&eGFR_short_record>0)
+tab drug if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
 
 *drug interactions*
 tab drug if drugs_do_not_use<=start_date
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-3*365.25)
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
+tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
 tab drug if drugs_consider_risk<=start_date
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
+tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
 drop if solid_organ==1|solid_organ_transplant_snomed<=start_date
 drop if advanced_decompensated_cirrhosis<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
-drop if renal_disease==1|ckd_stages_3_5<=start_date|ckd_primis_stage=="3"|ckd_primis_stage=="4"|ckd_primis_stage=="5"|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
+drop if renal_disease==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
 drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
 drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
-drop if egfr_creatinine_ctv3<60|egfr_creatinine_snomed<60|(eGFR_record<60&eGFR_record>0)|(eGFR_short_record<60&eGFR_short_record>0)
+drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 
