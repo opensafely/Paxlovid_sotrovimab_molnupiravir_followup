@@ -695,6 +695,70 @@ count if drug==1&sotrovimab_covid_not_start!=.
 count if drug==1&sotrovimab_covid_stopped!=.
 
 
+drop if high_risk_group==0
+*descriptives by drug groups*
+by drug,sort: sum age,de
+ttest age , by( drug )
+by drug,sort: sum bmi,de
+ttest bmi, by( drug )
+sum d_postest_treat ,de
+by drug,sort: sum d_postest_treat ,de
+ttest d_postest_treat , by( drug )
+ranksum d_postest_treat,by(drug)
+sum week_after_campaign,de
+by drug,sort: sum week_after_campaign,de
+ttest week_after_campaign , by( drug )
+ranksum week_after_campaign,by(drug)
+sum week_after_vaccinate,de
+by drug,sort: sum week_after_vaccinate,de
+ttest week_after_vaccinate , by( drug )
+ranksum week_after_vaccinate,by(drug)
+sum d_vaccinate_treat,de
+by drug,sort: sum d_vaccinate_treat,de
+ttest d_vaccinate_treat , by( drug )
+ranksum d_vaccinate_treat,by(drug)
+
+tab drug sex,row chi
+tab drug ethnicity,row chi
+tab drug imd,row chi
+ranksum imd,by(drug)
+tab drug region_nhs,row chi
+tab drug region_covid_therapeutics,row chi
+*need to address the error of "too many values"*
+tab stp if drug==0
+tab stp if drug==1
+tab drug age_group3 ,row chi
+tab drug d_postest_treat_g2 ,row chi
+tab drug d_postest_treat ,row
+tab drug downs_syndrome ,row chi
+tab drug solid_cancer ,row chi
+tab drug haema_disease ,row chi
+tab drug renal_disease ,row chi
+tab drug liver_disease ,row chi
+tab drug imid ,row chi
+tab drug immunosupression ,row chi
+tab drug hiv_aids ,row chi
+tab drug solid_organ ,row chi
+tab drug rare_neuro ,row chi
+tab drug high_risk_group ,row chi
+tab drug autism_nhsd ,row chi
+tab drug care_home_primis ,row chi
+tab drug dementia_nhsd ,row chi
+tab drug housebound_opensafely ,row chi
+tab drug learning_disability_primis ,row chi
+tab drug serious_mental_illness_nhsd ,row chi
+tab drug bmi_group4 ,row chi
+tab drug diabetes ,row chi
+tab drug chronic_cardiac_disease ,row chi
+tab drug hypertension ,row chi
+tab drug chronic_respiratory_disease ,row chi
+tab drug vaccination_status ,row chi
+tab drug month_after_vaccinate,row chi
+tab drug sgtf ,row chi
+tab drug sgtf_new ,row chi
+tab drug variant_recorded ,row chi
+
+
 
 
 save ./output/main.dta, replace
