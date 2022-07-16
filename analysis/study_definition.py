@@ -769,7 +769,7 @@ study = StudyDefinition(
   ),
 
   ### contraindicated medication
-  # drugs do not use
+  # drugs do not use (drugs used in secondary/tertiary care?)
   drugs_do_not_use = patients.with_these_medications(
     codelist = drugs_do_not_use_codes,
     returning = "date",
