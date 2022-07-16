@@ -674,6 +674,8 @@ tab drug month_after_vaccinate,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
 tab drug variant_recorded ,row chi
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox drug
 
 
 *check treatment status*
@@ -757,6 +759,8 @@ tab drug month_after_vaccinate,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
 tab drug variant_recorded ,row chi
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox drug
 
 
 
