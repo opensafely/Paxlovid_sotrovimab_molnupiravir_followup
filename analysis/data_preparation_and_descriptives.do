@@ -510,7 +510,7 @@ tab sgtf_new, m
 label define sgtf_new_Paxlovid 0 "S gene detected" 1 "confirmed SGTF" 9 "NA"
 label values sgtf_new sgtf_new_Paxlovid
 tab variant_recorded ,m
-tab sgtf variant_recorded ,m
+*tab sgtf variant_recorded ,m
 *Time between last vaccination and treatment*
 gen d_vaccinate_treat=start_date - last_vaccination_date
 sum d_vaccinate_treat,de
