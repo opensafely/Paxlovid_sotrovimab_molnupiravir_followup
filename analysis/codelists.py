@@ -12,13 +12,18 @@ mabs_procedure_codes = codelist(
 )
 # advanced decompensated liver cirrhosis
 advanced_decompensated_cirrhosis_snomed_codes = codelist_from_csv(
-    "codelists/user-speed-vm-condition-advanced-decompensated-cirrhosis-of-the-liver.csv",
+    "codelists/opensafely-condition-advanced-decompensated-cirrhosis-of-the-liver.csv",
+    system="snomed",
+    column="code"
+)
+advanced_decompensated_cirrhosis_icd10_codes = codelist_from_csv(
+    "codelists/opensafely-condition-advanced-decompensated-cirrhosis-of-the-liver-and-associated-conditions-icd-10.csv",
     system="snomed",
     column="code"
 )
 # ascitic drainage
 ascitic_drainage_snomed_codes = codelist_from_csv(
-    "codelists/user-speed-vm-procedure-ascitic-drainage.csv",
+    "codelists/opensafely-procedure-ascitic-drainage.csv",
     system="snomed",
     column="code"
 )
@@ -206,7 +211,11 @@ non_haematological_cancer_opensafely_snomed_codes = codelist_from_csv(
   system = "snomed",
   column = "id",
 )
-
+non_haematological_cancer_opensafely_snomed_codes_new = codelist_from_csv(
+  "codelists/user-bangzheng-cancer-excluding-lung-and-haematological-snomed-new.csv",
+  system = "snomed",
+  column = "id",
+)
 lung_cancer_opensafely_snomed_codes = codelist_from_csv(
   "codelists/opensafely-lung-cancer-snomed.csv", 
   system = "snomed", 
@@ -309,7 +318,11 @@ immunosupression_nhsd_codes = codelist_from_csv(
   system = "snomed",
   column = "code",
 )
-
+immunosupression_nhsd_codes_new = codelist_from_csv(
+  "codelists/user-bangzheng-nhsd-immunosupression-pcdcluster-snomed-ct-new.csv",
+  system = "snomed",
+  column = "code",
+)
 ## HIV/AIDs
 hiv_aids_nhsd_snomed_codes = codelist_from_csv(
   "codelists/nhsd-hiv-aids-snomed.csv", 
@@ -335,7 +348,11 @@ solid_organ_transplant_nhsd_snomed_codes = codelist_from_csv(
   system = "snomed",
   column = "code",
 )
-
+solid_organ_transplant_nhsd_snomed_codes_new = codelist_from_csv(
+  "codelists/user-bangzheng-nhsd-transplant-spl-atriskv4-snomed-ct-new.csv",
+  system = "snomed",
+  column = "code",
+)
 solid_organ_transplant_nhsd_opcs4_codes = codelist_from_csv(
   "codelists/nhsd-transplant-spl-hes-opcs4.csv", 
   system = "opcs4", 
