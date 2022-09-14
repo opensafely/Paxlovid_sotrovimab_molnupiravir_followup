@@ -40,13 +40,13 @@ study = StudyDefinition(
     age >= 18 AND age < 110
     AND NOT has_died
     AND registered_treated 
-    AND (sotrovimab_covid_therapeutics OR paxlovid_covid_therapeutics)
+    AND (sotrovimab_covid_therapeutics OR paxlovid_covid_therapeutics OR molnupiravir_covid_therapeutics)
     """,
   ),
   #require covid_test_positive_date<=date_treated (sensitivity analysis)
   #loose "AND (covid_test_positive AND NOT covid_positive_previous_30_days)"
   #AND NOT pregnancy (sensitivity analysis)
-  #AND NOT (casirivimab_covid_therapeutics OR molnupiravir_covid_therapeutics OR remdesivir_covid_therapeutics) (sensitivity analysis)
+  #AND NOT (casirivimab_covid_therapeutics OR remdesivir_covid_therapeutics) (sensitivity analysis)
 
   # TREATMENT - NEUTRALISING MONOCLONAL ANTIBODIES OR ANTIVIRALS ----
   
@@ -235,6 +235,7 @@ study = StudyDefinition(
   date_treated = patients.minimum_of(
     "sotrovimab_covid_therapeutics",
     "paxlovid_covid_therapeutics",
+    "molnupiravir_covid_therapeutics",
   ),
   
   registered_treated = patients.registered_as_of("date_treated"), 
@@ -314,6 +315,21 @@ study = StudyDefinition(
     },
   ),
   
+  # positive test history
+  covid_test_positive_pre_date = patients.with_test_result_in_sgss(
+    pathogen = "SARS-CoV-2",
+    test_result = "positive",
+    find_first_match_in_period = True,
+    restrict_to_earliest_specimen_date = False,
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    on_or_before = "covid_test_positive_date - 30 days",
+    return_expectations = {
+      "date": {"earliest": "2021-12-20", "latest": "index_date"},
+      "incidence": 0.1
+    },
+  ),
+  
   ### Onset of symptoms of COVID-19
   symptomatic_covid_test = patients.with_test_result_in_sgss(
     pathogen = "SARS-CoV-2",
@@ -347,6 +363,7 @@ study = StudyDefinition(
   start_date = patients.minimum_of(
     "sotrovimab_covid_therapeutics",
     "paxlovid_covid_therapeutics",
+    "molnupiravir_covid_therapeutics",
   ),
   
   ## Exclusion criteria variables
@@ -422,6 +439,17 @@ study = StudyDefinition(
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
   ),  
+  ascitic_drainage_icd10 = patients.admitted_to_hospital(
+        returning="date_admitted",
+        find_last_match_in_period=True,
+        date_format="YYYY-MM-DD",
+        with_these_diagnoses=advanced_decompensated_cirrhosis_icd10_codes,
+        on_or_before="start_date",
+        return_expectations={
+            "rate": "uniform",
+            "date": {"earliest": "1900-01-01", "latest": "today"},
+        },
+  ),
   ascitic_drainage_snomed_pre = patients.with_these_clinical_events(
     ascitic_drainage_snomed_codes,
     on_or_before = "ascitic_drainage_snomed - 1 day",
@@ -887,7 +915,7 @@ study = StudyDefinition(
   ## Blueteq ‘high risk’ cohort
   high_risk_cohort_covid_therapeutics = patients.with_covid_therapeutics(
     #with_these_statuses = ["Approved", "Treatment Complete"],
-    with_these_therapeutics = ["Sotrovimab", "Paxlovid"],
+    with_these_therapeutics = ["Sotrovimab", "Paxlovid", "Molnupiravir"],
     with_these_indications = "non_hospitalised",
     on_or_after = "index_date",
     find_first_match_in_period = True,
@@ -944,7 +972,18 @@ study = StudyDefinition(
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
   ),
-  
+  ## Solid cance-updated  
+  cancer_opensafely_snomed_new = patients.with_these_clinical_events(
+    combine_codelists(
+      non_haematological_cancer_opensafely_snomed_codes_new,
+      lung_cancer_opensafely_snomed_codes,
+      chemotherapy_radiotherapy_opensafely_snomed_codes
+    ),
+    between = ["start_date - 6 months", "start_date"],
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),    
   ## Haematological diseases
   haematopoietic_stem_cell_snomed = patients.with_these_clinical_events(
     haematopoietic_stem_cell_transplant_nhsd_snomed_codes,
@@ -1100,7 +1139,14 @@ study = StudyDefinition(
     find_last_match_in_period = True,
     date_format = "YYYY-MM-DD",
   ),
-  
+  ## Primary immune deficiencies-updated
+  immunosupression_nhsd_new = patients.with_these_clinical_events(
+    immunosupression_nhsd_codes_new,
+    on_or_before = "start_date",
+    returning = "date",
+    find_last_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+  ),  
   ## HIV/AIDs
   hiv_aids_nhsd_snomed = patients.with_these_clinical_events(
     hiv_aids_nhsd_snomed_codes,
@@ -1128,7 +1174,13 @@ study = StudyDefinition(
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
   ),
-  
+  solid_organ_nhsd_snomed_new = patients.with_these_clinical_events(
+    solid_organ_transplant_nhsd_snomed_codes_new,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),  
   solid_organ_transplant_nhsd_opcs4 = patients.admitted_to_hospital(
     returning = "date_admitted",
     on_or_before = "start_date",
@@ -1262,7 +1314,10 @@ study = StudyDefinition(
   solid_organ_transplant_nhsd = patients.minimum_of("solid_organ_transplant_nhsd_snomed", "solid_organ_transplant_nhsd_opcs4",
                                                     "transplant_thymus_opcs4", "transplant_conjunctiva_opcs4", "transplant_stomach_opcs4",
                                                     "transplant_ileum_1_opcs4","transplant_ileum_2_opcs4"), 
-  
+  solid_organ_transplant_nhsd_new = patients.minimum_of("solid_organ_nhsd_snomed_new", "solid_organ_transplant_nhsd_opcs4",
+                                                    "transplant_thymus_opcs4", "transplant_conjunctiva_opcs4", "transplant_stomach_opcs4",
+                                                    "transplant_ileum_1_opcs4","transplant_ileum_2_opcs4"), 
+                                                      
   ## Rare neurological conditions
   
   ### Multiple sclerosis
@@ -1448,7 +1503,7 @@ study = StudyDefinition(
   
   region_covid_therapeutics = patients.with_covid_therapeutics(
     #with_these_statuses = ["Approved", "Treatment Complete"],
-    with_these_therapeutics = ["Sotrovimab", "Paxlovid"],
+    with_these_therapeutics = ["Sotrovimab", "Paxlovid", "Molnupiravir"],
     with_these_indications = "non_hospitalised",
     on_or_after = "start_date",
     find_first_match_in_period = True,
@@ -2098,9 +2153,9 @@ study = StudyDefinition(
   ),  
 
   ## Critical care days for COVID-related hospitalisation 
-  covid_hospitalisation_critical_care = patients.admitted_to_hospital(
+  covid_hosp_critical_care = patients.admitted_to_hospital(
     returning = "days_in_critical_care",
-    with_these_diagnoses = covid_icd10_codes,
+    with_these_primary_diagnoses = covid_icd10_codes,
     between = ["start_date + 1 day", "start_date + 28 days"],
     find_first_match_in_period = True,
     return_expectations = {
@@ -2108,26 +2163,7 @@ study = StudyDefinition(
       "incidence": 0.4,
     },
   ),
-  ## total bed days during day1-28 for COVID-related hospitalisation 
-  #covid_hosp_bed_days = patients.admitted_to_hospital(
-  #  returning = "total_bed_days_in_period",
-  #  with_these_primary_diagnoses = covid_icd10_codes,
-  #  between = ["start_date + 1 day", "start_date + 28 days"],
-  #  return_expectations = {
-  #    "category": {"ratios": {"20": 0.5, "40": 0.5}},
-  #    "incidence": 0.4,
-  #  },
-  #),
-  #covid_hosp_bed_days_not_primary = patients.admitted_to_hospital(
-  #  returning = "total_bed_days_in_period",
-  #  with_these_diagnoses = covid_icd10_codes,
-  #  between = ["start_date + 1 day", "start_date + 28 days"],
-  #  return_expectations = {
-  #    "category": {"ratios": {"20": 0.5, "40": 0.5}},
-  #    "incidence": 0.4,
-  #  },
-  #),
-  
+
   ## COVID related death
   death_with_covid_on_the_death_certificate_date = patients.with_these_codes_on_death_certificate(
     covid_icd10_codes,
