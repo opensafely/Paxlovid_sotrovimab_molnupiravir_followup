@@ -1,15 +1,21 @@
 {
   "files": {
-    "user-speed-vm-condition-advanced-decompensated-cirrhosis-of-the-liver.csv": {
-      "id": "user/speed-vm/condition-advanced-decompensated-cirrhosis-of-the-liver/5c4c47b4",
-      "url": "https://codelists.opensafely.org/codelist/user/speed-vm/condition-advanced-decompensated-cirrhosis-of-the-liver/5c4c47b4/",
-      "downloaded_at": "2022-07-01 08:20:24.955635Z",
-      "sha": "6aa3bee40affab237e7e19e91adf3829293ab66f"
+    "opensafely-condition-advanced-decompensated-cirrhosis-of-the-liver.csv": {
+      "id": "opensafely/condition-advanced-decompensated-cirrhosis-of-the-liver/071038cf",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/condition-advanced-decompensated-cirrhosis-of-the-liver/071038cf/",
+      "downloaded_at": "2022-09-14 22:02:48.657412Z",
+      "sha": "cc91d2287dc30a4417140d1d2960dea6eecd61dc"
     },
-    "user-speed-vm-procedure-ascitic-drainage.csv": {
-      "id": "user/speed-vm/procedure-ascitic-drainage/39388836",
-      "url": "https://codelists.opensafely.org/codelist/user/speed-vm/procedure-ascitic-drainage/39388836/",
-      "downloaded_at": "2022-07-01 10:54:45.283134Z",
+    "opensafely-condition-advanced-decompensated-cirrhosis-of-the-liver-and-associated-conditions-icd-10.csv": {
+      "id": "opensafely/condition-advanced-decompensated-cirrhosis-of-the-liver-and-associated-conditions-icd-10/00e40554",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/condition-advanced-decompensated-cirrhosis-of-the-liver-and-associated-conditions-icd-10/00e40554/",
+      "downloaded_at": "2022-09-14 22:02:48.949971Z",
+      "sha": "d0b25cdc87dd1916e6b9e038456d25e8c28cd811"
+    },
+    "opensafely-procedure-ascitic-drainage.csv": {
+      "id": "opensafely/procedure-ascitic-drainage/39388836",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/procedure-ascitic-drainage/39388836/",
+      "downloaded_at": "2022-09-14 22:02:49.326168Z",
       "sha": "ca7b31e702e404f0d8aa2e48aa12f244d197e4dc"
     },
     "primis-covid19-vacc-uptake-ckd35.csv": {
@@ -375,8 +381,8 @@
     "primis-covid19-vacc-uptake-eth2001.csv": {
       "id": "primis-covid19-vacc-uptake/eth2001/v1",
       "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/eth2001/v1/",
-      "downloaded_at": "2022-07-01 08:20:49.833990Z",
-      "sha": "36e4eacba898e6ec72da8ff66e8c673bfd9aa8e4"
+      "downloaded_at": "2022-09-14 22:03:11.366949Z",
+      "sha": "2ff9aea91a05f41fe911a885eee50d2494247d58"
     },
     "nhsd-primary-care-domain-refsets-autism_cod.csv": {
       "id": "nhsd-primary-care-domain-refsets/autism_cod/20210127",
@@ -467,6 +473,24 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/hypertension-snomed/2020-04-28/",
       "downloaded_at": "2022-07-01 08:20:57.891274Z",
       "sha": "5d5471bb6a8a01e362b191b3eb8e80c2febeb1da"
+    },
+    "user-bangzheng-nhsd-immunosupression-pcdcluster-snomed-ct-new.csv": {
+      "id": "user/bangzheng/nhsd-immunosupression-pcdcluster-snomed-ct-new/7c9a7542",
+      "url": "https://codelists.opensafely.org/codelist/user/bangzheng/nhsd-immunosupression-pcdcluster-snomed-ct-new/7c9a7542/",
+      "downloaded_at": "2022-09-14 22:03:17.060869Z",
+      "sha": "09287f14fed4848e8fb7e706e859ebc1f316be74"
+    },
+    "user-bangzheng-nhsd-transplant-spl-atriskv4-snomed-ct-new.csv": {
+      "id": "user/bangzheng/nhsd-transplant-spl-atriskv4-snomed-ct-new/15a9e878",
+      "url": "https://codelists.opensafely.org/codelist/user/bangzheng/nhsd-transplant-spl-atriskv4-snomed-ct-new/15a9e878/",
+      "downloaded_at": "2022-09-14 22:03:17.425923Z",
+      "sha": "56a9f8c2b600286b5403ad532097a82fcbdccd7d"
+    },
+    "user-bangzheng-cancer-excluding-lung-and-haematological-snomed-new.csv": {
+      "id": "user/bangzheng/cancer-excluding-lung-and-haematological-snomed-new/31cac0ec",
+      "url": "https://codelists.opensafely.org/codelist/user/bangzheng/cancer-excluding-lung-and-haematological-snomed-new/31cac0ec/",
+      "downloaded_at": "2022-09-14 22:03:18.576210Z",
+      "sha": "cac87b571ed24373102d103bbf03d593966bd8bd"
     }
   }
 }
