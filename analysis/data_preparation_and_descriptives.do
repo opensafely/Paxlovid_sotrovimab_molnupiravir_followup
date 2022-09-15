@@ -341,6 +341,9 @@ format %td event_date_not_primary end_date_not_primary
 stset end_date_not_primary ,  origin(start_date) failure(failure_not_primary==1)
 stcox drug
 
+*count censored due to second therapy*
+count if failure==0&drug==1&min(molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)==end_date
+count if failure==0&drug==0&min(molnupiravir_covid_therapeutics,sotrovimab_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)==end_date
 *count covid death during day1-28 and before censor*
 count if failure==1&drug==1&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
 count if failure==1&drug==0&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
@@ -472,6 +475,13 @@ replace stp=99 if stp_N<100
 tab stp ,m
 
 tab rural_urban,m
+replace rural_urban=. if rural_urban<1
+replace rural_urban=3 if rural_urban==4
+replace rural_urban=5 if rural_urban==6
+replace rural_urban=7 if rural_urban==8
+tab rural_urban,m
+gen rural_urban_with_missing=rural_urban
+replace rural_urban_with_missing=99 if rural_urban==.
 *comor*
 tab autism_nhsd,m
 tab care_home_primis,m
@@ -650,6 +660,8 @@ tab drug sex,row chi
 tab drug ethnicity,row chi
 tab drug imd,row chi
 ranksum imd,by(drug)
+tab drug rural_urban,row chi
+ranksum rural_urban,by(drug)
 tab drug region_nhs,row chi
 tab drug region_covid_therapeutics,row chi
 *need to address the error of "too many values"*
@@ -739,6 +751,8 @@ tab drug sex,row chi
 tab drug ethnicity,row chi
 tab drug imd,row chi
 ranksum imd,by(drug)
+tab drug rural_urban,row chi
+ranksum rural_urban,by(drug)
 tab drug region_nhs,row chi
 tab drug region_covid_therapeutics,row chi
 *need to address the error of "too many values"*
