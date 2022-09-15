@@ -18,7 +18,7 @@ advanced_decompensated_cirrhosis_snomed_codes = codelist_from_csv(
 )
 advanced_decompensated_cirrhosis_icd10_codes = codelist_from_csv(
     "codelists/opensafely-condition-advanced-decompensated-cirrhosis-of-the-liver-and-associated-conditions-icd-10.csv",
-    system="snomed",
+    system="icd10",
     column="code"
 )
 # ascitic drainage
