@@ -30,17 +30,19 @@ import delimited ./output/input.csv, delimiter(comma) varnames(1) case(preserve)
 describe
 codebook
 
+rename ascitic_drainage_icd10 decompensated_cirrhosis_icd10
+
 *  Convert strings to dates  *
 foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics remdesivir_covid_therapeutics	///
         casirivimab_covid_therapeutics sotrovimab_covid_approved sotrovimab_covid_complete sotrovimab_covid_not_start sotrovimab_covid_stopped ///
 		paxlovid_covid_approved paxlovid_covid_complete paxlovid_covid_not_start paxlovid_covid_stopped covid_test_positive_pre_date ///
         covid_test_positive_date covid_test_positive_date2 covid_symptoms_snomed last_vaccination_date primary_covid_hospital_discharge ///
 	   any_covid_hospital_discharge_dat preg_36wks_date death_date dereg_date downs_syndrome_nhsd_snomed downs_syndrome_nhsd_icd10 cancer_opensafely_snomed ///
-	   haematopoietic_stem_cell_snomed haematopoietic_stem_cell_icd10 haematopoietic_stem_cell_opcs4 ///
+	   cancer_opensafely_snomed_new haematopoietic_stem_cell_snomed haematopoietic_stem_cell_icd10 haematopoietic_stem_cell_opcs4 ///
 	   haematological_malignancies_snom haematological_malignancies_icd1 sickle_cell_disease_nhsd_snomed sickle_cell_disease_nhsd_icd10 ///
 	   ckd_stage_5_nhsd_snomed ckd_stage_5_nhsd_icd10 liver_disease_nhsd_snomed liver_disease_nhsd_icd10 immunosuppresant_drugs_nhsd ///
-	   oral_steroid_drugs_nhsd immunosupression_nhsd hiv_aids_nhsd_snomed  solid_organ_transplant_nhsd_snom ///
-	   solid_organ_transplant_nhsd_opcs multiple_sclerosis_nhsd_snomed multiple_sclerosis_nhsd_icd10 ///
+	   oral_steroid_drugs_nhsd immunosupression_nhsd immunosupression_nhsd_new hiv_aids_nhsd_snomed  solid_organ_transplant_nhsd_snom solid_organ_nhsd_snomed_new ///
+	   solid_organ_transplant_nhsd_opcs solid_organ_transplant_nhsd solid_organ_transplant_nhsd_new multiple_sclerosis_nhsd_snomed multiple_sclerosis_nhsd_icd10 ///
 	   motor_neurone_disease_nhsd_snome motor_neurone_disease_nhsd_icd10 myasthenia_gravis_nhsd_snomed myasthenia_gravis_nhsd_icd10 ///
 	   huntingtons_disease_nhsd_snomed huntingtons_disease_nhsd_icd10 bmi_date_measured covid_positive_test_30_days_post ///
 	   covid_hosp_outcome_date0 covid_hosp_outcome_date1 covid_hosp_outcome_date2 covid_hosp_discharge_date0 covid_hosp_discharge_date1 covid_hosp_discharge_date2 ///
@@ -48,8 +50,8 @@ foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeu
 	   covid_hosp_date_mabs_procedure covid_hosp_date_mabs_not_pri covid_hosp_date0_not_primary covid_hosp_date1_not_primary covid_hosp_date2_not_primary ///
 	   covid_discharge_date0_not_pri covid_discharge_date1_not_pri covid_discharge_date2_not_pri death_with_covid_on_the_death_ce death_with_covid_underlying_date hospitalisation_outcome_date0 ///
 	   hospitalisation_outcome_date1 hospitalisation_outcome_date2 hosp_discharge_date0 hosp_discharge_date1 hosp_discharge_date2 covid_hosp_date_mabs_all_cause date_treated start_date ///
-	   downs_syndrome_nhsd haematological_disease_nhsd ckd_stage_5_nhsd liver_disease_nhsd hiv_aids_nhsd solid_organ_transplant_nhsd ///
-	   multiple_sclerosis_nhsd motor_neurone_disease_nhsd myasthenia_gravis_nhsd huntingtons_disease_nhsd sickle_cell_disease_nhsd advanced_decompensated_cirrhosis ascitic_drainage_snomed ///
+	   downs_syndrome_nhsd haematological_disease_nhsd ckd_stage_5_nhsd liver_disease_nhsd hiv_aids_nhsd  ascitic_drainage_icd10 ///
+	   multiple_sclerosis_nhsd motor_neurone_disease_nhsd myasthenia_gravis_nhsd huntingtons_disease_nhsd sickle_cell_disease_nhsd advanced_decompensated_cirrhosis decompensated_cirrhosis_icd10 ///
 	   ascitic_drainage_snomed_pre ckd_stages_3_5 ckd_primis_stage_date ckd3_icd10 ckd4_icd10 ckd5_icd10 dialysis dialysis_icd10 dialysis_procedure kidney_transplant kidney_transplant_icd10 ///
 	   kidney_transplant_procedure RRT RRT_icd10 RRT_procedure creatinine_ctv3_date creatinine_snomed_date creatinine_short_snomed_date eGFR_record_date eGFR_short_record_date ///
 	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk  {
@@ -352,8 +354,8 @@ count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==0&death_wit
 count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==1&death_with_covid_underlying_date>=covid_hospitalisation_outcome_da&death_with_covid_underlying_date<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
 count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==0&death_with_covid_underlying_date>=covid_hospitalisation_outcome_da&death_with_covid_underlying_date<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
 *count critical care within day1-28*
-tab drug covid_hospitalisation_critical_c,m row
-tab drug covid_hospitalisation_critical_c if failure==1&covid_hospitalisation_outcome_da==end_date,m row
+tab drug covid_hosp_critical_care,m row
+tab drug covid_hosp_critical_care if failure==1&covid_hospitalisation_outcome_da==end_date,m row
 
 
 
@@ -387,16 +389,21 @@ gen rare_neuro_nhsd = min(multiple_sclerosis_nhsd, motor_neurone_disease_nhsd, m
 
 gen downs_syndrome=(downs_syndrome_nhsd<=start_date|downs_therapeutics==1)
 gen solid_cancer=(cancer_opensafely_snomed<=start_date|solid_cancer_therapeutics==1)
+gen solid_cancer_new=(cancer_opensafely_snomed_new<=start_date|solid_cancer_therapeutics==1)
 gen haema_disease=( haematological_disease_nhsd <=start_date|haema_disease_therapeutics==1)
 gen renal_disease=( ckd_stage_5_nhsd <=start_date|renal_therapeutics==1)
 gen liver_disease=( liver_disease_nhsd <=start_date|liver_therapeutics==1)
 gen imid=( imid_nhsd <=start_date|imid_therapeutics==1)
 gen immunosupression=( immunosupression_nhsd <=start_date|immunosup_therapeutics==1)
+gen immunosupression_new=( immunosupression_nhsd_new <=start_date|immunosup_therapeutics==1)
 gen hiv_aids=( hiv_aids_nhsd <=start_date|hiv_aids_therapeutics==1)
 gen solid_organ=( solid_organ_transplant_nhsd<=start_date|solid_organ_therapeutics==1)
+gen solid_organ_new=( solid_organ_transplant_nhsd_new<=start_date|solid_organ_therapeutics==1)
 gen rare_neuro=( rare_neuro_nhsd <=start_date|rare_neuro_therapeutics==1)
 gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids + solid_organ + rare_neuro )>0)
 tab high_risk_group,m
+gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
+tab high_risk_group_new,m
 
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
@@ -534,8 +541,10 @@ tab week_after_campaign,m
 *exclude those with contraindications for Pax*
 *solid organ transplant*
 tab drug if solid_organ==1|solid_organ_transplant_snomed<=start_date
+tab drug if solid_organ_new==1|solid_organ_transplant_snomed<=start_date
 *liver*
 tab drug if advanced_decompensated_cirrhosis<=start_date
+tab drug if decompensated_cirrhosis_icd10<=start_date
 tab drug if ascitic_drainage_snomed<=start_date
 tab drug if ascitic_drainage_snomed<=start_date&ascitic_drainage_snomed>=(start_date-3*365.25)
 tab drug if liver_disease_nhsd_icd10<=start_date
@@ -597,8 +606,8 @@ tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*3
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
-drop if solid_organ==1|solid_organ_transplant_snomed<=start_date
-drop if advanced_decompensated_cirrhosis<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
+drop if solid_organ_new==1|solid_organ_transplant_snomed<=start_date
+drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
 drop if renal_disease==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
 drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
 drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
@@ -651,13 +660,16 @@ tab drug d_postest_treat_g2 ,row chi
 tab drug d_postest_treat ,row
 tab drug downs_syndrome ,row chi
 tab drug solid_cancer ,row chi
+tab drug solid_cancer_new ,row chi
 tab drug haema_disease ,row chi
 tab drug renal_disease ,row chi
 tab drug liver_disease ,row chi
 tab drug imid ,row chi
 tab drug immunosupression ,row chi
+tab drug immunosupression_new ,row chi
 tab drug hiv_aids ,row chi
 tab drug solid_organ ,row chi
+tab drug solid_organ_new ,row chi
 tab drug rare_neuro ,row chi
 tab drug high_risk_group ,row chi
 tab drug autism_nhsd ,row chi
@@ -676,6 +688,7 @@ tab drug month_after_vaccinate,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
 tab drug variant_recorded ,row chi
+tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
 
@@ -736,13 +749,16 @@ tab drug d_postest_treat_g2 ,row chi
 tab drug d_postest_treat ,row
 tab drug downs_syndrome ,row chi
 tab drug solid_cancer ,row chi
+tab drug solid_cancer_new ,row chi
 tab drug haema_disease ,row chi
 tab drug renal_disease ,row chi
 tab drug liver_disease ,row chi
 tab drug imid ,row chi
 tab drug immunosupression ,row chi
+tab drug immunosupression_new ,row chi
 tab drug hiv_aids ,row chi
 tab drug solid_organ ,row chi
+tab drug solid_organ_new ,row chi
 tab drug rare_neuro ,row chi
 tab drug high_risk_group ,row chi
 tab drug autism_nhsd ,row chi
@@ -761,6 +777,7 @@ tab drug month_after_vaccinate,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
 tab drug variant_recorded ,row chi
+tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
 
