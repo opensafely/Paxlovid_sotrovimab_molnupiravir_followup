@@ -77,7 +77,7 @@ foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeu
 
 
 *exclusion criteria*
-keep if sotrovimab_covid_therapeutics!=. | paxlovid_covid_therapeutics!=.
+keep if sotrovimab_covid_therapeutics==start_date | paxlovid_covid_therapeutics==start_date
 sum age,de
 keep if age>=18 & age<110
 tab sex,m
@@ -88,10 +88,10 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,16,2022)&start_date<=mdy(06,30,2022)
+keep if start_date>=mdy(02,16,2022)&start_date<=mdy(06,16,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
-drop if sotrovimab_covid_therapeutics!=. & ( paxlovid_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
+drop if sotrovimab_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
 drop if paxlovid_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<= paxlovid_covid_therapeutics | remdesivir_covid_therapeutics<= paxlovid_covid_therapeutics | casirivimab_covid_therapeutics<= paxlovid_covid_therapeutics )
 count if sotrovimab_covid_therapeutics!=. & paxlovid_covid_therapeutics!=.
 drop if sotrovimab_covid_therapeutics==paxlovid_covid_therapeutics
@@ -163,7 +163,7 @@ drop if start_date>=covid_hospitalisation_outcome_da| start_date>=death_with_cov
 
 
 *define outcome and follow-up time*
-gen study_end_date=mdy(08,29,2022)
+gen study_end_date=mdy(09,18,2022)
 gen start_date_29=start_date+28
 by drug, sort: count if covid_hospitalisation_outcome_da!=.
 by drug, sort: count if death_with_covid_on_the_death_ce!=.
@@ -407,7 +407,16 @@ gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_dis
 tab high_risk_group,m
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
-
+*detect*
+gen high_risk_group1=(( downs_syndrome + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids + solid_organ + rare_neuro )>0)
+gen high_risk_group_new1=(( downs_syndrome  + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
+tab high_risk_group1 high_risk_group_new1,m
+gen high_risk_group2=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid  + hiv_aids + solid_organ + rare_neuro )>0)
+gen high_risk_group_new2=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid  + hiv_aids + solid_organ_new + rare_neuro )>0)
+tab high_risk_group2 high_risk_group_new2,m
+gen high_risk_group3=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids  + rare_neuro )>0)
+gen high_risk_group_new3=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids  + rare_neuro )>0)
+tab high_risk_group3 high_risk_group_new3,m
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
 tab d_postest_treat,m
