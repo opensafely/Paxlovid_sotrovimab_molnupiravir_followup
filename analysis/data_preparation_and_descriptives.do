@@ -627,15 +627,15 @@ tab drug if drugs_consider_risk<=start_date
 
 *clean covariates*
 tab month_after_vaccinate,m
-*combine month6 and over due to small N*
-*replace month_after_vaccinate=6 if month_after_vaccinate>=6&month_after_vaccinate!=.
-*gen month_after_vaccinate_missing=month_after_vaccinate
-*replace month_after_vaccinate_missing=99 if month_after_vaccinate_missing==.
+*combine month7 and over due to small N*
+replace month_after_vaccinate=7 if month_after_vaccinate>=7&month_after_vaccinate!=.
+gen month_after_vaccinate_missing=month_after_vaccinate
+replace month_after_vaccinate_missing=99 if month_after_vaccinate_missing==.
 *calendar time*
 tab week_after_campaign,m
-*combine 8 and 9 due to small N*
-*replace week_after_campaign=8 if week_after_campaign==9
-
+*combine 9/10 and 26/27 due to small N*
+replace week_after_campaign=10 if week_after_campaign==9
+replace week_after_campaign=26 if week_after_campaign==27
 
 
 *descriptives by drug groups*
