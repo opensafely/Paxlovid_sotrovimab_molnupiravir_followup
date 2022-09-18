@@ -390,23 +390,42 @@ replace oral_steroid_drugs_nhsd=. if oral_steroid_drug_nhsd_3m_count < 2 & oral_
 gen imid_nhsd=min(oral_steroid_drugs_nhsd, immunosuppresant_drugs_nhsd)
 gen rare_neuro_nhsd = min(multiple_sclerosis_nhsd, motor_neurone_disease_nhsd, myasthenia_gravis_nhsd, huntingtons_disease_nhsd)
 
-gen downs_syndrome=(downs_syndrome_nhsd<=start_date|downs_therapeutics==1)
-gen solid_cancer=(cancer_opensafely_snomed<=start_date|solid_cancer_therapeutics==1)
-gen solid_cancer_new=(cancer_opensafely_snomed_new<=start_date|solid_cancer_therapeutics==1)
-gen haema_disease=( haematological_disease_nhsd <=start_date|haema_disease_therapeutics==1)
-gen renal_disease=( ckd_stage_5_nhsd <=start_date|renal_therapeutics==1)
-gen liver_disease=( liver_disease_nhsd <=start_date|liver_therapeutics==1)
-gen imid=( imid_nhsd <=start_date|imid_therapeutics==1)
-gen immunosupression=( immunosupression_nhsd <=start_date|immunosup_therapeutics==1)
-gen immunosupression_new=( immunosupression_nhsd_new <=start_date|immunosup_therapeutics==1)
-gen hiv_aids=( hiv_aids_nhsd <=start_date|hiv_aids_therapeutics==1)
-gen solid_organ=( solid_organ_transplant_nhsd<=start_date|solid_organ_therapeutics==1)
-gen solid_organ_new=( solid_organ_transplant_nhsd_new<=start_date|solid_organ_therapeutics==1)
-gen rare_neuro=( rare_neuro_nhsd <=start_date|rare_neuro_therapeutics==1)
+*gen downs_syndrome=(downs_syndrome_nhsd<=start_date|downs_therapeutics==1)
+*gen solid_cancer=(cancer_opensafely_snomed<=start_date|solid_cancer_therapeutics==1)
+*gen solid_cancer_new=(cancer_opensafely_snomed_new<=start_date|solid_cancer_therapeutics==1)
+*gen haema_disease=( haematological_disease_nhsd <=start_date|haema_disease_therapeutics==1)
+*gen renal_disease=( ckd_stage_5_nhsd <=start_date|renal_therapeutics==1)
+*gen liver_disease=( liver_disease_nhsd <=start_date|liver_therapeutics==1)
+*gen imid=( imid_nhsd <=start_date|imid_therapeutics==1)
+*gen immunosupression=( immunosupression_nhsd <=start_date|immunosup_therapeutics==1)
+*gen immunosupression_new=( immunosupression_nhsd_new <=start_date|immunosup_therapeutics==1)
+*gen hiv_aids=( hiv_aids_nhsd <=start_date|hiv_aids_therapeutics==1)
+*gen solid_organ=( solid_organ_transplant_nhsd<=start_date|solid_organ_therapeutics==1)
+*gen solid_organ_new=( solid_organ_transplant_nhsd_new<=start_date|solid_organ_therapeutics==1)
+*gen rare_neuro=( rare_neuro_nhsd <=start_date|rare_neuro_therapeutics==1)
+*gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids + solid_organ + rare_neuro )>0)
+*tab high_risk_group,m
+*gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
+*tab high_risk_group_new,m
+*high risk group only based on codelists*
+gen downs_syndrome=(downs_syndrome_nhsd<=start_date)
+gen solid_cancer=(cancer_opensafely_snomed<=start_date)
+gen solid_cancer_new=(cancer_opensafely_snomed_new<=start_date)
+gen haema_disease=( haematological_disease_nhsd <=start_date)
+gen renal_disease=( ckd_stage_5_nhsd <=start_date)
+gen liver_disease=( liver_disease_nhsd <=start_date)
+gen imid=( imid_nhsd <=start_date)
+gen immunosupression=( immunosupression_nhsd <=start_date)
+gen immunosupression_new=( immunosupression_nhsd_new <=start_date)
+gen hiv_aids=( hiv_aids_nhsd <=start_date)
+gen solid_organ=( solid_organ_transplant_nhsd<=start_date)
+gen solid_organ_new=( solid_organ_transplant_nhsd_new<=start_date)
+gen rare_neuro=( rare_neuro_nhsd <=start_date)
 gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids + solid_organ + rare_neuro )>0)
 tab high_risk_group,m
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
+
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
 tab d_postest_treat,m
@@ -543,8 +562,8 @@ tab week_after_campaign,m
 
 *exclude those with contraindications for Pax*
 *solid organ transplant*
-tab drug if solid_organ==1|solid_organ_transplant_snomed<=start_date
-tab drug if solid_organ_new==1|solid_organ_transplant_snomed<=start_date
+tab drug if solid_organ==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
+tab drug if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
 *liver*
 tab drug if advanced_decompensated_cirrhosis<=start_date
 tab drug if decompensated_cirrhosis_icd10<=start_date
@@ -552,7 +571,7 @@ tab drug if ascitic_drainage_snomed<=start_date
 tab drug if ascitic_drainage_snomed<=start_date&ascitic_drainage_snomed>=(start_date-3*365.25)
 tab drug if liver_disease_nhsd_icd10<=start_date
 *renal*
-tab drug if renal_disease==1
+tab drug if renal_disease==1|renal_therapeutics==1
 tab drug if ckd_stages_3_5<=start_date
 tab drug ckd_primis_stage,row
 replace ckd_primis_stage=. if ckd_primis_stage_date>start_date
@@ -609,9 +628,9 @@ tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*3
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
-drop if solid_organ_new==1|solid_organ_transplant_snomed<=start_date
+drop if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
 drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
-drop if renal_disease==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
+drop if renal_disease==1|renal_therapeutics==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
 drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
 drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
 drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
