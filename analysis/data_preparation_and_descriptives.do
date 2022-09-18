@@ -407,16 +407,6 @@ gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_dis
 tab high_risk_group,m
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
-*detect*
-gen high_risk_group1=(( downs_syndrome + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids + solid_organ + rare_neuro )>0)
-gen high_risk_group_new1=(( downs_syndrome  + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
-tab high_risk_group1 high_risk_group_new1,m
-gen high_risk_group2=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid  + hiv_aids + solid_organ + rare_neuro )>0)
-gen high_risk_group_new2=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid  + hiv_aids + solid_organ_new + rare_neuro )>0)
-tab high_risk_group2 high_risk_group_new2,m
-gen high_risk_group3=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids  + rare_neuro )>0)
-gen high_risk_group_new3=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids  + rare_neuro )>0)
-tab high_risk_group3 high_risk_group_new3,m
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
 tab d_postest_treat,m
@@ -544,17 +534,11 @@ gen month_after_vaccinate=ceil(d_vaccinate_treat/30)
 tab month_after_vaccinate,m
 gen week_after_vaccinate=ceil(d_vaccinate_treat/7)
 tab week_after_vaccinate,m
-*combine month6 and over due to small N*
-replace month_after_vaccinate=6 if month_after_vaccinate>=6&month_after_vaccinate!=.
-gen month_after_vaccinate_missing=month_after_vaccinate
-replace month_after_vaccinate_missing=99 if month_after_vaccinate_missing==.
 *calendar time*
 gen month_after_campaign=ceil((start_date-mdy(12,15,2021))/30)
 tab month_after_campaign,m
 gen week_after_campaign=ceil((start_date-mdy(12,15,2021))/7)
 tab week_after_campaign,m
-*combine 8 and 9 due to small N*
-*replace week_after_campaign=8 if week_after_campaign==9
 
 
 *exclude those with contraindications for Pax*
@@ -641,6 +625,17 @@ tab drug if liver_disease==1
 tab drug if drugs_do_not_use<=start_date
 tab drug if drugs_consider_risk<=start_date
 
+*clean covariates*
+tab month_after_vaccinate,m
+*combine month6 and over due to small N*
+*replace month_after_vaccinate=6 if month_after_vaccinate>=6&month_after_vaccinate!=.
+*gen month_after_vaccinate_missing=month_after_vaccinate
+*replace month_after_vaccinate_missing=99 if month_after_vaccinate_missing==.
+*calendar time*
+tab week_after_campaign,m
+*combine 8 and 9 due to small N*
+*replace week_after_campaign=8 if week_after_campaign==9
+
 
 
 *descriptives by drug groups*
@@ -693,6 +688,7 @@ tab drug solid_organ ,row chi
 tab drug solid_organ_new ,row chi
 tab drug rare_neuro ,row chi
 tab drug high_risk_group ,row chi
+tab drug high_risk_group_new ,row chi
 tab drug autism_nhsd ,row chi
 tab drug care_home_primis ,row chi
 tab drug dementia_nhsd ,row chi
@@ -733,7 +729,7 @@ count if drug==1&sotrovimab_covid_not_start!=.
 count if drug==1&sotrovimab_covid_stopped!=.
 
 
-drop if high_risk_group==0
+drop if high_risk_group_new==0
 *descriptives by drug groups*
 by drug,sort: sum age,de
 ttest age , by( drug )
