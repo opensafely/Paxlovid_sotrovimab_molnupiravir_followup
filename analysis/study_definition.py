@@ -430,16 +430,7 @@ study = StudyDefinition(
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
   ),
-
-  #  regular ascitic drainage (opcs4_codes in hospital??)
-  ascitic_drainage_snomed = patients.with_these_clinical_events(
-    ascitic_drainage_snomed_codes,
-    on_or_before = "start_date",
-    returning = "date",
-    date_format = "YYYY-MM-DD",
-    find_last_match_in_period = True,
-  ),  
-  ascitic_drainage_icd10 = patients.admitted_to_hospital(
+  decompensated_cirrhosis_icd10 = patients.admitted_to_hospital(
         returning="date_admitted",
         find_last_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -450,6 +441,14 @@ study = StudyDefinition(
             "date": {"earliest": "1900-01-01", "latest": "today"},
         },
   ),
+  #  regular ascitic drainage (opcs4_codes in hospital??)
+  ascitic_drainage_snomed = patients.with_these_clinical_events(
+    ascitic_drainage_snomed_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ), 
   ascitic_drainage_snomed_pre = patients.with_these_clinical_events(
     ascitic_drainage_snomed_codes,
     on_or_before = "ascitic_drainage_snomed - 1 day",
