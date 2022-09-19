@@ -88,7 +88,7 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,16,2022)&start_date<=mdy(07,16,2022)
+keep if start_date>=mdy(02,10,2022)&start_date<=mdy(06,30,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
 drop if molnupiravir_covid_therapeutics!=. & ( sotrovimab_covid_therapeutics<=molnupiravir_covid_therapeutics| remdesivir_covid_therapeutics<=molnupiravir_covid_therapeutics| casirivimab_covid_therapeutics<=molnupiravir_covid_therapeutics)
@@ -676,7 +676,7 @@ stcox drug
 
 
 
-drop if high_risk_group_new==0
+*drop if high_risk_group_new==0
 *descriptives by drug groups*
 by drug,sort: sum age,de
 ttest age , by( drug )
