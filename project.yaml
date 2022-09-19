@@ -52,6 +52,5 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/cox_mol.log
-        figure1: output/mol/phtest.svg  
-        figure2: output/mol/phtest_psw.svg
+
 
