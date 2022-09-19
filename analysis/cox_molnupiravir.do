@@ -74,8 +74,6 @@ stcox i.drug age_spline* i.sex i.region_nhs downs_syndrome solid_cancer_new haem
 stcox i.drug age_spline* i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b6.ethnicity b5.imd i.vaccination_status i.week_after_campaign b1.bmi_group4 diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease
 *PH test*
 estat phtest,de
-estat phtest, plot(1.drug)
-graph export ./output/mol/phtest.svg, as(svg) replace
 
 *un-stratified Cox, missing values as a separate category*
 stcox i.drug age i.sex i.stp downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro
@@ -266,9 +264,6 @@ tebalance summarize
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
 estat phtest,de
-estat phtest, plot(1.drug)
-graph export ./output/mol/phtest_psw.svg, as(svg) replace
-
 
 
 *secondary outcomes*
