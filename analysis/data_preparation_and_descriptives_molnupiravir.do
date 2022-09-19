@@ -711,23 +711,6 @@ stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
 
 
-*check treatment status*
-count if drug==0&paxlovid_covid_therapeutics==paxlovid_covid_approved
-count if drug==0&paxlovid_covid_therapeutics==paxlovid_covid_complete
-count if drug==0&paxlovid_covid_therapeutics==paxlovid_covid_not_start
-count if drug==0&paxlovid_covid_therapeutics==paxlovid_covid_stopped
-count if drug==0&paxlovid_covid_approved!=.
-count if drug==0&paxlovid_covid_complete!=.
-count if drug==0&paxlovid_covid_not_start!=.
-count if drug==0&paxlovid_covid_stopped!=.
-count if drug==1&molnupiravir_covid_therapeutics==molnupiravir_covid_approved
-count if drug==1&molnupiravir_covid_therapeutics==molnupiravir_covid_complete
-count if drug==1&molnupiravir_covid_therapeutics==molnupiravir_covid_not_start
-count if drug==1&molnupiravir_covid_therapeutics==molnupiravir_covid_stopped
-count if drug==1&molnupiravir_covid_approved!=.
-count if drug==1&molnupiravir_covid_complete!=.
-count if drug==1&molnupiravir_covid_not_start!=.
-count if drug==1&molnupiravir_covid_stopped!=.
 
 
 drop if high_risk_group_new==0
