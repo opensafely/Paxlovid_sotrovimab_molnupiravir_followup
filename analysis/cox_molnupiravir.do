@@ -6,9 +6,9 @@
 *
 *	Programmed by:	Bang Zheng
 *
-*	Data used:		output/main.dta
+*	Data used:		output/main_mol.dta
 *
-*	Output:	        logs/cox.log  output/phtest.svg  output/phtest_psw.svg
+*	Output:	        logs/cox_mol.log  output/mol/phtest.svg  output/mol/phtest_psw.svg
 *
 ********************************************************************************
 *
@@ -19,10 +19,10 @@
 
 * Open a log file
 cap log close
-log using ./logs/cox, replace t
+log using ./logs/cox_mol, replace t
 clear
 
-use ./output/main.dta
+use ./output/main_mol.dta
 
 *follow-up time and events*
 stset end_date ,  origin(start_date) failure(failure==1)
@@ -75,7 +75,7 @@ stcox i.drug age_spline* i.sex i.region_nhs downs_syndrome solid_cancer_new haem
 *PH test*
 estat phtest,de
 estat phtest, plot(1.drug)
-graph export ./output/phtest.svg, as(svg) replace
+graph export ./output/mol/phtest.svg, as(svg) replace
 
 *un-stratified Cox, missing values as a separate category*
 stcox i.drug age i.sex i.stp downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro
@@ -267,7 +267,7 @@ stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
 estat phtest,de
 estat phtest, plot(1.drug)
-graph export ./output/phtest_psw.svg, as(svg) replace
+graph export ./output/mol/phtest_psw.svg, as(svg) replace
 
 
 
