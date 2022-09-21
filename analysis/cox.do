@@ -53,6 +53,7 @@ stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immu
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
 
+do "analysis/ado/psmatch2.ado"
 psmatch2 drug age i.sex i.region_nhs, logit
 gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
 sum psweight,de
