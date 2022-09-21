@@ -41,6 +41,58 @@ tab _t drug if failure==0&_t<28&end_date==covid_hosp_date_day_cases_mab,m col
 tab _t drug if failure==0&_t<28&end_date==min(molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)&drug==1,m col
 tab _t drug if failure==0&_t<28&end_date==min(sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)&drug==0,m col
 
+*main analysis*
+replace drug=1-drug
+label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
+label values drug drug_Paxlovid2
+mkspline age_spline = age, cubic nknots(4)
+mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
+
+stcox i.drug age i.sex, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
+
+psmatch2 drug age i.sex i.region_nhs, logit
+gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
+sum psweight,de
+by drug, sort: sum _pscore ,de
+teffects ipw (failure) (drug age i.sex i.region_nhs ) if _pscore!=.
+tebalance summarize
+stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
+stcox i.drug
+
+psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, logit
+drop psweight
+gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
+sum psweight,de
+by drug, sort: sum _pscore ,de
+teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro) if _pscore!=.
+tebalance summarize
+stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
+stcox i.drug
+
+psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, logit
+drop psweight
+gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
+sum psweight,de
+by drug, sort: sum _pscore ,de
+teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*) if _pscore!=.
+tebalance summarize
+stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
+stcox i.drug
+
+psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, logit
+drop psweight
+gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
+sum psweight,de
+by drug, sort: sum _pscore ,de
+teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease) if _pscore!=.
+tebalance summarize
+stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
+stcox i.drug
+estat phtest,de
+
 
 *un-stratified Cox, with covariate adjustment, complete case*
 stcox i.drug
@@ -281,6 +333,11 @@ tab _t drug if failure_allcause==1,m col
 tab _t drug if failure_allcause==1&end_date_allcause==hospitalisation_outcome_date&end_date_allcause!=death_date,m col
 tab _t drug if failure_allcause==1&end_date_allcause==death_date,m col
 tab failure_allcause drug if _st==1,m col
+*main analysis*
+stcox i.drug age i.sex, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
 *stratified Cox, missing values as a separate category*
 stcox i.drug age i.sex, strata(stp)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, strata(stp)
@@ -305,6 +362,11 @@ tab _t drug if failure_2m==1,m col
 tab _t drug if failure_2m==1&end_date_2m==covid_hospitalisation_outcome_da&end_date_2m!=death_with_covid_on_the_death_ce,m col
 tab _t drug if failure_2m==1&end_date_2m==death_with_covid_on_the_death_ce,m col
 tab failure_2m drug if _st==1,m col
+*main analysis*
+stcox i.drug age i.sex, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
 *stratified Cox, missing values as a separate category*
 stcox i.drug age i.sex, strata(stp)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, strata(stp)
