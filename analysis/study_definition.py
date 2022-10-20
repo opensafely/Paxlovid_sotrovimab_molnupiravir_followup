@@ -1651,10 +1651,11 @@ study = StudyDefinition(
   vaccination_status = patients.categorised_as(
     {
       "Un-vaccinated": "DEFAULT",
-      "Un-vaccinated (declined)": """ covid_vax_declined AND NOT (covid_vax_1 OR covid_vax_2 OR covid_vax_3)""",
+      "Un-vaccinated (declined)": """ covid_vax_declined AND NOT (covid_vax_1 OR covid_vax_2 OR covid_vax_3 OR covid_vax_4)""",
       "One vaccination": """ covid_vax_1 AND NOT covid_vax_2 """,
       "Two vaccinations": """ covid_vax_2 AND NOT covid_vax_3 """,
-      "Three or more vaccinations": """ covid_vax_3 """
+      "Three vaccinations": """ covid_vax_3 AND NOT covid_vax_4 """,
+      "Four or more vaccinations": """ covid_vax_4 """
     },
     
     # first vaccine from during trials and up to treatment/test date
@@ -1681,13 +1682,21 @@ study = StudyDefinition(
       returning = "date",
       date_format = "YYYY-MM-DD"
     ),
+    # add 4th
+    covid_vax_4 = patients.with_tpp_vaccination_record(
+      target_disease_matches = "SARS-2 CORONAVIRUS",
+      between = ["covid_vax_3 + 56 days", "start_date"],
+      find_first_match_in_period = True,
+      returning = "date",
+      date_format = "YYYY-MM-DD"
+    ),
 
     covid_vax_declined = patients.with_these_clinical_events(
       covid_vaccine_declined_codes,
       returning="binary_flag",
       on_or_before = "start_date",
     ),
-    
+
     return_expectations = {
       "rate": "universal",
       "category": {
@@ -1695,13 +1704,13 @@ study = StudyDefinition(
           "Un-vaccinated": 0.1,
           "Un-vaccinated (declined)": 0.1,
           "One vaccination": 0.1,
-          "Two vaccinations": 0.2,
-          "Three or more vaccinations": 0.5,
+          "Two vaccinations": 0.1,
+          "Three vaccinations": 0.5,
+          "Four or more vaccinations": 0.1,
         }
       },
     },
   ),
-  # add 4th?
   # latest vaccination date
   last_vaccination_date = patients.with_tpp_vaccination_record(
       target_disease_matches = "SARS-2 CORONAVIRUS",
