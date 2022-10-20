@@ -86,7 +86,7 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,11,2022)&start_date<=mdy(07,15,2022)
+keep if start_date>=mdy(02,11,2022)&start_date<=mdy(07,31,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
 drop if sotrovimab_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
@@ -752,6 +752,66 @@ count if drug==1&sotrovimab_covid_approved!=.
 count if drug==1&sotrovimab_covid_complete!=.
 count if drug==1&sotrovimab_covid_not_start!=.
 count if drug==1&sotrovimab_covid_stopped!=.
+
+
+*compare characteristics between those with detected high-risk group category and those without*
+by drug,sort: tab high_risk_group_new,m
+
+by drug,sort: sum age if high_risk_group_new==0,de
+by drug,sort: sum bmi if high_risk_group_new==0,de
+by drug,sort: sum d_postest_treat if high_risk_group_new==0,de
+by drug,sort: sum week_after_campaign if high_risk_group_new==0,de
+by drug,sort: sum week_after_vaccinate if high_risk_group_new==0,de
+by drug,sort: sum d_vaccinate_treat if high_risk_group_new==0,de
+
+tab drug sex,row chi
+tab drug ethnicity,row chi
+tab drug White,row chi
+tab drug imd,row chi
+ranksum imd,by(drug)
+tab drug rural_urban,row chi
+ranksum rural_urban,by(drug)
+tab drug region_nhs,row chi
+tab drug region_covid_therapeutics,row chi
+tab drug age_group3 ,row chi
+tab drug d_postest_treat_g2 ,row chi
+tab drug d_postest_treat ,row
+tab drug downs_syndrome ,row chi
+tab drug solid_cancer ,row chi
+tab drug solid_cancer_new ,row chi
+tab drug haema_disease ,row chi
+tab drug renal_disease ,row chi
+tab drug liver_disease ,row chi
+tab drug imid ,row chi
+tab drug immunosupression ,row chi
+tab drug immunosupression_new ,row chi
+tab drug hiv_aids ,row chi
+tab drug solid_organ ,row chi
+tab drug solid_organ_new ,row chi
+tab drug rare_neuro ,row chi
+tab drug high_risk_group ,row chi
+tab drug high_risk_group_new ,row chi
+tab drug autism_nhsd ,row chi
+tab drug care_home_primis ,row chi
+tab drug dementia_nhsd ,row chi
+tab drug housebound_opensafely ,row chi
+tab drug learning_disability_primis ,row chi
+tab drug serious_mental_illness_nhsd ,row chi
+tab drug bmi_group4 ,row chi
+tab drug bmi_g3 ,row chi
+tab drug diabetes ,row chi
+tab drug chronic_cardiac_disease ,row chi
+tab drug hypertension ,row chi
+tab drug chronic_respiratory_disease ,row chi
+tab drug vaccination_status ,row chi
+tab drug month_after_vaccinate,row chi
+tab drug sgtf ,row chi
+tab drug sgtf_new ,row chi
+tab drug variant_recorded ,row chi
+tab drug if covid_test_positive_pre_date!=.
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox drug
+
 
 
 drop if high_risk_group_new==0
