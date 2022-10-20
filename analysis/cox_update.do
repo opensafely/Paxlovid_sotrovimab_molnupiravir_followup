@@ -42,6 +42,7 @@ tab _t drug if failure==0&_t<28&end_date==min(molnupiravir_covid_therapeutics,pa
 tab _t drug if failure==0&_t<28&end_date==min(sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)&drug==0,m col
 
 *main analysis*
+*recode Paxlovid as 1*
 replace drug=1-drug
 label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
 label values drug drug_Paxlovid2
@@ -49,9 +50,9 @@ mkspline age_spline = age, cubic nknots(4)
 mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 
 stcox i.drug age i.sex, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
 
 do "analysis/ado/psmatch2.ado"
 psmatch2 drug age i.sex i.region_nhs, logit
@@ -63,32 +64,32 @@ tebalance summarize
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
 
-psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, logit
+psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, logit
 drop psweight
 gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
 sum psweight,de
 by drug, sort: sum _pscore ,de
-teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro) if _pscore!=.
+teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro) if _pscore!=.
 tebalance summarize
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
 
-psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, logit
+psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, logit
 drop psweight
 gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
 sum psweight,de
 by drug, sort: sum _pscore ,de
-teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*) if _pscore!=.
+teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*) if _pscore!=.
 tebalance summarize
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
 
-psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, logit
+psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, logit
 drop psweight
 gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
 sum psweight,de
 by drug, sort: sum _pscore ,de
-teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease) if _pscore!=.
+teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease) if _pscore!=.
 tebalance summarize
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
@@ -99,15 +100,15 @@ gen fu=28
 replace fu=_t-_t0 if failure==0
 tab failure fu,m
 poisson failure i.drug age i.sex i.region_nhs, exposure(fu) irr
-poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro, exposure(fu) irr
-poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, exposure(fu) irr
-poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu) irr
+poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, exposure(fu) irr
+poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, exposure(fu) irr
+poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu) irr
 
 *Bayesian Poisson regression*
 set seed 2022
-bayes, saving(poisson1,replace): poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu)
+bayes, saving(poisson1,replace): poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu)
 estimates store poisson1
-bayes, saving(poisson2,replace): poisson failure  age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu)
+bayes, saving(poisson2,replace): poisson failure  age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu)
 estimates store poisson2
 bayesstats ic poisson2 poisson1
 
@@ -811,6 +812,8 @@ stcox i.drug age i.sex i.d_postest_treat_missing i.month_after_vaccinate_missing
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro i.d_postest_treat_missing i.month_after_vaccinate_missing, strata(stp)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b6.ethnicity_with_missing b5.imd_with_missing i.vaccination_status i.week_after_campaign i.d_postest_treat_missing i.month_after_vaccinate_missing, strata(stp)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro b6.ethnicity_with_missing b5.imd_with_missing i.vaccination_status i.week_after_campaign b1.bmi_g4_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease i.d_postest_treat_missing i.month_after_vaccinate_missing, strata(stp)
+*exclude patients with HIV/AIDS due to small number*
+
 *excluding patients with treatment records of both sotrovimab and Pax, or with treatment records of any other therapies*
 stcox i.drug age i.sex if (sotrovimab_covid_therapeutics==.|paxlovid_covid_therapeutics==.|sotrovimab_covid_therapeutics>start_date_29|paxlovid_covid_therapeutics>start_date_29)&molnupiravir_covid_therapeutics>start_date_29&remdesivir_covid_therapeutics>start_date_29&casirivimab_covid_therapeutics>start_date_29, strata(stp)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new hiv_aids  rare_neuro if (sotrovimab_covid_therapeutics==.|paxlovid_covid_therapeutics==.|sotrovimab_covid_therapeutics>start_date_29|paxlovid_covid_therapeutics>start_date_29)&molnupiravir_covid_therapeutics>start_date_29&remdesivir_covid_therapeutics>start_date_29&casirivimab_covid_therapeutics>start_date_29, strata(stp)
