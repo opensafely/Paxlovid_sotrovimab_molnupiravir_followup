@@ -68,3 +68,12 @@ actions:
         log: logs/data_preparation_update.log
       highly_sensitive:
         data: output/main_update.dta
+
+  cox_regression_update:
+    run: stata-mp:latest analysis/cox_update.do
+    needs: [data_preparation_update]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_update.log
+        figure1: output/phtest_update.svg  
+        figure2: output/phtest_psw_update.svg
