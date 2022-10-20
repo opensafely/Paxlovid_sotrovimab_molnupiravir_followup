@@ -59,3 +59,12 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_update.csv
+
+  data_preparation_update:
+    run: stata-mp:latest analysis/data_preparation_and_descriptives_update.do
+    needs: [generate_study_population_update]
+    outputs:
+      moderately_sensitive:
+        log: logs/data_preparation_update.log
+      highly_sensitive:
+        data: output/main_update.dta
