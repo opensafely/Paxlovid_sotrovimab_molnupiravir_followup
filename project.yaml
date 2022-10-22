@@ -28,6 +28,7 @@ actions:
         log: logs/cox.log
         figure1: output/phtest.svg  
         figure2: output/phtest_psw.svg
+        figure3: output/psgraph.svg 
 
   multiple_imputation:
     run: stata-mp:latest analysis/multiple_imputation.do
@@ -77,3 +78,4 @@ actions:
         log: logs/cox_update.log
         figure1: output/phtest_update.svg  
         figure2: output/phtest_psw_update.svg
+        figure3: output/psgraph_update.svg 
