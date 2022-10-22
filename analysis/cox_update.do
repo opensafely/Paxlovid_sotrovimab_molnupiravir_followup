@@ -85,6 +85,8 @@ stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
 
 psmatch2 drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, logit
+histogram _pscore, by(drug, col(1))
+graph export ./output/psgraph_update.svg, as(svg) replace
 drop psweight
 gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
 sum psweight,de
@@ -98,7 +100,7 @@ estat phtest,de
 *Poisson regression*
 gen fu=28
 replace fu=_t-_t0 if failure==0
-tab failure fu,m
+*tab failure fu,m
 poisson failure i.drug age i.sex i.region_nhs, exposure(fu) irr
 poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, exposure(fu) irr
 poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, exposure(fu) irr
