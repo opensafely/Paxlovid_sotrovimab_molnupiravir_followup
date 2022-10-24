@@ -533,14 +533,15 @@ tab hypertension,m
 tab chronic_respiratory_disease,m
 *vac and variant*
 tab vaccination_status,m
-rename vaccination_status vaccination_status_g5
-gen vaccination_status=0 if vaccination_status_g5=="Un-vaccinated"|vaccination_status_g5=="Un-vaccinated (declined)"
-replace vaccination_status=1 if vaccination_status_g5=="One vaccination"
-replace vaccination_status=2 if vaccination_status_g5=="Two vaccinations"
-replace vaccination_status=3 if vaccination_status_g5=="Three or more vaccinations"
-label define vac_Paxlovid 0 "Un-vaccinated" 1 "One vaccination" 2 "Two vaccinations" 3 "Three or more vaccinations"
+rename vaccination_status vaccination_status_g6
+gen vaccination_status=0 if vaccination_status_g6=="Un-vaccinated"|vaccination_status_g6=="Un-vaccinated (declined)"
+replace vaccination_status=1 if vaccination_status_g6=="One vaccination"
+replace vaccination_status=2 if vaccination_status_g6=="Two vaccinations"
+replace vaccination_status=3 if vaccination_status_g6=="Three vaccinations"
+replace vaccination_status=4 if vaccination_status_g6=="Four or more vaccinations"
+label define vac_Paxlovid 0 "Un-vaccinated" 1 "One vaccination" 2 "Two vaccinations" 3 "Three vaccinations" 4 "Four or more vaccinations"
 label values vaccination_status vac_Paxlovid
-gen vaccination_3=1 if vaccination_status==3
+gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
 tab sgtf,m
 tab sgtf_new, m
@@ -659,6 +660,11 @@ tab week_after_campaign,m
 *combine 9/10 and 26/27 due to small N*
 replace week_after_campaign=10 if week_after_campaign==9
 replace week_after_campaign=26 if week_after_campaign==27
+*combine stps with low N (<100) as "Other"*
+drop stp_N
+by stp, sort: gen stp_N=_N if stp!=.
+replace stp=99 if stp_N<100
+tab stp ,m
 
 
 *descriptives by drug groups*
