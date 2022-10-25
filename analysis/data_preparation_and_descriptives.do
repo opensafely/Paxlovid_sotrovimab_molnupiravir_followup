@@ -735,7 +735,7 @@ tab drug vaccination_status ,row chi
 tab drug month_after_vaccinate,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
-tab drug variant_recorded ,row chi
+*tab drug variant_recorded ,row chi
 tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
@@ -876,7 +876,7 @@ tab drug vaccination_status ,row chi
 tab drug month_after_vaccinate,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
-tab drug variant_recorded ,row chi
+*tab drug variant_recorded ,row chi
 tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
