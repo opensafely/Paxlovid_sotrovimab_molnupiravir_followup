@@ -881,7 +881,13 @@ tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
 
-
+*recode Paxlovid as 1*
+replace drug=1-drug
+label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
+label values drug drug_Paxlovid2
+*gen splines*
+mkspline age_spline = age, cubic nknots(4)
+mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 
 
 save ./output/main_update.dta, replace
