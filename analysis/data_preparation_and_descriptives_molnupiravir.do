@@ -86,7 +86,7 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,11,2022)&start_date<=mdy(06,30,2022)
+keep if start_date>=mdy(02,11,2022)&start_date<=mdy(07,15,2022)
 drop if stp==""
 *exclude those with other drugs before mol or Paxlovid, and those receiving mol and Paxlovid on the same day*
 drop if molnupiravir_covid_therapeutics!=. & ( sotrovimab_covid_therapeutics<=molnupiravir_covid_therapeutics| remdesivir_covid_therapeutics<=molnupiravir_covid_therapeutics| casirivimab_covid_therapeutics<=molnupiravir_covid_therapeutics)
@@ -387,7 +387,6 @@ label values age_group3 age_group3_Paxlovid
 tab age_group3,m
 egen age_5y_band=cut(age), at(18,25,30,35,40,45,50,55,60,65,70,75,80,85,110) label
 tab age_5y_band,m
-mkspline age_spline = age, cubic nknots(4)
 gen age_50=(age>=50)
 gen age_55=(age>=55)
 gen age_60=(age>=60)
