@@ -30,8 +30,6 @@ import delimited ./output/input.csv, delimiter(comma) varnames(1) case(preserve)
 describe
 codebook
 
-rename ascitic_drainage_icd10 decompensated_cirrhosis_icd10
-
 *  Convert strings to dates  *
 foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics remdesivir_covid_therapeutics	///
         casirivimab_covid_therapeutics sotrovimab_covid_approved sotrovimab_covid_complete sotrovimab_covid_not_start sotrovimab_covid_stopped ///
@@ -88,9 +86,9 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,11,2022)&start_date<=mdy(06,30,2022)
+keep if start_date>=mdy(02,11,2022)&start_date<=mdy(07,15,2022)
 drop if stp==""
-*exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
+*exclude those with other drugs before mol or Paxlovid, and those receiving mol and Paxlovid on the same day*
 drop if molnupiravir_covid_therapeutics!=. & ( sotrovimab_covid_therapeutics<=molnupiravir_covid_therapeutics| remdesivir_covid_therapeutics<=molnupiravir_covid_therapeutics| casirivimab_covid_therapeutics<=molnupiravir_covid_therapeutics)
 drop if paxlovid_covid_therapeutics!=. & ( sotrovimab_covid_therapeutics<= paxlovid_covid_therapeutics | remdesivir_covid_therapeutics<= paxlovid_covid_therapeutics | casirivimab_covid_therapeutics<= paxlovid_covid_therapeutics )
 count if molnupiravir_covid_therapeutics!=. & paxlovid_covid_therapeutics!=.
@@ -145,7 +143,7 @@ drop if start_date>=covid_hospitalisation_outcome_da| start_date>=death_with_cov
 
 
 *define outcome and follow-up time*
-gen study_end_date=mdy(09,18,2022)
+gen study_end_date=mdy(10,25,2022)
 gen start_date_29=start_date+28
 by drug, sort: count if covid_hospitalisation_outcome_da!=.
 by drug, sort: count if death_with_covid_on_the_death_ce!=.
@@ -410,6 +408,8 @@ replace ethnicity=. if ethnicity_with_missing_str=="Missing"
 label values ethnicity ethnicity_with_missing
 gen White=1 if ethnicity==6
 replace White=0 if ethnicity!=6&ethnicity!=.
+gen White_with_missing=White
+replace White_with_missing=9 if White==.
 
 tab imd,m
 replace imd=. if imd==0
@@ -467,6 +467,8 @@ replace bmi_g4_with_missing=9 if bmi_group4==.
 gen bmi_g3=bmi_group4
 replace bmi_g3=1 if bmi_g3==0
 label values bmi_g3 bmi_Paxlovid
+gen bmi_g3_with_missing=bmi_g3
+replace bmi_g3_with_missing=9 if bmi_g3==.
 gen bmi_25=(bmi>=25) if bmi!=.
 gen bmi_30=(bmi>=30) if bmi!=.
 
@@ -476,14 +478,15 @@ tab hypertension,m
 tab chronic_respiratory_disease,m
 *vac and variant*
 tab vaccination_status,m
-rename vaccination_status vaccination_status_g5
-gen vaccination_status=0 if vaccination_status_g5=="Un-vaccinated"|vaccination_status_g5=="Un-vaccinated (declined)"
-replace vaccination_status=1 if vaccination_status_g5=="One vaccination"
-replace vaccination_status=2 if vaccination_status_g5=="Two vaccinations"
-replace vaccination_status=3 if vaccination_status_g5=="Three or more vaccinations"
-label define vac_Paxlovid 0 "Un-vaccinated" 1 "One vaccination" 2 "Two vaccinations" 3 "Three or more vaccinations"
+rename vaccination_status vaccination_status_g6
+gen vaccination_status=0 if vaccination_status_g6=="Un-vaccinated"|vaccination_status_g6=="Un-vaccinated (declined)"
+replace vaccination_status=1 if vaccination_status_g6=="One vaccination"
+replace vaccination_status=2 if vaccination_status_g6=="Two vaccinations"
+replace vaccination_status=3 if vaccination_status_g6=="Three vaccinations"
+replace vaccination_status=4 if vaccination_status_g6=="Four or more vaccinations"
+label define vac_Paxlovid 0 "Un-vaccinated" 1 "One vaccination" 2 "Two vaccinations" 3 "Three vaccinations" 4 "Four or more vaccinations"
 label values vaccination_status vac_Paxlovid
-gen vaccination_3=1 if vaccination_status==3
+gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
 tab sgtf,m
 tab sgtf_new, m
@@ -503,7 +506,8 @@ gen month_after_campaign=ceil((start_date-mdy(12,15,2021))/30)
 tab month_after_campaign,m
 gen week_after_campaign=ceil((start_date-mdy(12,15,2021))/7)
 tab week_after_campaign,m
-
+gen day_after_campaign=start_date-mdy(12,15,2021)
+sum day_after_campaign,de
 
 *exclude those with contraindications for Pax*
 *solid organ transplant*
@@ -626,6 +630,7 @@ ranksum d_vaccinate_treat,by(drug)
 
 tab drug sex,row chi
 tab drug ethnicity,row chi
+tab drug White,row chi
 tab drug imd,row chi
 ranksum imd,by(drug)
 tab drug rural_urban,row chi
@@ -660,6 +665,7 @@ tab drug housebound_opensafely ,row chi
 tab drug learning_disability_primis ,row chi
 tab drug serious_mental_illness_nhsd ,row chi
 tab drug bmi_group4 ,row chi
+tab drug bmi_g3 ,row chi
 tab drug diabetes ,row chi
 tab drug chronic_cardiac_disease ,row chi
 tab drug hypertension ,row chi
@@ -701,6 +707,7 @@ ranksum d_vaccinate_treat,by(drug)
 
 tab drug sex,row chi
 tab drug ethnicity,row chi
+tab drug White,row chi
 tab drug imd,row chi
 ranksum imd,by(drug)
 tab drug rural_urban,row chi
@@ -734,6 +741,7 @@ tab drug housebound_opensafely ,row chi
 tab drug learning_disability_primis ,row chi
 tab drug serious_mental_illness_nhsd ,row chi
 tab drug bmi_group4 ,row chi
+tab drug bmi_g3 ,row chi
 tab drug diabetes ,row chi
 tab drug chronic_cardiac_disease ,row chi
 tab drug hypertension ,row chi
@@ -748,6 +756,13 @@ stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
 
 
+*recode Paxlovid as 1*
+replace drug=1-drug
+label define drug_Paxlovid2 0 "molnupiravir" 1 "Paxlovid"
+label values drug drug_Paxlovid2
+*gen splines*
+mkspline age_spline = age, cubic nknots(4)
+mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 
 
 save ./output/main_mol.dta, replace
