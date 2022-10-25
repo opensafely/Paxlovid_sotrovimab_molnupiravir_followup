@@ -42,13 +42,6 @@ tab _t drug if failure==0&_t<28&end_date==min(molnupiravir_covid_therapeutics,pa
 tab _t drug if failure==0&_t<28&end_date==min(sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)&drug==0,m col
 
 *main analysis*
-*recode Paxlovid as 1*
-replace drug=1-drug
-label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
-label values drug drug_Paxlovid2
-mkspline age_spline = age, cubic nknots(4)
-mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
-
 stcox i.drug age i.sex, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
