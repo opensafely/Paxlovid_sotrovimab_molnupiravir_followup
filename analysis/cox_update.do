@@ -38,8 +38,8 @@ tab failure drug,m col
 tab _t drug if failure==0&_t<28&end_date==death_date,m col
 tab _t drug if failure==0&_t<28&end_date==dereg_date,m col
 tab _t drug if failure==0&_t<28&end_date==covid_hosp_date_day_cases_mab,m col
-tab _t drug if failure==0&_t<28&end_date==min(molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)&drug==1,m col
-tab _t drug if failure==0&_t<28&end_date==min(sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)&drug==0,m col
+tab _t drug if failure==0&_t<28&end_date==min(molnupiravir_covid_therapeutics,sotrovimab_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)&drug==1,m col
+tab _t drug if failure==0&_t<28&end_date==min(paxlovid_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)&drug==0,m col
 
 *main analysis*
 stcox i.drug age i.sex, strata(region_nhs)
