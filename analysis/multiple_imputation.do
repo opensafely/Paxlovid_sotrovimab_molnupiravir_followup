@@ -2,7 +2,7 @@
 *
 *	Do-file:		multiple_imputation.do
 *
-*	Project:		sotrovimab-and-molnupiravir
+*	Project:		sotrovimab-and-Paxlovid
 *
 *	Programmed by:	Bang Zheng
 *
@@ -34,13 +34,13 @@ sysdir set PERSONAL "analysis/ado"
 
 set seed 1000
 
-ice m.ethnicity m.bmi_group4  m.imd   drug age i.sex i.stp downs_syndrome solid_cancer haema_disease renal_disease liver_disease imid immunosupression hiv_aids solid_organ rare_neuro i.vaccination_status i.week_after_campaign diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease failure, m(5) saving(imputed,replace)  
+ice m.White m.bmi_g3  m.imd   drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease imid immunosupression_new  rare_neuro i.vaccination_status calendar_day_spline* diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease failure, m(5) saving(imputed,replace)  
 clear
 use imputed
-mi import ice, imputed(ethnicity bmi_group4  imd)
+mi import ice, imputed(White bmi_g3  imd)
 mi stset end_date ,  origin(start_date) failure(failure==1)
-mi estimate, hr: stcox i.drug age i.sex downs_syndrome solid_cancer haema_disease renal_disease liver_disease imid immunosupression hiv_aids solid_organ rare_neuro b6.ethnicity b5.imd i.vaccination_status i.week_after_campaign,strata(stp)
-mi estimate, hr: stcox i.drug age i.sex downs_syndrome solid_cancer haema_disease renal_disease liver_disease imid immunosupression hiv_aids solid_organ rare_neuro b6.ethnicity b5.imd i.vaccination_status i.week_after_campaign b1.bmi_group4 diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(stp)
+mi estimate, hr: stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease imid immunosupression_new  rare_neuro b1.White b5.imd i.vaccination_status calendar_day_spline*,strata(region_nhs)
+mi estimate, hr: stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease imid immunosupression_new  rare_neuro b1.White b5.imd i.vaccination_status calendar_day_spline* b1.bmi_g3 diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
 
 
 log close
