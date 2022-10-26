@@ -108,12 +108,12 @@ poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new ha
 poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu) irr
 
 *Bayesian Poisson regression*
-set seed 2022
-bayes, saving(poisson1,replace): poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu)
-estimates store poisson1
-bayes, saving(poisson2,replace): poisson failure  age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu)
-estimates store poisson2
-bayesstats ic poisson2 poisson1
+*set seed 2022
+*bayes, saving(poisson1,replace): poisson failure i.drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu)
+*estimates store poisson1
+*bayes, saving(poisson2,replace): poisson failure  age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, exposure(fu)
+*estimates store poisson2
+*bayesstats ic poisson2 poisson1
 
 
 *un-stratified Cox, with covariate adjustment, complete case*
