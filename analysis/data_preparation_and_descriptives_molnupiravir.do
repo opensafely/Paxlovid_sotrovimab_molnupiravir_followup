@@ -487,6 +487,8 @@ label define vac_Paxlovid 0 "Un-vaccinated" 1 "One vaccination" 2 "Two vaccinati
 label values vaccination_status vac_Paxlovid
 gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
+gen vaccination_g3=vaccination_3 
+replace vaccination_g3=2 if vaccination_status==4
 tab sgtf,m
 tab sgtf_new, m
 label define sgtf_new_Paxlovid 0 "S gene detected" 1 "confirmed SGTF" 9 "NA"
