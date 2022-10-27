@@ -431,13 +431,10 @@ replace d_postest_treat=. if d_postest_treat<0|d_postest_treat>7
 gen d_postest_treat_g2=(d_postest_treat>=3) if d_postest_treat<=5
 label define d_postest_treat_g2_Pax 0 "<3 days" 1 "3-5 days" 
 label values d_postest_treat_g2 d_postest_treat_g2_Pax
-*restrict to those treated within 0-5 days after test positive*
-drop if d_postest_treat_g2==.
-tab drug,m
-*gen d_postest_treat_g3=d_postest_treat_g2
-*replace d_postest_treat_g3=2 if d_postest_treat_g2==.
-*label define d_postest_treat_g3_Pax 0 "<3 days" 1 "3-5 days" 2 "6-7 days" 
-*label values d_postest_treat_g3 d_postest_treat_g3_Pax
+gen d_postest_treat_missing=d_postest_treat_g2
+replace d_postest_treat_missing=9 if d_postest_treat_g2==.
+label define d_postest_treat_missing_Pax 0 "<3 days" 1 "3-5 days" 9 "missing" 
+label values d_postest_treat_missing d_postest_treat_missing_Pax
 *demo*
 gen age_group3=(age>=40)+(age>=60)
 label define age_group3_Paxlovid 0 "18-39" 1 "40-59" 2 ">=60" 
