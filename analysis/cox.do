@@ -493,10 +493,11 @@ stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immu
 
 stcox i.drug##i.chronic_respiratory_disease age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension , strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension if chronic_respiratory_disease==0, strata(region_nhs)
-*stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension if chronic_respiratory_disease==1, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension if chronic_respiratory_disease==1, strata(region_nhs)
 
-stcox i.drug##i.vaccination_3 age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing  calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing  calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if vaccination_3==1, strata(region_nhs)
+stcox i.drug##i.vaccination_g3 age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing  calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing  calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if vaccination_g3==1, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing  calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if vaccination_g3==2, strata(region_nhs)
 *stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing  calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if vaccination_3==0, strata(region_nhs)
 *stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing  calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if vaccination_status==0, strata(region_nhs)
 
@@ -569,8 +570,9 @@ stcox i.drug##i.chronic_respiratory_disease age i.sex  , strata(region_nhs)
 stcox i.drug age i.sex  if chronic_respiratory_disease==0, strata(region_nhs)
 stcox i.drug age i.sex  if chronic_respiratory_disease==1, strata(region_nhs)
 
-stcox i.drug##i.vaccination_3 age i.sex , strata(region_nhs)
-stcox i.drug age i.sex  if vaccination_3==1, strata(region_nhs)
+stcox i.drug##i.vaccination_g3 age i.sex , strata(region_nhs)
+stcox i.drug age i.sex  if vaccination_g3==1, strata(region_nhs)
+stcox i.drug age i.sex  if vaccination_g3==2, strata(region_nhs)
 *stcox i.drug age i.sex  if vaccination_3==0, strata(region_nhs)
 
 stcox i.drug##i.d_postest_treat_g2 age i.sex , strata(region_nhs)
