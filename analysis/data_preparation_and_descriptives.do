@@ -357,6 +357,11 @@ count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==0&death_wit
 *count critical care within day1-28*
 tab drug covid_hosp_critical_care,m row
 tab drug covid_hosp_critical_care if failure==1&covid_hospitalisation_outcome_da==end_date,m row
+*average hospital stay*
+gen covid_hosp_days=covid_hosp_discharge_date2-covid_hospitalisation_outcome_da if covid_hosp_discharge_date2!=.&covid_hosp_discharge_date2>covid_hospitalisation_outcome_da
+replace covid_hosp_days=covid_hosp_discharge_date1-covid_hospitalisation_outcome_da if covid_hosp_discharge_date1!=.&covid_hosp_discharge_date1>covid_hospitalisation_outcome_da
+replace covid_hosp_days=covid_hosp_discharge_date0-covid_hospitalisation_outcome_da if covid_hosp_discharge_date0!=.&covid_hosp_discharge_date0>covid_hospitalisation_outcome_da
+by drug, sort: sum covid_hosp_days if failure==1&covid_hospitalisation_outcome_da==end_date, de
 
 
 
@@ -810,7 +815,7 @@ tab failure drug if high_risk_group_new==0,m col
 
 
 
-drop if high_risk_group_new==0
+*drop if high_risk_group_new==0
 *descriptives by drug groups*
 by drug,sort: sum age,de
 ttest age , by( drug )
