@@ -156,7 +156,7 @@ tab covid_hosp_admission_method,m
 tab drug covid_hosp_admission_method, row chi
 *by drug days_to_covid_admission, sort: count if covid_hospitalisation_outcome_da!=covid_hosp_date_emergency&covid_hospitalisation_outcome_da!=.
 *capture and exclude COVID-hospital admission/death on the start date
-count if start_date==covid_hospitalisation_outcome_da| start_date==death_with_covid_on_the_death_ce
+by drug, sort: count if start_date==covid_hospitalisation_outcome_da| start_date==death_with_covid_on_the_death_ce
 drop if start_date>=covid_hospitalisation_outcome_da| start_date>=death_with_covid_on_the_death_ce|start_date>=death_date|start_date>=dereg_date
 
 
@@ -639,6 +639,8 @@ tab drug if drugs_consider_risk<=start_date
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+
+save ./output/sensitivity.dta, replace
 
 drop if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
 drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
