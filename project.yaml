@@ -19,6 +19,7 @@ actions:
         log: logs/data_preparation.log
       highly_sensitive:
         data: output/main.dta
+        data: output/sensitivity.dta
 
   cox_regression:
     run: stata-mp:latest analysis/cox.do
