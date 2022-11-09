@@ -806,4 +806,52 @@ by drug, sort: count if death_with_covid_on_the_death_ce!=.
 by drug, sort: count if death_with_covid_on_the_death_ce==.&death_date!=.
 gen death_without_covid=death_date if death_with_covid_on_the_death_ce==.&death_date!=.
 
+
+*further sensitivity analyses*
+clear
+use ./output/sensitivity.dta
+drop if high_risk_group_new==0
+*recode Paxlovid as 1*
+replace drug=1-drug
+label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
+label values drug drug_Paxlovid2
+*not exclude contra*
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox drug
+tab failure drug,m col
+*need to adjust for contra*
+gen solid_organ_contra=(solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date)
+gen liver_contra=(advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date)
+gen renal_contra=1 if renal_disease==1|renal_therapeutics==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
+replace renal_contra=1 if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date|dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
+replace renal_contra=1 if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
+replace renal_contra=0 if renal_contra==..
+gen drugs_do_not_use_contra=(drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180))
+gen drugs_consider_risk_contra=(drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180))
+stcox i.drug age i.sex, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro solid_organ_contra liver_contra renal_contra drugs_do_not_use_contra drugs_consider_risk_contra, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*  solid_organ_contra liver_contra renal_contra drugs_do_not_use_contra drugs_consider_risk_contra, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease  solid_organ_contra liver_contra renal_contra drugs_do_not_use_contra drugs_consider_risk_contra, strata(region_nhs)
+*only use the drugs_do_not_use list*
+drop if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
+drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
+drop if renal_disease==1|renal_therapeutics==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
+drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
+drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
+drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox i.drug age i.sex drugs_consider_risk_contra if drugs_do_not_use>start_date|drugs_do_not_use<(start_date-90), strata(region_nhs)
+stcox i.drug age i.sex drugs_consider_risk_contra downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro if drugs_do_not_use>start_date|drugs_do_not_use<(start_date-90), strata(region_nhs)
+stcox i.drug age i.sex drugs_consider_risk_contra downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* if drugs_do_not_use>start_date|drugs_do_not_use<(start_date-90), strata(region_nhs)
+stcox i.drug age i.sex drugs_consider_risk_contra downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if drugs_do_not_use>start_date|drugs_do_not_use<(start_date-90), strata(region_nhs)
+*set 3month cut-off for the two drug lists*
+drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-90)
+drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-90)
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox i.drug age i.sex, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
+
+
 log close
