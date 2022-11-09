@@ -825,7 +825,7 @@ gen liver_contra=(advanced_decompensated_cirrhosis<=start_date|decompensated_cir
 gen renal_contra=1 if renal_disease==1|renal_therapeutics==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
 replace renal_contra=1 if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date|dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
 replace renal_contra=1 if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
-replace renal_contra=0 if renal_contra==..
+replace renal_contra=0 if renal_contra==.
 gen drugs_do_not_use_contra=(drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180))
 gen drugs_consider_risk_contra=(drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180))
 stcox i.drug age i.sex, strata(region_nhs)
