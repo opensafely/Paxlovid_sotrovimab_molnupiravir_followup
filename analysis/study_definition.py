@@ -250,7 +250,7 @@ study = StudyDefinition(
     pathogen = "SARS-CoV-2",
     test_result = "positive",
     returning = "binary_flag",
-    on_or_after = "index_date - 5 days",
+    on_or_after = "date_treated - 5 days",
     find_first_match_in_period = True,
     restrict_to_earliest_specimen_date = False,
     return_expectations = {
@@ -265,7 +265,7 @@ study = StudyDefinition(
     restrict_to_earliest_specimen_date = False,
     returning = "date",
     date_format = "YYYY-MM-DD",
-    on_or_after = "index_date - 5 days",
+    on_or_after = "date_treated - 5 days",
     return_expectations = {
       "date": {"earliest": "2021-12-20", "latest": "index_date"},
       "incidence": 0.9
@@ -292,7 +292,7 @@ study = StudyDefinition(
   #   pathogen = "SARS-CoV-2",
   #   test_result = "positive",
   #   returning = "case_category",
-  #   on_or_after = "index_date - 5 days",
+  #   on_or_after = "date_treated - 5 days",
   #   restrict_to_earliest_specimen_date = True,
   #   return_expectations = {
   #     "category": {"ratios": {"LFT_Only": 0.4, "PCR_Only": 0.4, "LFT_WithPCR": 0.2}},
@@ -335,7 +335,7 @@ study = StudyDefinition(
     pathogen = "SARS-CoV-2",
     test_result = "any",
     returning = "symptomatic",
-    on_or_after = "index_date - 5 days",
+    on_or_after = "date_treated - 5 days",
     find_first_match_in_period = True,
     restrict_to_earliest_specimen_date = False,
     return_expectations={
@@ -355,7 +355,7 @@ study = StudyDefinition(
     returning = "date",
     date_format = "YYYY-MM-DD",
     find_first_match_in_period = True,
-    on_or_after = "index_date - 5 days",
+    on_or_after = "date_treated - 5 days",
   ),
   
   
@@ -378,14 +378,28 @@ study = StudyDefinition(
     #with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
     on_or_before = "start_date - 1 day",
     date_format = "YYYY-MM-DD",
-    find_first_match_in_period = False,
+    find_last_match_in_period = True,
     return_expectations = {
       "date": {"earliest": "2021-12-20", "latest": "index_date - 1 day"},
       "rate": "uniform",
       "incidence": 0.05
     },
   ),
-  
+  primary_covid_hospital_admission_date = patients.admitted_to_hospital(
+    returning = "date_admitted",
+    with_these_primary_diagnoses = covid_icd10_codes,
+    with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
+    # see https://docs.opensafely.org/study-def-variables/#sus for more info
+    #with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
+    on_or_before = "start_date - 1 day",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+    return_expectations = {
+      "date": {"earliest": "2021-12-20", "latest": "index_date - 1 day"},
+      "rate": "uniform",
+      "incidence": 0.05
+    },
+  ),    
   any_covid_hospital_discharge_date = patients.admitted_to_hospital(
     returning = "date_discharged",
     with_these_diagnoses = covid_icd10_codes,
@@ -394,7 +408,7 @@ study = StudyDefinition(
     with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
     on_or_before = "start_date - 1 day",
     date_format = "YYYY-MM-DD",
-    find_first_match_in_period = False,
+    find_last_match_in_period = True,
     return_expectations = {
       "date": {"earliest": "2021-12-20", "latest": "index_date - 1 day"},
       "rate": "uniform",
