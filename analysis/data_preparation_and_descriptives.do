@@ -552,7 +552,7 @@ gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
 gen vaccination_g3=vaccination_3 
 replace vaccination_g3=2 if vaccination_status==4
-gen pre_infection=(covid_test_positive_previous_dat<=(covid_test_positive_date - 30)&covid_test_positive_previous_dat>mdy(1,1,2020)&covid_test_positive_previous_dat!=.)
+gen pre_infection=(covid_test_positive_pre_date<=(covid_test_positive_date - 30)&covid_test_positive_pre_date>mdy(1,1,2020)&covid_test_positive_pre_date!=.)
 tab pre_infection,m
 tab sgtf,m
 tab sgtf_new, m
