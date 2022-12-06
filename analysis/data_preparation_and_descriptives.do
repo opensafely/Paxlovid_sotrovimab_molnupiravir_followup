@@ -34,7 +34,7 @@ codebook
 foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics remdesivir_covid_therapeutics	///
         casirivimab_covid_therapeutics sotrovimab_covid_approved sotrovimab_covid_complete sotrovimab_covid_not_start sotrovimab_covid_stopped ///
 		paxlovid_covid_approved paxlovid_covid_complete paxlovid_covid_not_start paxlovid_covid_stopped covid_test_positive_pre_date ///
-        covid_test_positive_date covid_test_positive_date2 covid_symptoms_snomed last_vaccination_date primary_covid_hospital_discharge ///
+        covid_test_positive_date covid_test_positive_date2 covid_symptoms_snomed last_vaccination_date primary_covid_hospital_discharge primary_covid_hospital_admission ///
 	   any_covid_hospital_discharge_dat preg_36wks_date death_date dereg_date downs_syndrome_nhsd_snomed downs_syndrome_nhsd_icd10 cancer_opensafely_snomed ///
 	   cancer_opensafely_snomed_new haematopoietic_stem_cell_snomed haematopoietic_stem_cell_icd10 haematopoietic_stem_cell_opcs4 ///
 	   haematological_malignancies_snom haematological_malignancies_icd1 sickle_cell_disease_nhsd_snomed sickle_cell_disease_nhsd_icd10 ///
@@ -73,6 +73,8 @@ foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeu
 *transplant_ileum_1_opcs4
 *transplant_ileum_2_opcs4
 
+*check hosp/death event date range*
+codebook covid_hosp_outcome_date2 hospitalisation_outcome_date2 death_date
 
 *exclusion criteria*
 keep if sotrovimab_covid_therapeutics==start_date | paxlovid_covid_therapeutics==start_date
@@ -119,11 +121,11 @@ by drug, sort: count if covid_hosp_outcome_date1==covid_hosp_date_mabs_procedure
 by drug, sort: count if covid_hosp_outcome_date0==covid_hosp_date_mabs_procedure&covid_hosp_outcome_date0!=.&(covid_hosp_discharge_date0 - covid_hosp_outcome_date0)==2
 by drug, sort: count if covid_hosp_outcome_date1==covid_hosp_date_mabs_procedure&covid_hosp_outcome_date1!=.&(covid_hosp_discharge_date1 - covid_hosp_outcome_date1)==2
 *check if any patient discharged in AM and admitted in PM*
-count if covid_hosp_outcome_date0==covid_hosp_discharge_date0&covid_hosp_outcome_date0!=.&covid_hosp_outcome_date1==.&covid_hosp_outcome_date2==.&covid_hosp_discharge_date1!=.
-count if covid_hosp_outcome_date1==covid_hosp_discharge_date1&covid_hosp_outcome_date1!=.&covid_hosp_outcome_date2==.&covid_hosp_discharge_date2!=.
-count if covid_hosp_outcome_date2==.&covid_hosp_discharge_date2!=.
-count if covid_hosp_outcome_date2!=.&covid_hosp_discharge_date2==.
-count if covid_hosp_outcome_date2!=.&covid_hosp_outcome_date2>covid_hosp_discharge_date2
+count if primary_covid_hospital_admission!=.&primary_covid_hospital_discharge==.
+count if primary_covid_hospital_admission==.&primary_covid_hospital_discharge!=.
+count if primary_covid_hospital_admission!=.&primary_covid_hospital_discharge!=.&primary_covid_hospital_admission==primary_covid_hospital_discharge
+count if primary_covid_hospital_admission!=.&primary_covid_hospital_discharge!=.&primary_covid_hospital_admission<primary_covid_hospital_discharge
+count if primary_covid_hospital_admission!=.&primary_covid_hospital_discharge!=.&primary_covid_hospital_admission>primary_covid_hospital_discharge
 *ignore day cases and mab procedures in day 0/1*
 replace covid_hosp_outcome_date0=. if covid_hosp_outcome_date0==covid_hosp_discharge_date0&covid_hosp_outcome_date0!=.
 replace covid_hosp_outcome_date1=. if covid_hosp_outcome_date1==covid_hosp_discharge_date1&covid_hosp_outcome_date1!=.
@@ -550,6 +552,8 @@ gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
 gen vaccination_g3=vaccination_3 
 replace vaccination_g3=2 if vaccination_status==4
+gen pre_infection=(covid_test_positive_previous_dat<=(covid_test_positive_date - 30)&covid_test_positive_previous_dat>mdy(1,1,2020)&covid_test_positive_previous_dat!=.)
+tab pre_infection,m
 tab sgtf,m
 tab sgtf_new, m
 label define sgtf_new_Paxlovid 0 "S gene detected" 1 "confirmed SGTF" 9 "NA"
@@ -883,8 +887,10 @@ tab drug hypertension ,row chi
 tab drug chronic_respiratory_disease ,row chi
 tab drug vaccination_status ,row chi
 tab drug month_after_vaccinate,row chi
+tab drug month_after_campaign,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
+tab drug pre_infection,row chi
 *tab drug variant_recorded ,row chi
 tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
