@@ -671,8 +671,8 @@ replace month_after_vaccinate_missing=99 if month_after_vaccinate_missing==.
 *calendar time*
 tab week_after_campaign,m
 *combine 9/10 and 26/27 due to small N*
-replace week_after_campaign=10 if week_after_campaign==9
-replace week_after_campaign=26 if week_after_campaign==27
+*replace week_after_campaign=10 if week_after_campaign==9
+*replace week_after_campaign=26 if week_after_campaign==27
 *combine stps with low N (<100) as "Other"*
 drop stp_N
 by stp, sort: gen stp_N=_N if stp!=.
