@@ -643,6 +643,8 @@ tab drug if drugs_consider_risk<=start_date
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+gen drugs_do_not_use_contra=(drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180))
+gen drugs_consider_risk_contra=(drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180))
 
 save ./output/sensitivity.dta, replace
 
@@ -655,7 +657,7 @@ drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine
 *drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
-drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+*drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
 tab drug if liver_disease_nhsd_snomed<=start_date
 tab drug if liver_disease==1
@@ -748,6 +750,7 @@ tab drug vaccination_status ,row chi
 tab drug month_after_vaccinate,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
+tab drug drugs_consider_risk_contra,row chi
 *tab drug variant_recorded ,row chi
 tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
@@ -817,6 +820,7 @@ tab drug hypertension  if high_risk_group_new==0,row chi
 tab drug chronic_respiratory_disease  if high_risk_group_new==0,row chi
 tab drug vaccination_status  if high_risk_group_new==0,row chi
 tab drug month_after_vaccinate if high_risk_group_new==0,row chi
+tab drug drugs_consider_risk_contra if high_risk_group_new==0,row chi
 tab failure drug if high_risk_group_new==0,m col
 
 
@@ -891,6 +895,7 @@ tab drug month_after_campaign,row chi
 tab drug sgtf ,row chi
 tab drug sgtf_new ,row chi
 tab drug pre_infection,row chi
+tab drug drugs_consider_risk_contra,row chi
 *tab drug variant_recorded ,row chi
 tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
