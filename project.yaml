@@ -81,3 +81,19 @@ actions:
         figure1: output/phtest_update.svg  
         figure2: output/phtest_psw_update.svg
         figure3: output/psgraph_update.svg 
+
+  data_preparation_molnupiravir_update:
+    run: stata-mp:latest analysis/data_preparation_and_descriptives_molnupiravir_update.do
+    needs: [generate_study_population_update]
+    outputs:
+      moderately_sensitive:
+        log: logs/data_preparation_mol_update.log
+      highly_sensitive:
+        data: output/main_mol_update.dta
+
+  cox_regression_molnupiravir_update:
+    run: stata-mp:latest analysis/cox_molnupiravir_update.do
+    needs: [data_preparation_molnupiravir_update]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_mol_update.log
