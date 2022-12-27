@@ -690,7 +690,7 @@ stcox drug
 
 
 
-drop if high_risk_group_new==0
+*drop if high_risk_group_new==0
 *descriptives by drug groups*
 by drug,sort: sum age,de
 ttest age , by( drug )
