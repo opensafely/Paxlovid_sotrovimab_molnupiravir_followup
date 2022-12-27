@@ -70,6 +70,7 @@ actions:
         log: logs/data_preparation_update.log
       highly_sensitive:
         data: output/main_update.dta
+        data2: output/sensitivity_update.dta
 
   cox_regression_update:
     run: stata-mp:latest analysis/cox_update.do
