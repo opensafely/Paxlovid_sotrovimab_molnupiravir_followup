@@ -446,6 +446,15 @@ by drug, sort: sum _pscore ,de
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
 estat phtest,de
+*exclude all patients in the non-overlapping parts of the PS distribution*
+psmatch2 drug age i.sex i.region_nhs  solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_g3 calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease , logit
+drop psweight
+gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
+sum psweight,de
+by drug, sort: sum _pscore ,de
+sum psweight if _support==1,de
+stset end_date if _support==1 [pwei=psweight],  origin(start_date) failure(failure==1)
+stcox i.drug
 
 
 
