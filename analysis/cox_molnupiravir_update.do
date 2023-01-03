@@ -457,9 +457,15 @@ psmatch2 drug age i.sex i.region_nhs  solid_cancer_new haema_disease   imid immu
 drop psweight
 gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
 sum psweight,de
-by drug, sort: sum _pscore ,de
-stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
+sum _pscore if drug==0,de
+gen _pscore_mol_min=r(min)
+gen _pscore_mol_max=r(max)
+sum _pscore if drug==1,de
+gen _pscore_pax_min=r(min)
+gen _pscore_pax_max=r(max)
+stset end_date if (drug==0&_pscore>=_pscore_pax_min&_pscore<=_pscore_pax_max)|(drug==1&_pscore>=_pscore_mol_min&_pscore<=_pscore_mol_max) [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
+drop _pscore_mol_min _pscore_mol_max _pscore_pax_min _pscore_pax_max
 
 
 *sensitivity analysis-all cause*
@@ -563,9 +569,15 @@ psmatch2 drug age i.sex i.region_nhs  solid_cancer_new haema_disease   imid immu
 drop psweight
 gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
 sum psweight,de
-by drug, sort: sum _pscore ,de
-stset end_date_allcause [pwei=psweight],  origin(start_date) failure(failure_allcause==1)
+sum _pscore if drug==0,de
+gen _pscore_mol_min=r(min)
+gen _pscore_mol_max=r(max)
+sum _pscore if drug==1,de
+gen _pscore_pax_min=r(min)
+gen _pscore_pax_max=r(max)
+stset end_date_allcause if (drug==0&_pscore>=_pscore_pax_min&_pscore<=_pscore_pax_max)|(drug==1&_pscore>=_pscore_mol_min&_pscore<=_pscore_mol_max) [pwei=psweight],  origin(start_date) failure(failure_allcause==1)
 stcox i.drug
+drop _pscore_mol_min _pscore_mol_max _pscore_pax_min _pscore_pax_max
 
 
 
