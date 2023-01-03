@@ -250,7 +250,7 @@ study = StudyDefinition(
     pathogen = "SARS-CoV-2",
     test_result = "positive",
     returning = "binary_flag",
-    on_or_after = "date_treated - 5 days",
+    on_or_after = "date_treated - 7 days",
     find_first_match_in_period = True,
     restrict_to_earliest_specimen_date = False,
     return_expectations = {
@@ -265,7 +265,7 @@ study = StudyDefinition(
     restrict_to_earliest_specimen_date = False,
     returning = "date",
     date_format = "YYYY-MM-DD",
-    on_or_after = "date_treated - 5 days",
+    on_or_after = "date_treated - 7 days",
     return_expectations = {
       "date": {"earliest": "2021-12-20", "latest": "index_date"},
       "incidence": 0.9
