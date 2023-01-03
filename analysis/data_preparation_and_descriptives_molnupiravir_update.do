@@ -690,7 +690,7 @@ stcox drug
 
 
 
-*drop if high_risk_group_new==0
+drop if high_risk_group_new==0
 *keep if d_postest_treat>=0&d_postest_treat<=5
 *descriptives by drug groups*
 by drug,sort: sum age,de
