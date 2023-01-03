@@ -433,10 +433,6 @@ tab stp ,m
 rename stp stp_str
 encode  stp_str ,gen(stp)
 label list stp
-*combine stps with low N (<100) as "Other"*
-by stp, sort: gen stp_N=_N if stp!=.
-replace stp=99 if stp_N<100
-tab stp ,m
 
 tab rural_urban,m
 replace rural_urban=. if rural_urban<1
@@ -601,6 +597,10 @@ tab drug if drugs_do_not_use<=start_date
 tab drug if drugs_consider_risk<=start_date
 
 *clean covariates*
+*combine stps with low N (<100) as "Other"*
+by stp, sort: gen stp_N=_N if stp!=.
+replace stp=99 if stp_N<100
+tab stp ,m
 tab month_after_vaccinate,m
 *combine month7 and over due to small N*
 replace month_after_vaccinate=7 if month_after_vaccinate>=7&month_after_vaccinate!=.
@@ -690,7 +690,7 @@ stcox drug
 
 
 
-*drop if high_risk_group_new==0
+drop if high_risk_group_new==0
 keep if d_postest_treat>=0&d_postest_treat<=5
 *descriptives by drug groups*
 by drug,sort: sum age,de
