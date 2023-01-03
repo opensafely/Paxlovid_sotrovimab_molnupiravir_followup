@@ -675,7 +675,6 @@ tab week_after_campaign,m
 *replace week_after_campaign=10 if week_after_campaign==9
 *replace week_after_campaign=26 if week_after_campaign==27
 *combine stps with low N (<100) as "Other"*
-drop stp_N
 by stp, sort: gen stp_N=_N if stp!=.
 replace stp=99 if stp_N<100
 tab stp ,m
