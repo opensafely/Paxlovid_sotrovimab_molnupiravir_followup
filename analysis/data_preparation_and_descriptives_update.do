@@ -88,7 +88,7 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,11,2022)&start_date<=mdy(09,01,2022)
+keep if start_date>=mdy(02,11,2022)&start_date<=mdy(10,01,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
 drop if sotrovimab_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
@@ -442,6 +442,9 @@ gen d_postest_treat_missing=d_postest_treat_g2
 replace d_postest_treat_missing=9 if d_postest_treat_g2==.
 label define d_postest_treat_missing_Pax 0 "<3 days" 1 "3-5 days" 9 "missing" 
 label values d_postest_treat_missing d_postest_treat_missing_Pax
+
+keep if d_postest_treat>=0&d_postest_treat<=5
+
 *demo*
 gen age_group3=(age>=40)+(age>=60)
 label define age_group3_Paxlovid 0 "18-39" 1 "40-59" 2 ">=60" 
@@ -494,10 +497,6 @@ tab stp ,m
 rename stp stp_str
 encode  stp_str ,gen(stp)
 label list stp
-*combine stps with low N (<100) as "Other"*
-by stp, sort: gen stp_N=_N if stp!=.
-replace stp=99 if stp_N<100
-tab stp ,m
 
 tab rural_urban,m
 replace rural_urban=. if rural_urban<1
@@ -657,7 +656,7 @@ drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine
 *drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
-*drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
 tab drug if liver_disease_nhsd_snomed<=start_date
 tab drug if liver_disease==1
