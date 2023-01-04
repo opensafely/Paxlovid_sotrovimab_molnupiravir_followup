@@ -443,7 +443,6 @@ replace d_postest_treat_missing=9 if d_postest_treat_g2==.
 label define d_postest_treat_missing_Pax 0 "<3 days" 1 "3-5 days" 9 "missing" 
 label values d_postest_treat_missing d_postest_treat_missing_Pax
 
-keep if d_postest_treat>=0&d_postest_treat<=5
 
 *demo*
 gen age_group3=(age>=40)+(age>=60)
