@@ -104,3 +104,4 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/cox_mol_update.log
+        figure1: output/psgraph_mol_update.svg 
