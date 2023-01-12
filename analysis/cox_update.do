@@ -878,6 +878,81 @@ stcox i.drug age i.sex, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
+*sotro over time compare*
+clear
+use ./output/sensitivity_update.dta
+drop if high_risk_group_new==0
+keep if start_date==sotrovimab_covid_therapeutics
+gen may_31_after=(start_date>=mdy(5,31,2022))
+tab may_31_after,m
+by may_31_after,sort: sum age,de
+ttest age , by( may_31_after )
+by may_31_after,sort: sum bmi,de
+ttest bmi, by( may_31_after )
+sum d_postest_treat ,de
+by may_31_after,sort: sum d_postest_treat ,de
+ttest d_postest_treat , by( may_31_after )
+ranksum d_postest_treat,by(may_31_after)
+sum week_after_campaign,de
+by may_31_after,sort: sum week_after_campaign,de
+ttest week_after_campaign , by( may_31_after )
+ranksum week_after_campaign,by(may_31_after)
+sum week_after_vaccinate,de
+by may_31_after,sort: sum week_after_vaccinate,de
+ttest week_after_vaccinate , by( may_31_after )
+ranksum week_after_vaccinate,by(may_31_after)
+sum d_vaccinate_treat,de
+by may_31_after,sort: sum d_vaccinate_treat,de
+ttest d_vaccinate_treat , by( may_31_after )
+ranksum d_vaccinate_treat,by(may_31_after)
+
+tab may_31_after sex,row chi
+tab may_31_after ethnicity,row chi
+tab may_31_after White,row chi
+tab may_31_after imd,row chi
+ranksum imd,by(may_31_after)
+tab may_31_after rural_urban,row chi
+ranksum rural_urban,by(may_31_after)
+tab may_31_after region_nhs,row chi
+tab may_31_after region_covid_therapeutics,row chi
+*need to address the error of "too many values"*
+tab stp if may_31_after==0
+tab stp if may_31_after==1
+tab may_31_after age_group3 ,row chi
+tab may_31_after d_postest_treat_g2 ,row chi
+tab may_31_after d_postest_treat ,row
+tab may_31_after downs_syndrome ,row chi
+tab may_31_after solid_cancer ,row chi
+tab may_31_after solid_cancer_new ,row chi
+tab may_31_after haema_disease ,row chi
+tab may_31_after renal_disease ,row chi
+tab may_31_after liver_disease ,row chi
+tab may_31_after imid ,row chi
+tab may_31_after immunosupression ,row chi
+tab may_31_after immunosupression_new ,row chi
+tab may_31_after hiv_aids ,row chi
+tab may_31_after solid_organ ,row chi
+tab may_31_after solid_organ_new ,row chi
+tab may_31_after rare_neuro ,row chi
+tab may_31_after autism_nhsd ,row chi
+tab may_31_after care_home_primis ,row chi
+tab may_31_after dementia_nhsd ,row chi
+tab may_31_after housebound_opensafely ,row chi
+tab may_31_after learning_disability_primis ,row chi
+tab may_31_after serious_mental_illness_nhsd ,row chi
+tab may_31_after bmi_group4 ,row chi
+tab may_31_after bmi_g3 ,row chi
+tab may_31_after diabetes ,row chi
+tab may_31_after chronic_cardiac_disease ,row chi
+tab may_31_after hypertension ,row chi
+tab may_31_after chronic_respiratory_disease ,row chi
+tab may_31_after vaccination_status ,row chi
+tab may_31_after month_after_vaccinate,row chi
+tab may_31_after drugs_do_not_use_contra,row chi
+tab may_31_after drugs_consider_risk_contra,row chi
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox i.may_31_after
+tab failure may_31_after,m col
 
 
 log close
