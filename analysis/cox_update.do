@@ -947,11 +947,14 @@ tab may_31_after chronic_cardiac_disease ,row chi
 tab may_31_after hypertension ,row chi
 tab may_31_after chronic_respiratory_disease ,row chi
 tab may_31_after vaccination_status ,row chi
-tab may_31_after month_after_vaccinate,row chi
 tab may_31_after drugs_do_not_use_contra,row chi
 tab may_31_after drugs_consider_risk_contra,row chi
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox i.may_31_after
+stcox i.may_31_after age i.sex , strata(region_nhs)
+stcox i.may_31_after age i.sex downs_syndrome solid_cancer_new haema_disease renal_disease liver_disease imid immunosupression_new  hiv_aids solid_organ_new rare_neuro drugs_do_not_use_contra drugs_consider_risk_contra , strata(region_nhs)
+stcox i.may_31_after age i.sex downs_syndrome solid_cancer_new haema_disease renal_disease liver_disease imid immunosupression_new  hiv_aids solid_organ_new rare_neuro drugs_do_not_use_contra drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status, strata(region_nhs)
+stcox i.may_31_after age i.sex downs_syndrome solid_cancer_new haema_disease renal_disease liver_disease imid immunosupression_new  hiv_aids solid_organ_new rare_neuro drugs_do_not_use_contra drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease , strata(region_nhs)
 tab failure may_31_after,m col
 
 
