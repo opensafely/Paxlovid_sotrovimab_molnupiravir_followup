@@ -172,14 +172,23 @@ by drug, sort: count if death_with_covid_on_the_death_ce==.&covid_hospitalisatio
 gen covid_hospitalisation_30day=(covid_hospitalisation_outcome_da!=.&covid_hospitalisation_outcome_da<=start_date_30)
 tab covid_hospitalisation_30day,m
 tab drug covid_hospitalisation_30day,row m
+tab drug covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
+tab drug covid_hospitalisation_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
+tab drug covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 *30-day COVID death*
 gen covid_death_30day=(death_with_covid_on_the_death_ce!=.&death_with_covid_on_the_death_ce<=start_date_30)
 tab covid_death_30day,m
 tab drug covid_death_30day,row m
+tab drug covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
+tab drug covid_death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
+tab drug covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 *30-day all-cause death*
 gen death_30day=(death_date!=.&death_date<=start_date_30)
 tab death_30day,m
 tab drug death_30day,row m
+tab drug death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
+tab drug death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
+tab drug death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 
 
 *covariates* 
@@ -494,33 +503,33 @@ tab stp ,m
 
 *descriptives by drug groups*
 by drug,sort: sum age,de
-ttest age , by( drug )
+*ttest age , by( drug )
 by drug,sort: sum bmi,de
-ttest bmi, by( drug )
+*ttest bmi, by( drug )
 sum d_postest_treat ,de
 by drug,sort: sum d_postest_treat ,de
-ttest d_postest_treat , by( drug )
-ranksum d_postest_treat,by(drug)
+*ttest d_postest_treat , by( drug )
+*ranksum d_postest_treat,by(drug)
 sum week_after_campaign,de
 by drug,sort: sum week_after_campaign,de
-ttest week_after_campaign , by( drug )
-ranksum week_after_campaign,by(drug)
+*ttest week_after_campaign , by( drug )
+*ranksum week_after_campaign,by(drug)
 sum week_after_vaccinate,de
 by drug,sort: sum week_after_vaccinate,de
-ttest week_after_vaccinate , by( drug )
-ranksum week_after_vaccinate,by(drug)
+*ttest week_after_vaccinate , by( drug )
+*ranksum week_after_vaccinate,by(drug)
 sum d_vaccinate_treat,de
 by drug,sort: sum d_vaccinate_treat,de
-ttest d_vaccinate_treat , by( drug )
-ranksum d_vaccinate_treat,by(drug)
+*ttest d_vaccinate_treat , by( drug )
+*ranksum d_vaccinate_treat,by(drug)
 
 tab drug sex,row chi
 tab drug ethnicity,row chi
 tab drug White,row chi
 tab drug imd,row chi
-ranksum imd,by(drug)
+*ranksum imd,by(drug)
 tab drug rural_urban,row chi
-ranksum rural_urban,by(drug)
+*ranksum rural_urban,by(drug)
 tab drug region_nhs,row chi
 tab drug region_covid_therapeutics,row chi
 *need to address the error of "too many values"*
@@ -565,14 +574,21 @@ tab drug drugs_consider_risk_contra,row chi
 tab drug if covid_test_positive_pre_date!=.
 
 *30-day COVID hosp*
-tab covid_hospitalisation_30day,m
 tab drug covid_hospitalisation_30day,row m
+tab drug covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
+tab drug covid_hospitalisation_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
+tab drug covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 *30-day COVID death*
-tab covid_death_30day,m
 tab drug covid_death_30day,row m
+tab drug covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
+tab drug covid_death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
+tab drug covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 *30-day all-cause death*
-tab death_30day,m
 tab drug death_30day,row m
+tab drug death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
+tab drug death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
+tab drug death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
+
 
 
 *check treatment status*
