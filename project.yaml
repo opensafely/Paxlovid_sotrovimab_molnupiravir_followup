@@ -113,3 +113,8 @@ actions:
       moderately_sensitive:
         log: logs/data_preparation_update_raw_rate.log
 
+  generate_study_population_raw_rate:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_raw_rate
+    outputs:
+      highly_sensitive:
+        cohort: output/input_raw_rate.csv
