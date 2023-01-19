@@ -35,14 +35,15 @@ study = StudyDefinition(
   index_date = campaign_start,
   
   # POPULATION ----
-  population = patients.satisfying(
-    """
-    age >= 18 AND age < 110
-    AND NOT has_died
-    AND registered_treated 
-    AND (sotrovimab_covid_therapeutics OR paxlovid_covid_therapeutics OR molnupiravir_covid_therapeutics)
-    """,
-  ),
+  population=patients.all(),
+  #population = patients.satisfying(
+  #  """
+  #  age >= 18 AND age < 110
+  #  AND NOT has_died
+  #  AND registered_treated 
+  #  AND (sotrovimab_covid_therapeutics OR paxlovid_covid_therapeutics OR molnupiravir_covid_therapeutics)
+  #  """,
+  #),
   #require covid_test_positive_date<=date_treated (sensitivity analysis)
   #loose "AND (covid_test_positive AND NOT covid_positive_previous_30_days)"
   #AND NOT pregnancy (sensitivity analysis)
@@ -250,7 +251,7 @@ study = StudyDefinition(
     pathogen = "SARS-CoV-2",
     test_result = "positive",
     returning = "binary_flag",
-    on_or_after = "date_treated - 7 days",
+    on_or_after = "date_treated - 30 days",
     find_first_match_in_period = True,
     restrict_to_earliest_specimen_date = False,
     return_expectations = {
@@ -265,7 +266,7 @@ study = StudyDefinition(
     restrict_to_earliest_specimen_date = False,
     returning = "date",
     date_format = "YYYY-MM-DD",
-    on_or_after = "date_treated - 7 days",
+    on_or_after = "date_treated - 30 days",
     return_expectations = {
       "date": {"earliest": "2021-12-20", "latest": "index_date"},
       "incidence": 0.9
