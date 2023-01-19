@@ -460,10 +460,12 @@ tab drug if drugs_do_not_use<=start_date
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-3*365.25)
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
+tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-90)
 tab drug if drugs_consider_risk<=start_date
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-90)
 gen drugs_do_not_use_contra=(drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180))
 gen drugs_consider_risk_contra=(drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180))
 
@@ -477,7 +479,7 @@ drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine
 *drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
-drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+*drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
 tab drug if liver_disease_nhsd_snomed<=start_date
 tab drug if liver_disease==1
