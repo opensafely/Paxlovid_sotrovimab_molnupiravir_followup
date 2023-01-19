@@ -105,3 +105,11 @@ actions:
       moderately_sensitive:
         log: logs/cox_mol_update.log
         figure1: output/psgraph_mol_update.svg 
+
+  data_preparation_update_raw_rate:
+    run: stata-mp:latest analysis/data_preparation_and_descriptives_update_raw_rate.do
+    needs: [generate_study_population_update]
+    outputs:
+      moderately_sensitive:
+        log: logs/data_preparation_update_raw_rate.log
+
