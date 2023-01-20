@@ -132,7 +132,7 @@ study = StudyDefinition(
     pathogen = "SARS-CoV-2",
     test_result = "positive",
     returning = "binary_flag",
-    on_or_after = "date_treated - 30 days",
+    on_or_after = "index_date - 5 days",
     find_first_match_in_period = True,
     restrict_to_earliest_specimen_date = False,
     return_expectations = {
@@ -147,7 +147,7 @@ study = StudyDefinition(
     restrict_to_earliest_specimen_date = False,
     returning = "date",
     date_format = "YYYY-MM-DD",
-    on_or_after = "date_treated - 30 days",
+    on_or_after = "index_date - 5 days",
     return_expectations = {
       "date": {"earliest": "2021-12-20", "latest": "index_date"},
       "incidence": 0.9
@@ -195,7 +195,7 @@ study = StudyDefinition(
     with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
     # see https://docs.opensafely.org/study-def-variables/#sus for more info
     #with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
-    on_or_before = "covid_test_positive_date - 1 day",
+    between = ["covid_test_positive_date - 31 days", "covid_test_positive_date - 1 day"],
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
     return_expectations = {
@@ -210,7 +210,7 @@ study = StudyDefinition(
     with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
     # see https://docs.opensafely.org/study-def-variables/#sus for more info
     #with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
-    on_or_before = "covid_test_positive_date - 1 day",
+    between = ["covid_test_positive_date - 31 days", "covid_test_positive_date - 1 day"],
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
     return_expectations = {
@@ -225,7 +225,7 @@ study = StudyDefinition(
     with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
     # see https://docs.opensafely.org/study-def-variables/#sus for more info
     #with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
-    on_or_before = "covid_test_positive_date - 1 day",
+    between = ["covid_test_positive_date - 31 days", "covid_test_positive_date - 1 day"],
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
     return_expectations = {
@@ -673,18 +673,7 @@ study = StudyDefinition(
   
   downs_syndrome_nhsd = patients.minimum_of("downs_syndrome_nhsd_snomed", "downs_syndrome_nhsd_icd10"), 
   
-  ## Solid cancer
-  cancer_opensafely_snomed = patients.with_these_clinical_events(
-    combine_codelists(
-      non_haematological_cancer_opensafely_snomed_codes,
-      lung_cancer_opensafely_snomed_codes,
-      chemotherapy_radiotherapy_opensafely_snomed_codes
-    ),
-    between = ["covid_test_positive_date - 6 months", "covid_test_positive_date"],
-    returning = "date",
-    date_format = "YYYY-MM-DD",
-    find_last_match_in_period = True,
-  ),
+
   ## Solid cance-updated  
   cancer_opensafely_snomed_new = patients.with_these_clinical_events(
     combine_codelists(
@@ -844,14 +833,6 @@ study = StudyDefinition(
   # imid_nhsd = patients.minimum_of("immunosuppresant_drugs_nhsd", "oral_steroid_drugs_nhsd"), - define in processing script
   
   
-  ## Primary immune deficiencies
-  immunosupression_nhsd = patients.with_these_clinical_events(
-    immunosupression_nhsd_codes,
-    on_or_before = "covid_test_positive_date",
-    returning = "date",
-    find_last_match_in_period = True,
-    date_format = "YYYY-MM-DD",
-  ),
   ## Primary immune deficiencies-updated
   immunosupression_nhsd_new = patients.with_these_clinical_events(
     immunosupression_nhsd_codes_new,
@@ -880,13 +861,6 @@ study = StudyDefinition(
   hiv_aids_nhsd = patients.minimum_of("hiv_aids_nhsd_snomed", "hiv_aids_nhsd_icd10"),
   
   ## Solid organ transplant
-  solid_organ_transplant_nhsd_snomed = patients.with_these_clinical_events(
-    solid_organ_transplant_nhsd_snomed_codes,
-    on_or_before = "covid_test_positive_date",
-    returning = "date",
-    date_format = "YYYY-MM-DD",
-    find_last_match_in_period = True,
-  ),
   solid_organ_nhsd_snomed_new = patients.with_these_clinical_events(
     solid_organ_transplant_nhsd_snomed_codes_new,
     on_or_before = "covid_test_positive_date",
@@ -1024,9 +998,6 @@ study = StudyDefinition(
     },
   ),
   
-  solid_organ_transplant_nhsd = patients.minimum_of("solid_organ_transplant_nhsd_snomed", "solid_organ_transplant_nhsd_opcs4",
-                                                    "transplant_thymus_opcs4", "transplant_conjunctiva_opcs4", "transplant_stomach_opcs4",
-                                                    "transplant_ileum_1_opcs4","transplant_ileum_2_opcs4"), 
   solid_organ_transplant_nhsd_new = patients.minimum_of("solid_organ_nhsd_snomed_new", "solid_organ_transplant_nhsd_opcs4",
                                                     "transplant_thymus_opcs4", "transplant_conjunctiva_opcs4", "transplant_stomach_opcs4",
                                                     "transplant_ileum_1_opcs4","transplant_ileum_2_opcs4"), 
