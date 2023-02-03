@@ -884,6 +884,12 @@ gen renal_contra=1 if renal_disease==1|renal_therapeutics==1|ckd_stages_3_5<=sta
 replace renal_contra=1 if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date|dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
 replace renal_contra=1 if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
 replace renal_contra=0 if renal_contra==.
+tab drug failure if solid_organ_contra==1&_st==1,row
+tab drug failure if liver_contra==1&_st==1,row
+tab drug failure if renal_contra==1&_st==1,row
+tab drug failure if drugs_do_not_use_contra==1&_st==1,row
+tab drug failure if drugs_consider_risk==1&_st==1,row
+
 mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 stcox i.drug age i.sex, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro solid_organ_contra liver_contra renal_contra drugs_do_not_use_contra drugs_consider_risk_contra, strata(region_nhs)
