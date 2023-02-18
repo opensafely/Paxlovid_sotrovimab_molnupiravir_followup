@@ -35,15 +35,14 @@ study = StudyDefinition(
   index_date = campaign_start,
   
   # POPULATION ----
-  population=patients.all(),
-  #population = patients.satisfying(
-  #  """
-  #  age >= 18 AND age < 110
-  #  AND NOT has_died
-  #  AND registered_treated 
-  #  AND (sotrovimab_covid_therapeutics OR paxlovid_covid_therapeutics OR molnupiravir_covid_therapeutics)
-  #  """,
-  #),
+  population = patients.satisfying(
+    """
+    age >= 18 AND age < 110
+    AND NOT has_died
+    AND registered_treated 
+    AND (sotrovimab_covid_therapeutics OR paxlovid_covid_therapeutics OR molnupiravir_covid_therapeutics)
+    """,
+  ),
   #require covid_test_positive_date<=date_treated (sensitivity analysis)
   #loose "AND (covid_test_positive AND NOT covid_positive_previous_30_days)"
   #AND NOT pregnancy (sensitivity analysis)
@@ -320,7 +319,7 @@ study = StudyDefinition(
   covid_test_positive_pre_date = patients.with_test_result_in_sgss(
     pathogen = "SARS-CoV-2",
     test_result = "positive",
-    find_first_match_in_period = True,
+    find_last_match_in_period = True,
     restrict_to_earliest_specimen_date = False,
     returning = "date",
     date_format = "YYYY-MM-DD",
@@ -800,6 +799,156 @@ study = StudyDefinition(
         },
   ),  
 
+
+  ## UKRR variables
+  # Prevalent cohorts
+  #2020
+  ukrr_2020 = patients.with_record_in_ukrr(
+      from_dataset="2020_prevalence",
+      returning="binary_flag",
+      return_expectations={
+          "incidence": 0.25
+      },
+  ),
+  ukrr_2020_mod = patients.with_record_in_ukrr(
+      from_dataset="2020_prevalence",
+      returning="treatment_modality_prevalence",
+      return_expectations={
+              "category": {"ratios": {"ICHD": 0.5, "Tx": 0.5}},
+              "incidence": 0.25,
+          },
+  ),
+  ukrr_2020_centre = patients.with_record_in_ukrr(
+      from_dataset="2020_prevalence",
+      returning="renal_centre",
+      return_expectations={
+              "category": {"ratios": {"RRK02": 0.5, "RDEE1": 0.5}},
+              "incidence": 0.25,
+          },
+  ),
+  ukrr_2020_startmod = patients.with_record_in_ukrr(
+  from_dataset="2020_prevalence",
+  returning="treatment_modality_start",
+  return_expectations={
+          "category": {"ratios": {"ICHD": 0.5, "Tx": 0.5}},
+          "incidence": 0.25,
+      },
+  ),
+  ukrr_2020_startdate = patients.with_record_in_ukrr(
+      from_dataset="2020_prevalence",
+      returning="rrt_start_date",
+      date_format="YYYY-MM-DD",
+      return_expectations={
+              "date": {"earliest": "1970-01-01", "latest": "2020-12-31"},
+          },
+  ),
+  #2021
+  ukrr_2021 = patients.with_record_in_ukrr(
+      from_dataset="2021_prevalence",
+      returning="binary_flag",
+      return_expectations={
+          "incidence": 0.25
+      },
+  ),
+  ukrr_2021_mod = patients.with_record_in_ukrr(
+      from_dataset="2021_prevalence",
+      returning="treatment_modality_prevalence",
+      return_expectations={
+              "category": {"ratios": {"ICHD": 0.5, "Tx": 0.5}},
+              "incidence": 0.25,
+          },
+  ),
+  ukrr_2021_centre = patients.with_record_in_ukrr(
+      from_dataset="2021_prevalence",
+      returning="renal_centre",
+      return_expectations={
+              "category": {"ratios": {"RRK02": 0.5, "RDEE1": 0.5}},
+              "incidence": 0.25,
+          },
+  ),
+  ukrr_2021_startmod = patients.with_record_in_ukrr(
+  from_dataset="2021_prevalence",
+  returning="treatment_modality_start",
+  return_expectations={
+          "category": {"ratios": {"ICHD": 0.5, "Tx": 0.5}},
+          "incidence": 0.25,
+      },
+  ),
+  ukrr_2021_startdate = patients.with_record_in_ukrr(
+      from_dataset="2021_prevalence",
+      returning="rrt_start_date",
+      date_format="YYYY-MM-DD",
+      return_expectations={
+              "date": {"earliest": "1970-01-01", "latest": "2021-12-31"},
+          },
+  ),
+  #2020 CKD
+  #2020
+  ukrr_ckd2020 = patients.with_record_in_ukrr(
+      from_dataset="2020_ckd",
+      returning="binary_flag",
+      return_expectations={
+          "incidence": 0.35
+      },
+  ),
+  ukrr_ckd2020_creat = patients.with_record_in_ukrr(
+      from_dataset="2020_ckd",
+      returning="latest_creatinine",
+          return_expectations={
+              "int": {"distribution": "normal", "mean": 45, "stddev": 20},
+              "incidence": 0.35,
+          },
+  ),
+  ukrr_ckd2020_egfr = patients.with_record_in_ukrr(
+      from_dataset="2020_ckd",
+      returning="latest_egfr",
+          return_expectations={
+              "float": {"distribution": "normal", "mean": 20, "stddev": 10},
+              "incidence": 0.2,
+          },
+  ),
+  ukrr_ckd2020_centre = patients.with_record_in_ukrr(
+      from_dataset="2020_ckd",
+      returning="renal_centre",
+      return_expectations={
+              "category": {"ratios": {"RRK02": 0.5, "RDEE1": 0.5}},
+              "incidence": 0.35,
+          },
+  ),
+  #Incident cohort
+  #2020
+  ukrr_inc2020 = patients.with_record_in_ukrr(
+      from_dataset="2020_incidence",
+      returning="binary_flag",
+      return_expectations={
+          "incidence": 0.25
+      },
+  ),
+  ukrr_inc2020_mod = patients.with_record_in_ukrr(
+      from_dataset="2020_incidence",
+      returning="treatment_modality_start",
+      return_expectations={
+              "category": {"ratios": {"ICHD": 0.5, "Tx": 0.5}},
+              "incidence": 0.25,
+          },
+  ),
+  ukrr_inc2020_centre = patients.with_record_in_ukrr(
+      from_dataset="2020_incidence",
+      returning="renal_centre",
+      return_expectations={
+              "category": {"ratios": {"RRK02": 0.5, "RDEE1": 0.5}},
+              "incidence": 0.25,
+          },
+  ),
+  ukrr_inc2020_date = patients.with_record_in_ukrr(
+      from_dataset="2020_incidence",
+      returning="rrt_start_date",
+      date_format="YYYY-MM-DD",
+      return_expectations={
+              "date": {"earliest": "2020-01-01", "latest": "2020-12-31"},
+          },
+  ),
+
   ## Paxlovid - exclusion
   #  Solid organ transplant (plus solid_organ_transplant_nhsd_snomed defined below)
   solid_organ_transplant_snomed = patients.with_these_clinical_events(
@@ -998,6 +1147,18 @@ study = StudyDefinition(
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
   ),    
+  cancer_opensafely_snomed_ever = patients.with_these_clinical_events(
+    combine_codelists(
+      non_haematological_cancer_opensafely_snomed_codes_new,
+      lung_cancer_opensafely_snomed_codes,
+      chemotherapy_radiotherapy_opensafely_snomed_codes
+    ),
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),    
+
   ## Haematological diseases
   haematopoietic_stem_cell_snomed = patients.with_these_clinical_events(
     haematopoietic_stem_cell_transplant_nhsd_snomed_codes,
@@ -1068,7 +1229,60 @@ study = StudyDefinition(
                                                     "sickle_cell_disease_nhsd_snomed", 
                                                     "sickle_cell_disease_nhsd_icd10"), 
   
+  haematopoietic_stem_cell_snomed_ever = patients.with_these_clinical_events(
+    haematopoietic_stem_cell_transplant_nhsd_snomed_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),
   
+  haematopoietic_stem_cell_icd10_ever = patients.admitted_to_hospital(
+    returning = "date_admitted",
+    on_or_before = "start_date",
+    with_these_diagnoses = haematopoietic_stem_cell_transplant_nhsd_icd10_codes,
+    find_last_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+  ),
+  
+  haematopoietic_stem_cell_opcs4_ever = patients.admitted_to_hospital(
+    returning = "date_admitted",
+    on_or_before = "start_date",
+    with_these_procedures = haematopoietic_stem_cell_transplant_nhsd_opcs4_codes,
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+    return_expectations = {
+      "date": {"earliest": "2020-02-01"},
+      "rate": "exponential_increase",
+      "incidence": 0.01,
+    },
+  ),
+  
+  haematological_malignancies_snomed_ever = patients.with_these_clinical_events(
+    haematological_malignancies_nhsd_snomed_codes,
+    on_or_before = "start_date",
+    returning = "date",
+    date_format = "YYYY-MM-DD",
+    find_last_match_in_period = True,
+  ),
+  
+  haematological_malignancies_icd10_ever = patients.admitted_to_hospital(
+    returning = "date_admitted",
+    on_or_before = "start_date",
+    with_these_diagnoses = haematological_malignancies_nhsd_icd10_codes,
+    find_last_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+  ),
+
+  haematological_disease_nhsd_ever = patients.minimum_of("haematopoietic_stem_cell_snomed_ever", 
+                                                    "haematopoietic_stem_cell_icd10_ever", 
+                                                    "haematopoietic_stem_cell_opcs4_ever", 
+                                                    "haematological_malignancies_snomed_ever", 
+                                                    "haematological_malignancies_icd10_ever",
+                                                    "sickle_cell_disease_nhsd_snomed", 
+                                                    "sickle_cell_disease_nhsd_icd10"), 
+  
+
   ## Renal disease
   ckd_stage_5_nhsd_snomed = patients.with_these_clinical_events(
     ckd_stage_5_nhsd_snomed_codes,
@@ -1143,7 +1357,21 @@ study = StudyDefinition(
   ),
   
   # imid_nhsd = patients.minimum_of("immunosuppresant_drugs_nhsd", "oral_steroid_drugs_nhsd"), - define in processing script
+  immunosuppresant_drugs_nhsd_ever = patients.with_these_medications(
+    codelist = combine_codelists(immunosuppresant_drugs_dmd_codes, immunosuppresant_drugs_snomed_codes),
+    returning = "date",
+    on_or_before = "start_date",
+    find_last_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+  ),
   
+  oral_steroid_drugs_nhsd_ever = patients.with_these_medications(
+    codelist = combine_codelists(oral_steroid_drugs_dmd_codes, oral_steroid_drugs_snomed_codes),
+    returning = "date",
+    on_or_before = "start_date",
+    find_last_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+  ),  
   
   ## Primary immune deficiencies
   immunosupression_nhsd = patients.with_these_clinical_events(
