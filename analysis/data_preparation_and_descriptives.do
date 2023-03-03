@@ -52,7 +52,7 @@ foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeu
 	   multiple_sclerosis_nhsd motor_neurone_disease_nhsd myasthenia_gravis_nhsd huntingtons_disease_nhsd sickle_cell_disease_nhsd advanced_decompensated_cirrhosis decompensated_cirrhosis_icd10 ///
 	   ascitic_drainage_snomed ascitic_drainage_snomed_pre ckd_stages_3_5 ckd_primis_stage_date ckd3_icd10 ckd4_icd10 ckd5_icd10 dialysis dialysis_icd10 dialysis_procedure kidney_transplant kidney_transplant_icd10 ///
 	   kidney_transplant_procedure RRT RRT_icd10 RRT_procedure creatinine_ctv3_date creatinine_snomed_date creatinine_short_snomed_date eGFR_record_date eGFR_short_record_date ///
-	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk  {
+	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk cancer_opensafely_snomed_ever haematological_disease_nhsd_ever immunosuppresant_drugs_nhsd_ever oral_steroid_drugs_nhsd_ever {
   capture confirm string variable `var'
   if _rc==0 {
   rename `var' a
@@ -393,6 +393,7 @@ by drug,sort: count if high_risk_cohort_covid_therapeut!=""&high_risk_cohort_cov
 
 replace oral_steroid_drugs_nhsd=. if oral_steroid_drug_nhsd_3m_count < 2 & oral_steroid_drug_nhsd_12m_count < 4
 gen imid_nhsd=min(oral_steroid_drugs_nhsd, immunosuppresant_drugs_nhsd)
+gen imid_nhsd_ever=min(oral_steroid_drugs_nhsd_ever, immunosuppresant_drugs_nhsd_ever)
 gen rare_neuro_nhsd = min(multiple_sclerosis_nhsd, motor_neurone_disease_nhsd, myasthenia_gravis_nhsd, huntingtons_disease_nhsd)
 
 *gen downs_syndrome=(downs_syndrome_nhsd<=start_date|downs_therapeutics==1)
@@ -416,10 +417,13 @@ gen rare_neuro_nhsd = min(multiple_sclerosis_nhsd, motor_neurone_disease_nhsd, m
 gen downs_syndrome=(downs_syndrome_nhsd<=start_date)
 gen solid_cancer=(cancer_opensafely_snomed<=start_date)
 gen solid_cancer_new=(cancer_opensafely_snomed_new<=start_date)
+gen solid_cancer_ever=(cancer_opensafely_snomed_ever<=start_date)
 gen haema_disease=( haematological_disease_nhsd <=start_date)
+gen haema_disease_ever=( haematological_disease_nhsd_ever <=start_date)
 gen renal_disease=( ckd_stage_5_nhsd <=start_date)
 gen liver_disease=( liver_disease_nhsd <=start_date)
 gen imid=( imid_nhsd <=start_date)
+gen imid_ever=( imid_nhsd_ever <=start_date)
 gen immunosupression=( immunosupression_nhsd <=start_date)
 gen immunosupression_new=( immunosupression_nhsd_new <=start_date)
 gen hiv_aids=( hiv_aids_nhsd <=start_date)
@@ -430,6 +434,8 @@ gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_dis
 tab high_risk_group,m
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
+gen high_risk_group_ever=(( downs_syndrome + solid_cancer_ever + haema_disease_ever + renal_disease + liver_disease + imid_ever + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
+tab high_risk_group_ever,m
 
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
@@ -637,10 +643,12 @@ tab drug if drugs_do_not_use<=start_date
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-3*365.25)
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
+tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-90)
 tab drug if drugs_consider_risk<=start_date
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-90)
 gen drugs_do_not_use_contra=(drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180))
 gen drugs_consider_risk_contra=(drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180))
 
