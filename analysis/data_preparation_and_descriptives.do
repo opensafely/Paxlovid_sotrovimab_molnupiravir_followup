@@ -88,7 +88,7 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,11,2022)&start_date<=mdy(12,01,2022)
+keep if start_date>=mdy(02,11,2022)&start_date<=mdy(11,01,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
 drop if sotrovimab_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
@@ -438,6 +438,11 @@ tab high_risk_group_ever,m
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
 tab d_postest_treat,m
+by drug,sort: tab d_postest_treat,m
+gen month_after_campaign=ceil((start_date-mdy(12,15,2021))/30)
+by month_after_campaign,sort: tab d_postest_treat,m
+by month_after_campaign,sort: tab d_postest_treat if drug==0,m
+by month_after_campaign,sort: tab d_postest_treat if drug==1,m
 replace d_postest_treat=. if d_postest_treat<0|d_postest_treat>7
 gen d_postest_treat_g2=(d_postest_treat>=3) if d_postest_treat<=5
 label define d_postest_treat_g2_Pax 0 "<3 days" 1 "3-5 days" 
@@ -570,7 +575,6 @@ tab month_after_vaccinate,m
 gen week_after_vaccinate=ceil(d_vaccinate_treat/7)
 tab week_after_vaccinate,m
 *calendar time*
-gen month_after_campaign=ceil((start_date-mdy(12,15,2021))/30)
 tab month_after_campaign,m
 gen week_after_campaign=ceil((start_date-mdy(12,15,2021))/7)
 tab week_after_campaign,m
