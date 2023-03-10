@@ -895,7 +895,7 @@ stcox i.drug age i.sex, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro solid_organ_contra liver_contra renal_contra drugs_do_not_use_contra drugs_consider_risk_contra, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*  solid_organ_contra liver_contra renal_contra drugs_do_not_use_contra drugs_consider_risk_contra, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease  solid_organ_contra liver_contra renal_contra drugs_do_not_use_contra drugs_consider_risk_contra, strata(region_nhs)
-*only use the drugs_do_not_use list*
+*only use the drugs_do_not_use list and 3m cut-off*
 drop if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
 drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
 drop if renal_disease==1|renal_therapeutics==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
@@ -912,6 +912,16 @@ stcox i.drug age i.sex drugs_consider_risk_contra downs_syndrome solid_cancer_ne
 *set 3month cut-off for the two drug lists*
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-90)
 drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-90)
+drop calendar_day_spline*
+mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox i.drug age i.sex, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
+*set 6month cut-off for the two drug lists*
+drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
+drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 drop calendar_day_spline*
 mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 stset end_date ,  origin(start_date) failure(failure==1)
