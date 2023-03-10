@@ -370,20 +370,6 @@ gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_dis
 tab high_risk_group,m
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
-*supplement high risk group based on blueteq note*
-replace downs_syndrome=1 if high_risk_group_new==0&downs_therapeutics==1
-replace solid_cancer_new=1 if high_risk_group_new==0&solid_cancer_therapeutics==1
-replace haema_disease=1 if high_risk_group_new==0&haema_disease_therapeutics==1
-replace renal_disease=1 if high_risk_group_new==0&renal_therapeutics==1
-replace liver_disease=1 if high_risk_group_new==0&liver_therapeutics==1
-replace imid=1 if high_risk_group_new==0&imid_therapeutics==1
-replace immunosupression_new=1 if high_risk_group_new==0&immunosup_therapeutics==1
-replace hiv_aids=1 if high_risk_group_new==0&hiv_aids_therapeutics==1
-replace solid_organ_new=1 if high_risk_group_new==0&solid_organ_therapeutics==1
-replace rare_neuro=1 if high_risk_group_new==0&rare_neuro_therapeutics==1
-drop high_risk_group_new
-gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
-tab high_risk_group_new,m
 
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
@@ -782,6 +768,82 @@ tab drug if covid_test_positive_pre_date!=.
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
 
+
+drop if d_postest_treat<0|d_postest_treat>7
+*descriptives by drug groups*
+by drug,sort: sum age,de
+ttest age , by( drug )
+by drug,sort: sum bmi,de
+ttest bmi, by( drug )
+sum d_postest_treat ,de
+by drug,sort: sum d_postest_treat ,de
+ttest d_postest_treat , by( drug )
+ranksum d_postest_treat,by(drug)
+sum week_after_campaign,de
+by drug,sort: sum week_after_campaign,de
+ttest week_after_campaign , by( drug )
+ranksum week_after_campaign,by(drug)
+sum week_after_vaccinate,de
+by drug,sort: sum week_after_vaccinate,de
+ttest week_after_vaccinate , by( drug )
+ranksum week_after_vaccinate,by(drug)
+sum d_vaccinate_treat,de
+by drug,sort: sum d_vaccinate_treat,de
+ttest d_vaccinate_treat , by( drug )
+ranksum d_vaccinate_treat,by(drug)
+
+tab drug sex,row chi
+tab drug ethnicity,row chi
+tab drug White,row chi
+tab drug imd,row chi
+ranksum imd,by(drug)
+tab drug rural_urban,row chi
+ranksum rural_urban,by(drug)
+tab drug region_nhs,row chi
+tab drug region_covid_therapeutics,row chi
+*need to address the error of "too many values"*
+tab stp if drug==0
+tab stp if drug==1
+tab drug age_group3 ,row chi
+tab drug d_postest_treat_g2 ,row chi
+tab drug d_postest_treat ,row
+tab drug downs_syndrome ,row chi
+tab drug solid_cancer ,row chi
+tab drug solid_cancer_new ,row chi
+tab drug haema_disease ,row chi
+tab drug renal_disease ,row chi
+tab drug liver_disease ,row chi
+tab drug imid ,row chi
+tab drug immunosupression ,row chi
+tab drug immunosupression_new ,row chi
+tab drug hiv_aids ,row chi
+tab drug solid_organ ,row chi
+tab drug solid_organ_new ,row chi
+tab drug rare_neuro ,row chi
+tab drug high_risk_group ,row chi
+tab drug autism_nhsd ,row chi
+tab drug care_home_primis ,row chi
+tab drug dementia_nhsd ,row chi
+tab drug housebound_opensafely ,row chi
+tab drug learning_disability_primis ,row chi
+tab drug serious_mental_illness_nhsd ,row chi
+tab drug bmi_group4 ,row chi
+tab drug bmi_g3 ,row chi
+tab drug diabetes ,row chi
+tab drug chronic_cardiac_disease ,row chi
+tab drug hypertension ,row chi
+tab drug chronic_respiratory_disease ,row chi
+tab drug vaccination_status ,row chi
+tab drug month_after_vaccinate,row chi
+tab drug month_after_campaign,row chi
+tab drug sgtf ,row chi
+tab drug sgtf_new ,row chi
+tab drug variant_recorded ,row chi
+tab drug pre_infection,row chi
+tab drug drugs_consider_risk_contra,row chi
+tab drug if covid_test_positive_pre_date!=.
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox drug
 
 *recode Paxlovid as 1*
 replace drug=1-drug
