@@ -663,7 +663,7 @@ drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine
 *drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
-drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+*drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
 tab drug if liver_disease_nhsd_snomed<=start_date
 tab drug if liver_disease==1
