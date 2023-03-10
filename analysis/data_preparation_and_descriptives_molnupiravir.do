@@ -52,7 +52,7 @@ foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeu
 	   multiple_sclerosis_nhsd motor_neurone_disease_nhsd myasthenia_gravis_nhsd huntingtons_disease_nhsd sickle_cell_disease_nhsd advanced_decompensated_cirrhosis decompensated_cirrhosis_icd10 ///
 	   ascitic_drainage_snomed ascitic_drainage_snomed_pre ckd_stages_3_5 ckd_primis_stage_date ckd3_icd10 ckd4_icd10 ckd5_icd10 dialysis dialysis_icd10 dialysis_procedure kidney_transplant kidney_transplant_icd10 ///
 	   kidney_transplant_procedure RRT RRT_icd10 RRT_procedure creatinine_ctv3_date creatinine_snomed_date creatinine_short_snomed_date eGFR_record_date eGFR_short_record_date ///
-	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk  {
+	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk cancer_opensafely_snomed_ever haematological_disease_nhsd_ever immunosuppresant_drugs_nhsd_ever oral_steroid_drugs_nhsd_ever  {
   capture confirm string variable `var'
   if _rc==0 {
   rename `var' a
@@ -591,7 +591,7 @@ drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine
 *drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
-drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+*drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
 tab drug if liver_disease_nhsd_snomed<=start_date
 tab drug if liver_disease==1
