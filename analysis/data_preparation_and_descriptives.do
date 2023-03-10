@@ -750,7 +750,6 @@ tab drug hiv_aids ,row chi
 tab drug solid_organ ,row chi
 tab drug solid_organ_new ,row chi
 tab drug rare_neuro ,row chi
-tab drug high_risk_group ,row chi
 tab drug high_risk_group_new ,row chi
 tab drug autism_nhsd ,row chi
 tab drug care_home_primis ,row chi
@@ -894,7 +893,6 @@ tab drug hiv_aids ,row chi
 tab drug solid_organ ,row chi
 tab drug solid_organ_new ,row chi
 tab drug rare_neuro ,row chi
-tab drug high_risk_group ,row chi
 tab drug autism_nhsd ,row chi
 tab drug care_home_primis ,row chi
 tab drug dementia_nhsd ,row chi
