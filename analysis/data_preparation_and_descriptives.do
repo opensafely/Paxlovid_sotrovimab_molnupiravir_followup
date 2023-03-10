@@ -430,12 +430,25 @@ gen hiv_aids=( hiv_aids_nhsd <=start_date)
 gen solid_organ=( solid_organ_transplant_nhsd<=start_date)
 gen solid_organ_new=( solid_organ_transplant_nhsd_new<=start_date)
 gen rare_neuro=( rare_neuro_nhsd <=start_date)
-gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids + solid_organ + rare_neuro )>0)
-tab high_risk_group,m
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
 gen high_risk_group_ever=(( downs_syndrome + solid_cancer_ever + haema_disease_ever + renal_disease + liver_disease + imid_ever + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_ever,m
+*supplement high risk group based on blueteq note*
+replace downs_syndrome=1 if high_risk_group_new==0&downs_therapeutics==1
+replace solid_cancer_new=1 if high_risk_group_new==0&solid_cancer_therapeutics==1
+replace haema_disease=1 if high_risk_group_new==0&haema_disease_therapeutics==1
+replace renal_disease=1 if high_risk_group_new==0&renal_therapeutics==1
+replace liver_disease=1 if high_risk_group_new==0&liver_therapeutics==1
+replace imid=1 if high_risk_group_new==0&imid_therapeutics==1
+replace immunosupression_new=1 if high_risk_group_new==0&immunosup_therapeutics==1
+replace hiv_aids=1 if high_risk_group_new==0&hiv_aids_therapeutics==1
+replace solid_organ_new=1 if high_risk_group_new==0&solid_organ_therapeutics==1
+replace rare_neuro=1 if high_risk_group_new==0&rare_neuro_therapeutics==1
+drop high_risk_group_new
+gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
+tab high_risk_group_new,m
+
 
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
