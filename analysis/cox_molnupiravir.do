@@ -334,7 +334,7 @@ stcox i.drug
 
 *2m covid hosp/death*
 *follow-up time and events*
-stset end_date_2m if start_date<=mdy(9,1,2022),  origin(start_date) failure(failure_2m==1)
+stset end_date_2m if start_date<=mdy(11,1,2022),  origin(start_date) failure(failure_2m==1)
 tab _t,m
 tab _t drug,m col
 by drug, sort: sum _t ,de
