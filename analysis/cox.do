@@ -357,7 +357,7 @@ stcox i.drug
 
 *2m covid hosp/death*
 *follow-up time and events*
-stset end_date_2m if start_date<=mdy(9,1,2022),  origin(start_date) failure(failure_2m==1)
+stset end_date_2m if start_date<=mdy(11,1,2022),  origin(start_date) failure(failure_2m==1)
 tab _t,m
 tab _t drug,m col
 by drug, sort: sum _t ,de
@@ -806,7 +806,7 @@ stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immu
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
 
 *sensi-2m_covid*
-stset end_date_2m if start_date<=mdy(9,1,2022),  origin(start_date) failure(failure_2m==1)
+stset end_date_2m if start_date<=mdy(11,1,2022),  origin(start_date) failure(failure_2m==1)
 *additionally adjusting for days between test positive and treatment initiation, and days/months between last vaccination date and treatment initiation; *
 stcox i.drug age i.sex i.d_postest_treat_missing i.month_after_vaccinate_missing, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra i.d_postest_treat_missing i.month_after_vaccinate_missing, strata(region_nhs)
@@ -854,7 +854,7 @@ stcox i.drug age i.sex downs_syndrome solid_cancer haema_disease   imid immunosu
 stcox i.drug age i.sex downs_syndrome solid_cancer haema_disease   imid immunosupression   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* , strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer haema_disease   imid immunosupression   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease , strata(region_nhs)
 *using Cox models with calendar date as the underlying time scale*
-stset end_date_2m if start_date<=mdy(9,1,2022),  origin(campaign_start_date) enter(start_date) failure(failure_2m==1)
+stset end_date_2m if start_date<=mdy(11,1,2022),  origin(campaign_start_date) enter(start_date) failure(failure_2m==1)
 stcox i.drug age i.sex, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
