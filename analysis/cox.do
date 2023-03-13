@@ -944,7 +944,6 @@ drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney
 drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
 drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
-drop calendar_day_spline*
 mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox i.drug age i.sex, strata(region_nhs)
