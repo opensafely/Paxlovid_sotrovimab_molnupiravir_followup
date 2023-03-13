@@ -88,7 +88,7 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,11,2022)&start_date<=mdy(11,01,2022)
+keep if start_date>=mdy(02,11,2022)&start_date<=mdy(12,01,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
 drop if sotrovimab_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
@@ -393,7 +393,6 @@ by drug,sort: count if high_risk_cohort_covid_therapeut!=""&high_risk_cohort_cov
 
 replace oral_steroid_drugs_nhsd=. if oral_steroid_drug_nhsd_3m_count < 2 & oral_steroid_drug_nhsd_12m_count < 4
 gen imid_nhsd=min(oral_steroid_drugs_nhsd, immunosuppresant_drugs_nhsd)
-gen imid_nhsd_ever=min(oral_steroid_drugs_nhsd_ever, immunosuppresant_drugs_nhsd_ever)
 gen rare_neuro_nhsd = min(multiple_sclerosis_nhsd, motor_neurone_disease_nhsd, myasthenia_gravis_nhsd, huntingtons_disease_nhsd)
 
 *gen downs_syndrome=(downs_syndrome_nhsd<=start_date|downs_therapeutics==1)
@@ -423,7 +422,7 @@ gen haema_disease_ever=( haematological_disease_nhsd_ever <=start_date)
 gen renal_disease=( ckd_stage_5_nhsd <=start_date)
 gen liver_disease=( liver_disease_nhsd <=start_date)
 gen imid=( imid_nhsd <=start_date)
-gen imid_ever=( imid_nhsd_ever <=start_date)
+gen imid_ever=((immunosuppresant_drugs_nhsd_ever <=start_date&immunosuppresant_drugs_nhsd_ever>start_date-365)|(oral_steroid_drugs_nhsd_ever <=start_date&oral_steroid_drugs_nhsd_ever>start_date-365))
 gen immunosupression=( immunosupression_nhsd <=start_date)
 gen immunosupression_new=( immunosupression_nhsd_new <=start_date)
 gen hiv_aids=( hiv_aids_nhsd <=start_date)
