@@ -872,6 +872,7 @@ replace drug=1-drug
 label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
 label values drug drug_Paxlovid2
 drop if high_risk_group_new==0
+drop if d_postest_treat<0|d_postest_treat>7
 *not exclude contra*
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox drug
