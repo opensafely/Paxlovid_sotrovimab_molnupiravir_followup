@@ -812,11 +812,6 @@ stcox i.drug age i.sex i.d_postest_treat_missing i.month_after_vaccinate_missing
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra i.d_postest_treat_missing i.month_after_vaccinate_missing, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* i.d_postest_treat_missing i.month_after_vaccinate_missing, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease i.d_postest_treat_missing i.month_after_vaccinate_missing, strata(region_nhs)
-*exclude patients with HIV/AIDS due to small number*
-stcox i.drug age i.sex if hiv_aids==0, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra if hiv_aids==0, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* if hiv_aids==0, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if hiv_aids==0, strata(region_nhs)
 *exclude 1-year drug interactions*
 stcox i.drug age i.sex if (drugs_do_not_use>start_date|drugs_do_not_use<(start_date-365.25))&(drugs_consider_risk>start_date|drugs_consider_risk<(start_date-365.25)), strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro if (drugs_do_not_use>start_date|drugs_do_not_use<(start_date-365.25))&(drugs_consider_risk>start_date|drugs_consider_risk<(start_date-365.25)), strata(region_nhs)
@@ -834,7 +829,7 @@ stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immu
 *stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b6.ethnicity_with_missing b5.imd_with_missing i.vaccination_status i.week_after_campaign b1.bmi_g4_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if pregnancy!=1, strata(region_nhs)
 *additionally adjusting for rural-urban classification, other comorbidities (dementia, autism, learning disabilities, severe mental illness), and care home residency and housebound status *
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease i.rural_urban_with_missing autism_nhsd care_home_primis dementia_nhsd housebound_opensafely learning_disability_primis serious_mental_illness_nhsd, strata(region_nhs)
-*excluding patients who did not have a positive SARS-CoV-2 test record before treatment or initiated treatment after 5 days since positive SARS-CoV-2 test*
+*excluding patients who initiated treatment after 5 days since positive SARS-CoV-2 test*
 stcox i.drug age i.sex if d_postest_treat>=0&d_postest_treat<=5, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra if d_postest_treat>=0&d_postest_treat<=5, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* if d_postest_treat>=0&d_postest_treat<=5, strata(region_nhs)
@@ -913,16 +908,6 @@ stcox i.drug age i.sex drugs_consider_risk_contra if drugs_do_not_use>start_date
 stcox i.drug age i.sex drugs_consider_risk_contra downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro if drugs_do_not_use>start_date|drugs_do_not_use<(start_date-90), strata(region_nhs)
 stcox i.drug age i.sex drugs_consider_risk_contra downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* if drugs_do_not_use>start_date|drugs_do_not_use<(start_date-90), strata(region_nhs)
 stcox i.drug age i.sex drugs_consider_risk_contra downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if drugs_do_not_use>start_date|drugs_do_not_use<(start_date-90), strata(region_nhs)
-*set 3month cut-off for the two drug lists*
-drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-90)
-drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-90)
-drop calendar_day_spline*
-mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
-stset end_date ,  origin(start_date) failure(failure==1)
-stcox i.drug age i.sex, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
 *set 6month cut-off for the two drug lists*
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
 drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
@@ -948,6 +933,7 @@ drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney
 drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
 drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
+drop if d_postest_treat<0|d_postest_treat>7
 mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 stset end_date ,  origin(start_date) failure(failure==1)
 stcox i.drug age i.sex, strata(region_nhs)
@@ -963,6 +949,28 @@ stcox i.drug age i.sex, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_ever haema_disease_ever   imid_ever immunosupression_new   rare_neuro, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_ever haema_disease_ever   imid_ever immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
 stcox i.drug age i.sex downs_syndrome solid_cancer_ever haema_disease_ever   imid_ever immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
+
+*not exclude who did not have a positive SARS-CoV-2 test record before treatment or initiated treatment after 7 days*
+clear 
+use ./output/sensitivity.dta
+*recode Paxlovid as 1*
+replace drug=1-drug
+label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
+label values drug drug_Paxlovid2
+drop if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
+drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
+drop if renal_disease==1|renal_therapeutics==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
+drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
+drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
+drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
+drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
+drop if high_risk_group_new==0
+mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox i.drug age i.sex, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline*, strata(region_nhs)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(region_nhs)
 
 
 log close
