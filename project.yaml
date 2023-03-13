@@ -54,6 +54,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/cox_mol.log
+        figure1: output/psgraph_mol.svg 
 
 
   generate_study_population_update:
