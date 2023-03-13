@@ -31,8 +31,12 @@ tab _t,m
 tab _t drug,m col
 by drug, sort: sum _t ,de
 tab _t drug if failure==1,m col
+tab _t drug if failure==1&end_date==covid_hospitalisation_outcome_da,m col
 tab _t drug if failure==1&end_date==covid_hospitalisation_outcome_da&end_date!=death_with_covid_on_the_death_ce,m col
 tab _t drug if failure==1&end_date==death_with_covid_on_the_death_ce,m col
+*count covid death during day1-28 and before censor*
+count if failure==1&drug==1&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,sotrovimab_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
+count if failure==1&drug==0&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,paxlovid_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
 tab failure drug,m col
 *check censor reasons*
 tab _t drug if failure==0&_t<28&end_date==death_date,m col
