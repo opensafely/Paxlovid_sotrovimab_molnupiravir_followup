@@ -92,11 +92,11 @@ drop psweight
 gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
 sum psweight,de
 by drug, sort: sum _pscore ,de
-*teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease) if _pscore!=.
-*tebalance summarize
+teffects ipw (failure) (drug age i.sex i.region_nhs downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro drugs_consider_risk_contra b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease) if _pscore!=.
+tebalance summarize
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
-*estat phtest,de
+estat phtest,de
 estat phtest, plot(1.drug)
 graph export ./output/phtest_psw.svg, as(svg) replace
 
