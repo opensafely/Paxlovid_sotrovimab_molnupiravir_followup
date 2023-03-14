@@ -907,6 +907,12 @@ stcox drug
 
 
 drop if d_postest_treat<0|d_postest_treat>7
+*clean covariates*
+*combine stps with low N (<100) as "Other"*
+drop stp_N
+by stp, sort: gen stp_N=_N if stp!=.
+replace stp=99 if stp_N<100
+tab stp ,m
 *descriptives by drug groups*
 by drug,sort: sum age,de
 ttest age , by( drug )
