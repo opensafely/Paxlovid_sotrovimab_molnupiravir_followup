@@ -488,6 +488,10 @@ tab drug may_31_after,row chi
 stcox i.drug##i.may_31_after i.sex age downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status  b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(stp)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if may_31_after==0, strata(stp)
 stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if may_31_after==1, strata(stp)
+mkspline calendar_day_sp0 = day_after_campaign if may_31_after==0, cubic nknots(4)
+mkspline calendar_day_sp1 = day_after_campaign if may_31_after==1, cubic nknots(4)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_sp0* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if may_31_after==0, strata(stp)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_sp1* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if may_31_after==1, strata(stp)
 
 *use minimal-adjusted model*
 stcox i.drug##i.sex age , strata(stp)
