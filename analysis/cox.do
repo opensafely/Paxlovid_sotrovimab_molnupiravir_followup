@@ -483,11 +483,17 @@ stcox i.drug##i.d_postest_treat_g2 age i.sex downs_syndrome solid_cancer_new hae
 *stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if d_postest_treat_g2==0, strata(stp)
 *stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro b1.White_with_missing b5.imd_with_missing i.vaccination_status calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if d_postest_treat_g2==1, strata(stp)
 
+gen may_31_after=(start_date>=mdy(5,31,2022))
+tab drug may_31_after,row chi
+stcox i.drug##i.may_31_after i.sex age downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status  b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(stp)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if may_31_after==0, strata(stp)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if may_31_after==1, strata(stp)
+
 gen June_23_after=(start_date>=mdy(6,23,2022))
 tab drug June_23_after,row chi
 stcox i.drug##i.June_23_after i.sex age downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status  b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease, strata(stp)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status i.week_after_campaign b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if June_23_after==0, strata(stp)
-stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status i.week_after_campaign b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if June_23_after==1, strata(stp)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if June_23_after==0, strata(stp)
+stcox i.drug age i.sex downs_syndrome solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_status b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if June_23_after==1, strata(stp)
 
 *use minimal-adjusted model*
 stcox i.drug##i.sex age , strata(stp)
