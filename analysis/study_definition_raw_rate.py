@@ -1288,7 +1288,7 @@ study = StudyDefinition(
       "incidence": 0.6},
   ),
   ## COVID related death - COVID as underlying cause
-  death_with_covid_underlying_date = patients.with_these_codes_on_death_certificate(
+  death_with_covid_underly_date = patients.with_these_codes_on_death_certificate(
     covid_icd10_codes,
     returning = "date_of_death",
     date_format = "YYYY-MM-DD",
@@ -1438,7 +1438,7 @@ study = StudyDefinition(
       "incidence": 0.6},
   ),
   ## COVID related death - COVID as underlying cause
-  death_with_covid_underlying_dateT = patients.with_these_codes_on_death_certificate(
+  death_with_covid_underly_dateT = patients.with_these_codes_on_death_certificate(
     covid_icd10_codes,
     returning = "date_of_death",
     date_format = "YYYY-MM-DD",
