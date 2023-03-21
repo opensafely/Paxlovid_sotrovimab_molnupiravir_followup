@@ -17,9 +17,6 @@ from codelists import *
 
 ## Define study time variables
 from datetime import timedelta, date, datetime 
-
-# index date need to be 1 month earlier than the beginning of study period!
-index_date = "2021-12-16"
 end_date = date.today().isoformat()
 
 ## Define study population and variables
@@ -43,6 +40,9 @@ study = StudyDefinition(
   #loose "AND (covid_test_positive AND NOT covid_positive_previous_30_days)"
   #AND NOT pregnancy (sensitivity analysis)
   #AND NOT (casirivimab_covid_therapeutics OR remdesivir_covid_therapeutics) (sensitivity analysis)
+  
+  # index date need to be 1 month earlier than the beginning of study period!
+  index_date = "2021-12-16",
 
   # TREATMENT - NEUTRALISING MONOCLONAL ANTIBODIES OR ANTIVIRALS ----
   
