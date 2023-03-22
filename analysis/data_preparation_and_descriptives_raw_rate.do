@@ -37,7 +37,7 @@ drop if cancer_opensafely_snomed_new==""&immunosuppresant_drugs_nhsd==""&oral_st
 
 
 *  Convert strings to dates  *
-foreach var of varlist index_date sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics remdesivir_covid_therapeutics	///
+foreach var of varlist  sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics remdesivir_covid_therapeutics	///
         casirivimab_covid_therapeutics date_treated start_date ///
         covid_test_positive_date  primary_covid_hospital_discharge primary_covid_hospital_admission ///
 	   any_covid_hospital_discharge_dat any_covid_hospital_admission_dat death_date dereg_date  ///
