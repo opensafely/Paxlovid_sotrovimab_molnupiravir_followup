@@ -18,10 +18,10 @@
 
 *set start date of the study period*
 local start_MDY= "12,16,2021"
-local start_DMY: display %td mdy(`start_mdy')
+local start_DMY: display %td mdy(`start_MDY')
 
 *create result table*
-postfile mytab str25 (Variable Untreated_eligible Untreated_without_contra Overall_treated Paxlovid Sotrovimab Sotro_without_contra) using "./output/table.dta", replace
+postfile mytab str25 (Cohorts N 30_day_COVID_hosp 30_day_COVID_mortality 30_day_all_mortality Age_mean Female_prop Vaccination_3_or_more) using "./output/table.dta", replace
 
 
 * Open a log file
@@ -148,9 +148,13 @@ gen rare_neuro=( rare_neuro_nhsd <=start_date)
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
 keep if high_risk_group_new==1
+count 
+local N_untreated=r(N) 
+
 
 *demo*
 sum age,de
+local age_untreated=r(mean)
 gen age_group3=(age>=40)+(age>=60)
 label define age_group3_Paxlovid 0 "18-39" 1 "40-59" 2 ">=60" 
 label values age_group3 age_group3_Paxlovid
@@ -164,6 +168,9 @@ gen sex=0 if sex_str=="M"
 replace sex=1 if sex_str=="F"
 label define sex_Paxlovid 0 "Male" 1 "Female"
 label values sex sex_Paxlovid
+sum sex
+local female_untreated=r(mean)
+
 
 *vac and variant*
 tab vaccination_status,m
@@ -177,8 +184,10 @@ label define vac_Paxlovid 0 "Un-vaccinated" 1 "One vaccination" 2 "Two vaccinati
 label values vaccination_status vac_Paxlovid
 gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
-gen vaccination_g3=vaccination_3 
-replace vaccination_g3=2 if vaccination_status==4
+tab vaccination_3
+sum vaccination_3
+local vac_3_untreated=r(mean)
+
 tab variant_recorded ,m
 tab symptomatic_covid_test ,m
 
@@ -189,18 +198,24 @@ gen start_date_30=covid_test_positive_date+30
 *30-day COVID hosp*
 gen covid_hospitalisation_30day=(covid_hospitalisation_outcome_da!=.&covid_hospitalisation_outcome_da<=start_date_30)
 tab covid_hospitalisation_30day,m
+sum covid_hospitalisation_30day
+local cov_hosp_untreated=r(mean)
 *tab  covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
 *tab  covid_hospitalisation_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),m
 *30-day COVID death*
 gen covid_death_30day=(death_with_covid_date!=.&death_with_covid_date<=start_date_30)
 tab covid_death_30day,m
+sum covid_death_30day
+local cov_death_untreated=r(mean)
 *tab  covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),m
 *tab  covid_death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
 *30-day all-cause death*
 gen death_30day=(death_date!=.&death_date<=start_date_30)
 tab death_30day,m
+sum death_30day
+local death_untreated=r(mean)
 *tab  death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
 *tab  death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
@@ -275,20 +290,34 @@ drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+count 
+local N_untreated_no=r(N) 
+sum age,de
+local age_untreated_no=r(mean)
+sum sex
+local female_untreated_no=r(mean)
+sum vaccination_3
+local vac_3_untreated_no=r(mean)
 
 
 *30-day COVID hosp*
 tab covid_hospitalisation_30day,m
+sum covid_hospitalisation_30day
+local cov_hosp_untreated_no=r(mean)
 *tab  covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
 *tab  covid_hospitalisation_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),m
 *30-day COVID death*
 tab covid_death_30day,m
+sum covid_death_30day
+local cov_death_untreated_no=r(mean)
 *tab  covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),m
 *tab  covid_death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
 *30-day all-cause death*
 tab death_30day,m
+sum death_30day
+local death_untreated_no=r(mean)
 *tab  death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
 *tab  death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
@@ -436,6 +465,12 @@ gen rare_neuro=( rare_neuro_nhsd <=start_date)
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
 keep if high_risk_group_new==1
+count
+local N_treated=r(N) 
+count if drug==0
+local N_pax=r(N) 
+count if drug==1
+local N_sot=r(N) 
 
 
 *Time between positive test and treatment*
@@ -448,6 +483,11 @@ tab drug d_postest_treat ,row
 
 *demo*
 sum age,de
+local age_treated=r(mean)
+sum age if drug==0,de
+local age_pax=r(mean)
+sum age if drug==1,de
+local age_sot=r(mean)
 gen age_group3=(age>=40)+(age>=60)
 label define age_group3_Paxlovid 0 "18-39" 1 "40-59" 2 ">=60" 
 label values age_group3 age_group3_Paxlovid
@@ -463,6 +503,12 @@ replace sex=1 if sex_str=="F"
 label define sex_Paxlovid 0 "Male" 1 "Female"
 label values sex sex_Paxlovid
 tab drug sex,row chi
+sum sex
+local female_treated=r(mean)
+sum sex if drug==0
+local female_pax=r(mean)
+sum sex if drug==1
+local female_sot=r(mean)
 
 *vac and variant*
 tab vaccination_status,m
@@ -476,8 +522,13 @@ label define vac_Paxlovid 0 "Un-vaccinated" 1 "One vaccination" 2 "Two vaccinati
 label values vaccination_status vac_Paxlovid
 gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
-gen vaccination_g3=vaccination_3 
-replace vaccination_g3=2 if vaccination_status==4
+sum vaccination_3
+local vac_3_treated=r(mean)
+sum vaccination_3 if drug==0
+local vac_3_pax=r(mean)
+sum vaccination_3 if drug==1
+local vac_3_sot=r(mean)
+
 tab variant_recorded ,m
 tab symptomatic_covid_test ,m
 tab drug vaccination_status ,row chi
@@ -486,13 +537,30 @@ tab drug vaccination_status ,row chi
 *30-day COVID hosp*
 tab covid_hospitalisation_30day,m
 tab drug covid_hospitalisation_30day,row m
+sum covid_hospitalisation_30day
+local cov_hosp_treated=r(mean)
+sum covid_hospitalisation_30day if drug==0
+local cov_hosp_pax=r(mean)
+sum covid_hospitalisation_30day if drug==1
+local cov_hosp_sot=r(mean)
 *30-day COVID death*
 tab covid_death_30day,m
 tab drug covid_death_30day,row m
+sum covid_death_30day
+local cov_death_treated=r(mean)
+sum covid_death_30day if drug==0
+local cov_death_pax=r(mean)
+sum covid_death_30day if drug==1
+local cov_death_sot=r(mean)
 *30-day all-cause death*
 tab death_30day,m
 tab drug death_30day,row m
-
+sum death_30day
+local death_treated=r(mean)
+sum death_30day if drug==0
+local death_pax=r(mean)
+sum death_30day if drug==1
+local death_sot=r(mean)
 
 
 
@@ -560,18 +628,29 @@ drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
-
+count if drug==1
+local N_sot_no=r(N) 
+sum age if drug==1,de
+local age_sot_no=r(mean)
+sum sex if drug==1
+local female_sot_no=r(mean)
+sum vaccination_3 if drug==1
+local vac_3_sot_no=r(mean)
 
 
 *30-day COVID hosp*
 tab covid_hospitalisation_30day,m
 tab drug covid_hospitalisation_30day,row m
+sum covid_hospitalisation_30day if drug==1
+local cov_hosp_sot_no=r(mean)
 *tab drug covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
 *tab drug covid_hospitalisation_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
 *tab drug covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 *30-day COVID death*
 tab covid_death_30day,m
 tab drug covid_death_30day,row m
+sum covid_death_30day if drug==1
+local cov_death_sot_no=r(mean)
 *tab drug covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
 *tab drug covid_death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
 *tab drug covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
