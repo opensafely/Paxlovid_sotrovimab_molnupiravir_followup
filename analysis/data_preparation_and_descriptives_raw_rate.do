@@ -18,9 +18,10 @@
 
 *set start date of the study period*
 local start_MDY= "12,16,2021"
+local start_DMY: display %td mdy(`start_mdy')
 
 *create result table*
-postfile mytab str20 (Variable Untreated_eligible Untreated_without_contra Overall_treated Paxlovid Sotrovimab Sotro_without_contra) using "./output/table.dta", replace
+postfile mytab str25 (Variable Untreated_eligible Untreated_without_contra Overall_treated Paxlovid Sotrovimab Sotro_without_contra) using "./output/table.dta", replace
 
 
 * Open a log file
@@ -64,7 +65,7 @@ foreach var of varlist  sotrovimab_covid_therapeutics molnupiravir_covid_therape
 *check hosp/death event date range*
 codebook  covid_hosp_outcome_date2 death_date
 sum covid_hosp_outcome_date2  
-local end_DMY: disp %td r(max)
+local end_DMY: disp %td r(max)-31
 
 
 *exclusion criteria*
@@ -82,7 +83,8 @@ keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 drop if primary_covid_hospital_discharge!=.|primary_covid_hospital_admission!=.
 drop if any_covid_hospital_admission_dat!=.|any_covid_hospital_discharge_dat!=.
 *restrict study period! NOTE: end of study period should be 30 days earlier than the latest hosp event date in current extraction*
-keep if covid_test_positive_date>=mdy(`start_mdy')&covid_test_positive_date<=(date("`end_DMY'", "DMY")-31)
+keep if covid_test_positive_date>=mdy(`start_MDY')&covid_test_positive_date<=date("`end_DMY'", "DMY")
+sum covid_test_positive_date
 *drop if stp==""
 
 assert start_date==covid_test_positive_date
@@ -343,7 +345,8 @@ keep if sex=="F"|sex=="M"
 keep if has_diedT==0
 tab covid_test_positive covid_positive_previous_30_days,m
 *restrict study period! NOTE: end of study period should be 30 days earlier than the latest hosp event date in current extraction*
-keep if date_treated>=mdy(`start_mdy')&date_treated<=(date("`end_DMY'", "DMY")-31)
+keep if date_treated>=mdy(`start_MDY')&date_treated<=date("`end_DMY'", "DMY")
+sum date_treated
 *drop if stp==""
 replace start_date=date_treated if start_date!=date_treated
 *exclude those with multiple therapy*
@@ -579,6 +582,10 @@ tab drug death_30day,row m
 *tab drug death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
 *tab drug death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 
+*add Notes*
+post mytab ("Note:") ("") ("") ("") ("") ("") ("") 
+post mytab ("Start date: `start_DMY'") ("") ("") ("") ("") ("") ("") 
+post mytab ("End date: `end_DMY'") ("") ("") ("") ("") ("") ("")  
 
 
 postclose mytab
