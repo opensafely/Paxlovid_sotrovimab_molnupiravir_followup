@@ -107,12 +107,6 @@ actions:
         log: logs/cox_mol_update.log
         figure1: output/psgraph_mol_update.svg 
 
-  data_preparation_update_raw_rate:
-    run: stata-mp:latest analysis/data_preparation_and_descriptives_update_raw_rate.do
-    needs: [generate_study_population_update]
-    outputs:
-      moderately_sensitive:
-        log: logs/data_preparation_update_raw_rate.log
 
   generate_study_population_raw_rate:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_raw_rate
@@ -120,9 +114,11 @@ actions:
       highly_sensitive:
         cohort: output/input_raw_rate.csv
 
-  data_preparation_update_raw_rate_untreated:
-    run: stata-mp:latest analysis/data_preparation_and_descriptives_update_raw_rate_untreated.do
+  data_preparation_raw_rate:
+    run: stata-mp:latest analysis/data_preparation_and_descriptives_raw_rate.do
     needs: [generate_study_population_raw_rate]
     outputs:
       moderately_sensitive:
-        log: logs/data_preparation_update_raw_rate_untreated.log
+        log: logs/data_preparation_raw_rate.log
+        table1: output/table.dta
+        table2: output/table.csv
