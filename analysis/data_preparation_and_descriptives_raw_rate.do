@@ -379,7 +379,7 @@ foreach var of varlist  sotrovimab_covid_therapeutics molnupiravir_covid_therape
 
 
 *exclusion criteria*
-keep if sotrovimab_covid_therapeutics==start_date | paxlovid_covid_therapeutics==start_date
+keep if sotrovimab_covid_therapeutics==date_treated | paxlovid_covid_therapeutics==date_treated
 sum age,de
 keep if age>=18 & age<110
 tab sex,m
