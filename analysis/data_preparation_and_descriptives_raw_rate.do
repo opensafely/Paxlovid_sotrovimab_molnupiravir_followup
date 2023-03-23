@@ -657,14 +657,22 @@ local cov_death_sot_no=r(mean)
 *30-day all-cause death*
 tab death_30day,m
 tab drug death_30day,row m
+sum death_30day if drug==1
+local death_sot_no=r(mean)
 *tab drug death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
 *tab drug death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
 *tab drug death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 
-*add Notes*
-post mytab ("Note:") ("") ("") ("") ("") ("") ("") 
-post mytab ("Start date: `start_DMY'") ("") ("") ("") ("") ("") ("") 
-post mytab ("End date: `end_DMY'") ("") ("") ("") ("") ("") ("")  
+*add rows to Table*
+post mytab  ("Overall treated (Sot/Pax)") ("`N_treated'") ("`cov_hosp_treated'") ("`cov_death_treated'") ("`death_treated'") ("`age_treated'") ("`female_treated'") ("`vac_3_treated'") 
+post mytab ("Paxlovid") ("`N_pax'") ("`cov_hosp_pax'") ("`cov_death_pax'") ("`death_pax'") ("`age_pax'") ("`female_pax'") ("`vac_3_pax'")  
+post mytab ("Sotrovimab") ("`N_sot'") ("`cov_hosp_sot'") ("`cov_death_sot'") ("`death_sot'") ("`age_sot'") ("`female_sot'") ("`vac_3_sot'")  
+post mytab ("Sotro without contra") ("`N_sot_no'") ("`cov_hosp_sot_no'") ("`cov_death_sot_no'") ("`death_sot_no'") ("`age_sot_no'") ("`female_sot_no'") ("`vac_3_sot_no'")  
+post mytab ("Untreated but eligible") ("`N_untreated'") ("`cov_hosp_untreated'") ("`cov_death_untreated'") ("`death_untreated'") ("`age_untreated'") ("`female_untreated'") ("`vac_3_untreated'")  
+post mytab ("Untreated without contra") ("`N_untreated_no'") ("`cov_hosp_untreated_no'") ("`cov_death_untreated_no'") ("`death_untreated_no'") ("`age_untreated_no'") ("`female_untreated_no'") ("`vac_3_untreated_no'")  
+post mytab ("Note:") ("") ("") ("") ("") ("") ("") ("")  
+post mytab ("Start date: `start_DMY'") ("") ("") ("") ("") ("") ("") ("")  
+post mytab ("End date: `end_DMY'") ("") ("") ("") ("") ("") ("") ("")   
 
 
 postclose mytab
