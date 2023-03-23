@@ -1337,7 +1337,7 @@ study = StudyDefinition(
     with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
     # see https://docs.opensafely.org/study-def-variables/#sus for more info
     # with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
-    between = ["start_date", "start_date"],
+    between = ["date_treated", "date_treated"],
     find_first_match_in_period = True,
     date_format = "YYYY-MM-DD",
     return_expectations = {
@@ -1353,7 +1353,7 @@ study = StudyDefinition(
     with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
     # see https://docs.opensafely.org/study-def-variables/#sus for more info
     # with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
-    between = ["start_date + 1 day", "start_date + 1 day"],
+    between = ["date_treated + 1 day", "date_treated + 1 day"],
     find_first_match_in_period = True,
     date_format = "YYYY-MM-DD",
     return_expectations = {
@@ -1368,7 +1368,7 @@ study = StudyDefinition(
     with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
     # see https://docs.opensafely.org/study-def-variables/#sus for more info
     # with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
-    on_or_after = "start_date + 2 days",
+    on_or_after = "date_treated + 2 days",
     find_first_match_in_period = True,
     date_format = "YYYY-MM-DD",
     return_expectations = {
@@ -1431,7 +1431,7 @@ study = StudyDefinition(
     covid_icd10_codes,
     returning = "date_of_death",
     date_format = "YYYY-MM-DD",
-    on_or_after = "start_date",
+    on_or_after = "date_treated",
     return_expectations = {
       "date": {"earliest": "2021-01-01", "latest" : "today"},
       "rate": "uniform",
@@ -1442,7 +1442,7 @@ study = StudyDefinition(
     covid_icd10_codes,
     returning = "date_of_death",
     date_format = "YYYY-MM-DD",
-    on_or_after = "start_date",
+    on_or_after = "date_treated",
     match_only_underlying_cause=True,
     return_expectations = {
       "date": {"earliest": "2021-01-01", "latest" : "today"},
@@ -1454,7 +1454,7 @@ study = StudyDefinition(
   death_dateT = patients.died_from_any_cause(
     returning = "date_of_death",
     date_format = "YYYY-MM-DD",
-    on_or_after = "start_date",
+    on_or_after = "date_treated",
     return_expectations = {
       "date": {"earliest": "2021-12-20", "latest": "index_date"},
       "incidence": 0.1
@@ -1462,13 +1462,13 @@ study = StudyDefinition(
   ),
   
   has_diedT = patients.died_from_any_cause(
-    on_or_before = "start_date - 1 day",
+    on_or_before = "date_treated - 1 day",
     returning = "binary_flag",
   ),
   
   ## De-registration
   dereg_dateT = patients.date_deregistered_from_all_supported_practices(
-    on_or_after = "start_date",
+    on_or_after = "date_treated",
     date_format = "YYYY-MM-DD",
     return_expectations = {
       "date": {"earliest": "2021-12-20", "latest": "index_date"},
