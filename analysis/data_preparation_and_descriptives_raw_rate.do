@@ -123,7 +123,7 @@ drop if covid_hosp_outcome_date2==covid_hosp_discharge_date2&covid_hosp_outcome_
 *censor*
 *capture and exclude COVID-hospital admission/death on the start date
 drop if covid_test_positive_date>=covid_hospitalisation_outcome_da| covid_test_positive_date>=death_with_covid_date|covid_test_positive_date>=death_date|covid_test_positive_date>=dereg_date
-drop if dereg_date>=covid_test_positive_date&dereg_date<=(covid_test_positive_date+30)
+*drop if dereg_date>=covid_test_positive_date&dereg_date<=(covid_test_positive_date+30)
 
 
 
@@ -429,7 +429,7 @@ drop if covid_hosp_outcome_date2T==covid_hosp_discharge_date2T&covid_hosp_outcom
 *capture and exclude COVID-hospital admission/death on the start date
 by drug, sort: count if start_date==covid_hospitalisation_outcome_da| start_date==death_with_covid_dateT
 drop if start_date>=covid_hospitalisation_outcome_da| start_date>=death_with_covid_dateT|start_date>=death_dateT|start_date>=dereg_dateT
-drop if dereg_dateT>=start_date&dereg_dateT<=(start_date+30)
+*drop if dereg_dateT>=start_date&dereg_dateT<=(start_date+30)
 
 
 *define outcome and follow-up time*
