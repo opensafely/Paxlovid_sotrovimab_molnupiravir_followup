@@ -154,7 +154,7 @@ local N_untreated=r(N)
 
 *demo*
 sum age,de
-local age_untreated=r(mean)
+local age_untreated=string(r(mean),"%9.1f")
 gen age_group3=(age>=40)+(age>=60)
 label define age_group3_Paxlovid 0 "18-39" 1 "40-59" 2 ">=60" 
 label values age_group3 age_group3_Paxlovid
@@ -169,7 +169,7 @@ replace sex=1 if sex_str=="F"
 label define sex_Paxlovid 0 "Male" 1 "Female"
 label values sex sex_Paxlovid
 sum sex
-local female_untreated=r(mean)
+local female_untreated=string(r(mean)*100,"%9.1f")
 
 
 *vac and variant*
@@ -186,7 +186,7 @@ gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
 tab vaccination_3
 sum vaccination_3
-local vac_3_untreated=r(mean)
+local vac_3_untreated=string(r(mean)*100,"%9.1f")
 
 tab variant_recorded ,m
 tab symptomatic_covid_test ,m
@@ -201,7 +201,7 @@ tab covid_hospitalisation_30day,m
 count if covid_hospitalisation_30day==1
 local cov_hosp_untreated_n=r(N)
 sum covid_hospitalisation_30day
-local cov_hosp_untreated=r(mean)
+local cov_hosp_untreated=string(r(mean)*100,"%9.2f")
 *tab  covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
 *tab  covid_hospitalisation_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),m
@@ -211,7 +211,7 @@ tab covid_death_30day,m
 count if covid_death_30day==1
 local cov_death_untreated_n=r(N)
 sum covid_death_30day
-local cov_death_untreated=r(mean)
+local cov_death_untreated=string(r(mean)*100,"%9.2f")
 *tab  covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),m
 *tab  covid_death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
@@ -221,7 +221,7 @@ tab death_30day,m
 count if death_30day==1
 local death_untreated_n=r(N)
 sum death_30day
-local death_untreated=r(mean)
+local death_untreated=string(r(mean)*100,"%9.2f")
 *tab  death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
 *tab  death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
@@ -299,11 +299,11 @@ drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
 count 
 local N_untreated_no=r(N) 
 sum age,de
-local age_untreated_no=r(mean)
+local age_untreated_no=string(r(mean),"%9.1f")
 sum sex
-local female_untreated_no=r(mean)
+local female_untreated_no=string(r(mean)*100,"%9.1f")
 sum vaccination_3
-local vac_3_untreated_no=r(mean)
+local vac_3_untreated_no=string(r(mean)*100,"%9.1f")
 
 
 *30-day COVID hosp*
@@ -311,7 +311,7 @@ tab covid_hospitalisation_30day,m
 count if covid_hospitalisation_30day==1
 local cov_hosp_untreated_no_n=r(N)
 sum covid_hospitalisation_30day
-local cov_hosp_untreated_no=r(mean)
+local cov_hosp_untreated_no=string(r(mean)*100,"%9.2f")
 *tab  covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
 *tab  covid_hospitalisation_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),m
@@ -320,7 +320,7 @@ tab covid_death_30day,m
 count if covid_death_30day==1
 local cov_death_untreated_no_n=r(N)
 sum covid_death_30day
-local cov_death_untreated_no=r(mean)
+local cov_death_untreated_no=string(r(mean)*100,"%9.2f")
 *tab  covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),m
 *tab  covid_death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
@@ -329,7 +329,7 @@ tab death_30day,m
 count if death_30day==1
 local death_untreated_no_n=r(N)
 sum death_30day
-local death_untreated_no=r(mean)
+local death_untreated_no=string(r(mean)*100,"%9.2f")
 *tab  death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
 *tab  death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022), m
 *tab  death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
@@ -496,11 +496,11 @@ tab drug d_postest_treat ,row
 
 *demo*
 sum age,de
-local age_treated=r(mean)
+local age_treated=string(r(mean),"%9.1f")
 sum age if drug==0,de
-local age_pax=r(mean)
+local age_pax=string(r(mean),"%9.1f")
 sum age if drug==1,de
-local age_sot=r(mean)
+local age_sot=string(r(mean),"%9.1f")
 gen age_group3=(age>=40)+(age>=60)
 label define age_group3_Paxlovid 0 "18-39" 1 "40-59" 2 ">=60" 
 label values age_group3 age_group3_Paxlovid
@@ -517,11 +517,11 @@ label define sex_Paxlovid 0 "Male" 1 "Female"
 label values sex sex_Paxlovid
 tab drug sex,row chi
 sum sex
-local female_treated=r(mean)
+local female_treated=string(r(mean)*100,"%9.1f")
 sum sex if drug==0
-local female_pax=r(mean)
+local female_pax=string(r(mean)*100,"%9.1f")
 sum sex if drug==1
-local female_sot=r(mean)
+local female_sot=string(r(mean)*100,"%9.1f")
 
 *vac and variant*
 tab vaccination_status,m
@@ -536,11 +536,11 @@ label values vaccination_status vac_Paxlovid
 gen vaccination_3=1 if vaccination_status==3|vaccination_status==4
 replace vaccination_3=0 if vaccination_status<3
 sum vaccination_3
-local vac_3_treated=r(mean)
+local vac_3_treated=string(r(mean)*100,"%9.1f")
 sum vaccination_3 if drug==0
-local vac_3_pax=r(mean)
+local vac_3_pax=string(r(mean)*100,"%9.1f")
 sum vaccination_3 if drug==1
-local vac_3_sot=r(mean)
+local vac_3_sot=string(r(mean)*100,"%9.1f")
 
 tab variant_recorded ,m
 tab symptomatic_covid_test ,m
@@ -551,11 +551,11 @@ tab drug vaccination_status ,row chi
 tab covid_hospitalisation_30day,m
 tab drug covid_hospitalisation_30day,row m
 sum covid_hospitalisation_30day
-local cov_hosp_treated=r(mean)
+local cov_hosp_treated=string(r(mean)*100,"%9.2f")
 sum covid_hospitalisation_30day if drug==0
-local cov_hosp_pax=r(mean)
+local cov_hosp_pax=string(r(mean)*100,"%9.2f")
 sum covid_hospitalisation_30day if drug==1
-local cov_hosp_sot=r(mean)
+local cov_hosp_sot=string(r(mean)*100,"%9.2f")
 
 count if covid_hospitalisation_30day==1
 local cov_hosp_treated_n=r(N)
@@ -567,11 +567,11 @@ local cov_hosp_sot_n=r(N)
 tab covid_death_30day,m
 tab drug covid_death_30day,row m
 sum covid_death_30day
-local cov_death_treated=r(mean)
+local cov_death_treated=string(r(mean)*100,"%9.2f")
 sum covid_death_30day if drug==0
-local cov_death_pax=r(mean)
+local cov_death_pax=string(r(mean)*100,"%9.2f")
 sum covid_death_30day if drug==1
-local cov_death_sot=r(mean)
+local cov_death_sot=string(r(mean)*100,"%9.2f")
 
 count if covid_death_30day==1
 local cov_death_treated_n=r(N)
@@ -583,11 +583,11 @@ local cov_death_sot_n=r(N)
 tab death_30day,m
 tab drug death_30day,row m
 sum death_30day
-local death_treated=r(mean)
+local death_treated=string(r(mean)*100,"%9.2f")
 sum death_30day if drug==0
-local death_pax=r(mean)
+local death_pax=string(r(mean)*100,"%9.2f")
 sum death_30day if drug==1
-local death_sot=r(mean)
+local death_sot=string(r(mean)*100,"%9.2f")
 
 count if death_30day==1
 local death_treated_n=r(N)
@@ -652,9 +652,9 @@ gen drugs_do_not_use_contra=(drugs_do_not_use<=start_date&drugs_do_not_use>=(sta
 gen drugs_consider_risk_contra=(drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180))
 
 
-drop if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
+drop if solid_organ_new==1|solid_organ_transplant_snomed<=start_date
 drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
-drop if renal_disease==1|renal_therapeutics==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
+drop if renal_disease==1|ckd_stages_3_5<=start_date|ckd_primis_stage==3|ckd_primis_stage==4|ckd_primis_stage==5|ckd3_icd10<=start_date|ckd4_icd10<=start_date|ckd5_icd10<=start_date
 drop if kidney_transplant<=start_date|kidney_transplant_icd10<=start_date|kidney_transplant_procedure<=start_date
 drop if dialysis<=start_date|dialysis_icd10<=start_date|dialysis_procedure<=start_date
 drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine_snomed<60&creatinine_operator_snomed!="<")|(eGFR_record<60&eGFR_record>0&eGFR_operator!=">"&eGFR_operator!=">=")|(eGFR_short_record<60&eGFR_short_record>0&eGFR_short_operator!=">"&eGFR_short_operator!=">=")
@@ -665,18 +665,18 @@ drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
 count if drug==1
 local N_sot_no=r(N) 
 sum age if drug==1,de
-local age_sot_no=r(mean)
+local age_sot_no=string(r(mean),"%9.1f")
 sum sex if drug==1
-local female_sot_no=r(mean)
+local female_sot_no=string(r(mean)*100,"%9.1f")
 sum vaccination_3 if drug==1
-local vac_3_sot_no=r(mean)
+local vac_3_sot_no=string(r(mean)*100,"%9.1f")
 
 
 *30-day COVID hosp*
 tab covid_hospitalisation_30day,m
 tab drug covid_hospitalisation_30day,row m
 sum covid_hospitalisation_30day if drug==1
-local cov_hosp_sot_no=r(mean)
+local cov_hosp_sot_no=string(r(mean)*100,"%9.2f")
 count if covid_hospitalisation_30day==1&drug==1
 local cov_hosp_sot_no_n=r(N)
 *tab drug covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
@@ -686,7 +686,7 @@ local cov_hosp_sot_no_n=r(N)
 tab covid_death_30day,m
 tab drug covid_death_30day,row m
 sum covid_death_30day if drug==1
-local cov_death_sot_no=r(mean)
+local cov_death_sot_no=string(r(mean)*100,"%9.2f")
 count if covid_death_30day==1&drug==1
 local cov_death_sot_no_n=r(N)
 *tab drug covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
@@ -696,7 +696,7 @@ local cov_death_sot_no_n=r(N)
 tab death_30day,m
 tab drug death_30day,row m
 sum death_30day if drug==1
-local death_sot_no=r(mean)
+local death_sot_no=string(r(mean)*100,"%9.2f")
 count if death_30day==1&drug==1
 local death_sot_no_n=r(N)
 *tab drug death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
@@ -706,12 +706,12 @@ local death_sot_no_n=r(N)
 
 
 *add rows to Table*
-post mytab  ("Overall treated (Sot/Pax)") ("`N_treated'") ("`cov_hosp_treated_n'/`cov_hosp_treated'") ("`cov_death_treated_n'/`cov_death_treated'") ("`death_treated_n'/`death_treated'") ("`age_treated'") ("`female_treated'") ("`vac_3_treated'") 
-post mytab ("Paxlovid") ("`N_pax'") ("`cov_hosp_pax_n'/`cov_hosp_pax'") ("`cov_death_pax_n'/`cov_death_pax'") ("`death_pax_n'/`death_pax'") ("`age_pax'") ("`female_pax'") ("`vac_3_pax'")  
-post mytab ("Sotrovimab") ("`N_sot'") ("`cov_hosp_sot_n'/`cov_hosp_sot'") ("`cov_death_sot_n'/`cov_death_sot'") ("`death_sot_n'/`death_sot'") ("`age_sot'") ("`female_sot'") ("`vac_3_sot'")  
-post mytab ("Sotro without contra") ("`N_sot_no'") ("`cov_hosp_sot_no_n'/`cov_hosp_sot_no'") ("`cov_death_sot_no_n'/`cov_death_sot_no'") ("`death_sot_no_n'/`death_sot_no'") ("`age_sot_no'") ("`female_sot_no'") ("`vac_3_sot_no'")  
-post mytab ("Untreated but eligible") ("`N_untreated'") ("`cov_hosp_untreated_n'/`cov_hosp_untreated'") ("`cov_death_untreated_n'/`cov_death_untreated'") ("`death_untreated_n'/`death_untreated'") ("`age_untreated'") ("`female_untreated'") ("`vac_3_untreated'")  
-post mytab ("Untreated without contra") ("`N_untreated_no'") ("`cov_hosp_untreated_no_n'/`cov_hosp_untreated_no'") ("`cov_death_untreated_no_n'/`cov_death_untreated_no'") ("`death_untreated_no_n'/`death_untreated_no'") ("`age_untreated_no'") ("`female_untreated_no'") ("`vac_3_untreated_no'")  
+post mytab  ("Overall treated (Sot/Pax)") ("`N_treated'") ("`cov_hosp_treated_n'/`cov_hosp_treated'%") ("`cov_death_treated_n'/`cov_death_treated'%") ("`death_treated_n'/`death_treated'%") ("`age_treated'") ("`female_treated'%") ("`vac_3_treated'%") 
+post mytab ("Paxlovid") ("`N_pax'") ("`cov_hosp_pax_n'/`cov_hosp_pax'%") ("`cov_death_pax_n'/`cov_death_pax'%") ("`death_pax_n'/`death_pax'%") ("`age_pax'") ("`female_pax'%") ("`vac_3_pax'%")  
+post mytab ("Sotrovimab") ("`N_sot'") ("`cov_hosp_sot_n'/`cov_hosp_sot'%") ("`cov_death_sot_n'/`cov_death_sot'%") ("`death_sot_n'/`death_sot'%") ("`age_sot'") ("`female_sot'%") ("`vac_3_sot'%")  
+post mytab ("Sotro without contra") ("`N_sot_no'") ("`cov_hosp_sot_no_n'/`cov_hosp_sot_no'%") ("`cov_death_sot_no_n'/`cov_death_sot_no'%") ("`death_sot_no_n'/`death_sot_no'%") ("`age_sot_no'") ("`female_sot_no'%") ("`vac_3_sot_no'%")  
+post mytab ("Untreated but eligible") ("`N_untreated'") ("`cov_hosp_untreated_n'/`cov_hosp_untreated'%") ("`cov_death_untreated_n'/`cov_death_untreated'%") ("`death_untreated_n'/`death_untreated'%") ("`age_untreated'") ("`female_untreated'%") ("`vac_3_untreated'%")  
+post mytab ("Untreated without contra") ("`N_untreated_no'") ("`cov_hosp_untreated_no_n'/`cov_hosp_untreated_no'%") ("`cov_death_untreated_no_n'/`cov_death_untreated_no'%") ("`death_untreated_no_n'/`death_untreated_no'%") ("`age_untreated_no'") ("`female_untreated_no'%") ("`vac_3_untreated_no'%")  
 post mytab ("Note:") ("") ("") ("") ("") ("") ("") ("")  
 post mytab ("Start date: `start_DMY'") ("") ("") ("") ("") ("") ("") ("")  
 post mytab ("End date: `end_DMY'") ("") ("") ("") ("") ("") ("") ("")   
