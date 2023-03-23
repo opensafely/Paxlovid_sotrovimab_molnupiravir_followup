@@ -354,7 +354,7 @@ keep if registered_treated==1
 drop if cancer_opensafely_snomed_new==""&immunosuppresant_drugs_nhsd==""&oral_steroid_drugs_nhsd==""&immunosupression_nhsd_new==""&solid_organ_transplant_nhsd_new==""&downs_syndrome_nhsd==""&haematological_disease_nhsd==""&ckd_stage_5_nhsd==""&liver_disease_nhsd==""&hiv_aids_nhsd==""&multiple_sclerosis_nhsd==""&motor_neurone_disease_nhsd==""&myasthenia_gravis_nhsd==""&huntingtons_disease_nhsd=="" 
 
 *  Convert strings to dates  *
-foreach var of varlist index_date sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics remdesivir_covid_therapeutics	///
+foreach var of varlist  sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics remdesivir_covid_therapeutics	///
         casirivimab_covid_therapeutics date_treated start_date ///
         covid_test_positive_date  primary_covid_hospital_discharge primary_covid_hospital_admission ///
 	   any_covid_hospital_discharge_dat any_covid_hospital_admission_dat death_date dereg_date  ///
