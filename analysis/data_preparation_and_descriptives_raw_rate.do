@@ -21,7 +21,7 @@ local start_MDY= "12,16,2021"
 local start_DMY: display %td mdy(`start_MDY')
 
 *create result table*
-postfile mytab str25 (Cohorts N 30_day_COVID_hosp 30_day_COVID_mortality 30_day_all_mortality Age_mean Female_prop Vaccination_3_or_more) using "./output/table.dta", replace
+postfile mytab str25 (Cohorts N COVID_hosp_30_day COVID_mortality_30_day all_mortality_30_day Age_mean Female_prop Vaccination_3_or_more) using "./output/table.dta", replace
 
 
 * Open a log file
@@ -198,6 +198,8 @@ gen start_date_30=covid_test_positive_date+30
 *30-day COVID hosp*
 gen covid_hospitalisation_30day=(covid_hospitalisation_outcome_da!=.&covid_hospitalisation_outcome_da<=start_date_30)
 tab covid_hospitalisation_30day,m
+count if covid_hospitalisation_30day==1
+local cov_hosp_untreated_n=r(N)
 sum covid_hospitalisation_30day
 local cov_hosp_untreated=r(mean)
 *tab  covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
@@ -206,6 +208,8 @@ local cov_hosp_untreated=r(mean)
 *30-day COVID death*
 gen covid_death_30day=(death_with_covid_date!=.&death_with_covid_date<=start_date_30)
 tab covid_death_30day,m
+count if covid_death_30day==1
+local cov_death_untreated_n=r(N)
 sum covid_death_30day
 local cov_death_untreated=r(mean)
 *tab  covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),m
@@ -214,6 +218,8 @@ local cov_death_untreated=r(mean)
 *30-day all-cause death*
 gen death_30day=(death_date!=.&death_date<=start_date_30)
 tab death_30day,m
+count if death_30day==1
+local death_untreated_n=r(N)
 sum death_30day
 local death_untreated=r(mean)
 *tab  death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
@@ -302,6 +308,8 @@ local vac_3_untreated_no=r(mean)
 
 *30-day COVID hosp*
 tab covid_hospitalisation_30day,m
+count if covid_hospitalisation_30day==1
+local cov_hosp_untreated_no_n=r(N)
 sum covid_hospitalisation_30day
 local cov_hosp_untreated_no=r(mean)
 *tab  covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
@@ -309,6 +317,8 @@ local cov_hosp_untreated_no=r(mean)
 *tab  covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),m
 *30-day COVID death*
 tab covid_death_30day,m
+count if covid_death_30day==1
+local cov_death_untreated_no_n=r(N)
 sum covid_death_30day
 local cov_death_untreated_no=r(mean)
 *tab  covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),m
@@ -316,6 +326,8 @@ local cov_death_untreated_no=r(mean)
 *tab  covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022), m
 *30-day all-cause death*
 tab death_30day,m
+count if death_30day==1
+local death_untreated_no_n=r(N)
 sum death_30day
 local death_untreated_no=r(mean)
 *tab  death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022), m
@@ -543,6 +555,13 @@ sum covid_hospitalisation_30day if drug==0
 local cov_hosp_pax=r(mean)
 sum covid_hospitalisation_30day if drug==1
 local cov_hosp_sot=r(mean)
+
+count if covid_hospitalisation_30day==1
+local cov_hosp_treated_n=r(N)
+count if covid_hospitalisation_30day==1&drug==0
+local cov_hosp_pax_n=r(N)
+count if covid_hospitalisation_30day==1&drug==1
+local cov_hosp_sot_n=r(N)
 *30-day COVID death*
 tab covid_death_30day,m
 tab drug covid_death_30day,row m
@@ -552,6 +571,13 @@ sum covid_death_30day if drug==0
 local cov_death_pax=r(mean)
 sum covid_death_30day if drug==1
 local cov_death_sot=r(mean)
+
+count if covid_death_30day==1
+local cov_death_treated_n=r(N)
+count if covid_death_30day==1&drug==0
+local cov_death_pax_n=r(N)
+count if covid_death_30day==1&drug==1
+local cov_death_sot_n=r(N)
 *30-day all-cause death*
 tab death_30day,m
 tab drug death_30day,row m
@@ -561,6 +587,13 @@ sum death_30day if drug==0
 local death_pax=r(mean)
 sum death_30day if drug==1
 local death_sot=r(mean)
+
+count if death_30day==1
+local death_treated_n=r(N)
+count if death_30day==1&drug==0
+local death_pax_n=r(N)
+count if death_30day==1&drug==1
+local death_sot_n=r(N)
 
 
 
@@ -643,6 +676,8 @@ tab covid_hospitalisation_30day,m
 tab drug covid_hospitalisation_30day,row m
 sum covid_hospitalisation_30day if drug==1
 local cov_hosp_sot_no=r(mean)
+count if covid_hospitalisation_30day==1&drug==1
+local cov_hosp_sot_no_n=r(N)
 *tab drug covid_hospitalisation_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
 *tab drug covid_hospitalisation_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
 *tab drug covid_hospitalisation_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
@@ -651,6 +686,8 @@ tab covid_death_30day,m
 tab drug covid_death_30day,row m
 sum covid_death_30day if drug==1
 local cov_death_sot_no=r(mean)
+count if covid_death_30day==1&drug==1
+local cov_death_sot_no_n=r(N)
 *tab drug covid_death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
 *tab drug covid_death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
 *tab drug covid_death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
@@ -659,17 +696,21 @@ tab death_30day,m
 tab drug death_30day,row m
 sum death_30day if drug==1
 local death_sot_no=r(mean)
+count if death_30day==1&drug==1
+local death_sot_no_n=r(N)
 *tab drug death_30day if start_date>=mdy(12,16,2021)&start_date<=mdy(2,10,2022),row m
 *tab drug death_30day if start_date>=mdy(2,11,2022)&start_date<=mdy(5,31,2022),row m
 *tab drug death_30day if start_date>=mdy(6,1,2022)&start_date<=mdy(10,1,2022),row m
 
+
+
 *add rows to Table*
-post mytab  ("Overall treated (Sot/Pax)") ("`N_treated'") ("`cov_hosp_treated'") ("`cov_death_treated'") ("`death_treated'") ("`age_treated'") ("`female_treated'") ("`vac_3_treated'") 
-post mytab ("Paxlovid") ("`N_pax'") ("`cov_hosp_pax'") ("`cov_death_pax'") ("`death_pax'") ("`age_pax'") ("`female_pax'") ("`vac_3_pax'")  
-post mytab ("Sotrovimab") ("`N_sot'") ("`cov_hosp_sot'") ("`cov_death_sot'") ("`death_sot'") ("`age_sot'") ("`female_sot'") ("`vac_3_sot'")  
-post mytab ("Sotro without contra") ("`N_sot_no'") ("`cov_hosp_sot_no'") ("`cov_death_sot_no'") ("`death_sot_no'") ("`age_sot_no'") ("`female_sot_no'") ("`vac_3_sot_no'")  
-post mytab ("Untreated but eligible") ("`N_untreated'") ("`cov_hosp_untreated'") ("`cov_death_untreated'") ("`death_untreated'") ("`age_untreated'") ("`female_untreated'") ("`vac_3_untreated'")  
-post mytab ("Untreated without contra") ("`N_untreated_no'") ("`cov_hosp_untreated_no'") ("`cov_death_untreated_no'") ("`death_untreated_no'") ("`age_untreated_no'") ("`female_untreated_no'") ("`vac_3_untreated_no'")  
+post mytab  ("Overall treated (Sot/Pax)") ("`N_treated'") ("`cov_hosp_treated_n'/`cov_hosp_treated'") ("`cov_death_treated_n'/`cov_death_treated'") ("`death_treated_n'/`death_treated'") ("`age_treated'") ("`female_treated'") ("`vac_3_treated'") 
+post mytab ("Paxlovid") ("`N_pax'") ("`cov_hosp_pax_n'/`cov_hosp_pax'") ("`cov_death_pax_n'/`cov_death_pax'") ("`death_pax_n'/`death_pax'") ("`age_pax'") ("`female_pax'") ("`vac_3_pax'")  
+post mytab ("Sotrovimab") ("`N_sot'") ("`cov_hosp_sot_n'/`cov_hosp_sot'") ("`cov_death_sot_n'/`cov_death_sot'") ("`death_sot_n'/`death_sot'") ("`age_sot'") ("`female_sot'") ("`vac_3_sot'")  
+post mytab ("Sotro without contra") ("`N_sot_no'") ("`cov_hosp_sot_no_n'/`cov_hosp_sot_no'") ("`cov_death_sot_no_n'/`cov_death_sot_no'") ("`death_sot_no_n'/`death_sot_no'") ("`age_sot_no'") ("`female_sot_no'") ("`vac_3_sot_no'")  
+post mytab ("Untreated but eligible") ("`N_untreated'") ("`cov_hosp_untreated_n'/`cov_hosp_untreated'") ("`cov_death_untreated_n'/`cov_death_untreated'") ("`death_untreated_n'/`death_untreated'") ("`age_untreated'") ("`female_untreated'") ("`vac_3_untreated'")  
+post mytab ("Untreated without contra") ("`N_untreated_no'") ("`cov_hosp_untreated_no_n'/`cov_hosp_untreated_no'") ("`cov_death_untreated_no_n'/`cov_death_untreated_no'") ("`death_untreated_no_n'/`death_untreated_no'") ("`age_untreated_no'") ("`female_untreated_no'") ("`vac_3_untreated_no'")  
 post mytab ("Note:") ("") ("") ("") ("") ("") ("") ("")  
 post mytab ("Start date: `start_DMY'") ("") ("") ("") ("") ("") ("") ("")  
 post mytab ("End date: `end_DMY'") ("") ("") ("") ("") ("") ("") ("")   
