@@ -65,8 +65,10 @@ tab registered_treated_hosp
 tab high_risk_cohort_covid_therapeut
 tab high_risk_cohort_covid_therapeut if covid_therapeutics!=""
 tab high_risk_cohort_covid_therapeut if covid_therapeutics_hosp!=""
-
-
+count  if tocilizumab_covid_hosp!=.&death_with_covid_date!=.
+count  if sarilumab_covid_hosp!=.&death_with_covid_date!=.
+count  if tocilizumab_covid_hosp!=.&death_date!=.
+count  if sarilumab_covid_hosp!=.&death_date!=.
 
 *check hosp/death event date range*
 *codebook covid_hosp_outcome_date2 hospitalisation_outcome_date2 death_date
