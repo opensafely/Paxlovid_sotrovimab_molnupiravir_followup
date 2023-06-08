@@ -284,6 +284,7 @@ sum fu if imid==1,de
 sum fu if immunosupression_new==1,de
 sum fu if hiv_aids==1,de
 sum fu if solid_organ_new==1,de
+sum fu if failure==1&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date),de
 
 
 *long-term outcome - 60d post*
@@ -453,6 +454,7 @@ sum fu if imid==1,de
 sum fu if immunosupression_new==1,de
 sum fu if hiv_aids==1,de
 sum fu if solid_organ_new==1,de
+sum fu if failure==1&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date),de
 
 *long-term outcome - 60d post*
 drop if start_date_59>=death_date|start_date_59>=dereg_date
@@ -850,6 +852,7 @@ by drug, sort: sum fu if imid==1,de
 by drug, sort: sum fu if immunosupression_new==1,de
 by drug, sort: sum fu if hiv_aids==1,de
 by drug, sort: sum fu if solid_organ_new==1,de
+by drug, sort: sum fu if failure==1&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date),de
 
 *long-term outcome - 60d post*
 gen start_date_59=start_date+59
@@ -1023,6 +1026,7 @@ by drug, sort: sum fu if imid==1,de
 by drug, sort: sum fu if immunosupression_new==1,de
 by drug, sort: sum fu if hiv_aids==1,de
 by drug, sort: sum fu if solid_organ_new==1,de
+by drug, sort: sum fu if failure==1&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date),de
 
 *long-term outcome - 60d post*
 drop if start_date_59>=death_dateT|start_date_59>=dereg_dateT
