@@ -893,9 +893,14 @@ tab drug if covid_therapeutics_hosp_60dT!=.
 tab drug if covid_therapeutics_out_60dT!=.
 tab drug covid_therapeutics_out_60d_mT
 *primary outcome*
-tab failure_60d,m
+gen event_date_60d=min( covid_positive_test_60d_postT, death_with_covid_dateT, AE_covid_60dT, covid_hosp_not_primary_60dT, covid_therapeutics_onset_60dT, covid_therapeutics_hosp_60dT, covid_therapeutics_out_60dT)
+gen failure_60d=(event_date_60d!=.&event_date_60d<=study_end_date)
+tab drug failure_60d,m row
+gen end_date_60d=event_date_60d if failure_60d==1
+replace end_date_60d=min(death_dateT, dereg_dateT, study_end_date) if failure_60d==0
 stset end_date_60d ,  origin(start_date_59) failure(failure_60d==1)
 stcox i.drug
+gen fu_60d=_t-_t0
 by drug, sort: sum fu_60d,de
 
 
