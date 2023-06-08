@@ -43,7 +43,7 @@ foreach var of varlist  sotrovimab_covid_therapeutics molnupiravir_covid_therape
         covid_test_positive_date  primary_covid_hospital_discharge primary_covid_hospital_admission ///
 	   any_covid_hospital_discharge_dat any_covid_hospital_admission_dat death_date dereg_date  ///
 	   cancer_opensafely_snomed_new   immunosuppresant_drugs_nhsd ///
-	   oral_steroid_drugs_nhsd  immunosupression_nhsd_new   solid_organ_transplant_nhsd_new  ///
+	   oral_steroid_drugs_nhsd  immunosupression_nhsd_new   solid_organ_transplant_nhsd_new  haematological_malignancies_snom haematological_malignancies_icd1 ///
 	   covid_hosp_outcome_date0 covid_hosp_outcome_date1 covid_hosp_outcome_date2 covid_hosp_discharge_date0 covid_hosp_discharge_date1 covid_hosp_discharge_date2 ///
 	   death_with_covid_date death_with_covid_underly_date covid_hosp_outcome_date0T covid_hosp_outcome_date1T covid_hosp_outcome_date2T covid_hosp_discharge_date0T ///
 	   covid_hosp_discharge_date1T covid_hosp_discharge_date2T death_with_covid_dateT  death_with_covid_underly_dateT death_dateT dereg_dateT  ///
@@ -145,13 +145,20 @@ gen rare_neuro_nhsd = min(multiple_sclerosis_nhsd, motor_neurone_disease_nhsd, m
 *high risk group only based on codelists*
 gen downs_syndrome=(downs_syndrome_nhsd<=start_date)
 gen solid_cancer_new=(cancer_opensafely_snomed_new<=start_date)
+tab solid_cancer_new
 gen haema_disease=( haematological_disease_nhsd <=start_date)
+tab haema_disease
+count if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date
 gen renal_disease=( ckd_stage_5_nhsd <=start_date)
 gen liver_disease=( liver_disease_nhsd <=start_date)
 gen imid=( imid_nhsd <=start_date)
+tab imid
 gen immunosupression_new=( immunosupression_nhsd_new <=start_date)
+tab immunosupression_new
 gen hiv_aids=( hiv_aids_nhsd <=start_date)
+tab hiv_aids
 gen solid_organ_new=( solid_organ_transplant_nhsd_new<=start_date)
+tab solid_organ_new
 gen rare_neuro=( rare_neuro_nhsd <=start_date)
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
@@ -263,6 +270,21 @@ stset end_date ,  origin(start_date_29) failure(failure==1)
 gen fu=_t-_t0
 sum fu,de
 sum fu if failure==1,de
+tab failure if solid_cancer_new==1,m
+tab failure if haema_disease==1,m
+tab failure if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,m
+tab failure if imid==1,m
+tab failure if immunosupression_new==1,m
+tab failure if hiv_aids==1,m
+tab failure if solid_organ_new==1,m
+sum fu if solid_cancer_new==1,de
+sum fu if haema_disease==1,de
+sum fu if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,de
+sum fu if imid==1,de
+sum fu if immunosupression_new==1,de
+sum fu if hiv_aids==1,de
+sum fu if solid_organ_new==1,de
+
 
 *long-term outcome - 60d post*
 gen start_date_59=covid_test_positive_date+59
@@ -417,6 +439,20 @@ count if (covid_therapeutics_onset_30d!=.&covid_therapeutics_onset_30d<=study_en
 tab failure,m
 sum fu,de
 sum fu if failure==1,de
+tab failure if solid_cancer_new==1,m
+tab failure if haema_disease==1,m
+tab failure if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,m
+tab failure if imid==1,m
+tab failure if immunosupression_new==1,m
+tab failure if hiv_aids==1,m
+tab failure if solid_organ_new==1,m
+sum fu if solid_cancer_new==1,de
+sum fu if haema_disease==1,de
+sum fu if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,de
+sum fu if imid==1,de
+sum fu if immunosupression_new==1,de
+sum fu if hiv_aids==1,de
+sum fu if solid_organ_new==1,de
 
 *long-term outcome - 60d post*
 drop if start_date_59>=death_date|start_date_59>=dereg_date
@@ -467,7 +503,7 @@ foreach var of varlist  sotrovimab_covid_therapeutics molnupiravir_covid_therape
         covid_test_positive_date  primary_covid_hospital_discharge primary_covid_hospital_admission ///
 	   any_covid_hospital_discharge_dat any_covid_hospital_admission_dat death_date dereg_date  ///
 	   cancer_opensafely_snomed_new   immunosuppresant_drugs_nhsd ///
-	   oral_steroid_drugs_nhsd  immunosupression_nhsd_new   solid_organ_transplant_nhsd_new  ///
+	   oral_steroid_drugs_nhsd  immunosupression_nhsd_new   solid_organ_transplant_nhsd_new haematological_malignancies_snom haematological_malignancies_icd1 ///
 	   covid_hosp_outcome_date0 covid_hosp_outcome_date1 covid_hosp_outcome_date2 covid_hosp_discharge_date0 covid_hosp_discharge_date1 covid_hosp_discharge_date2 ///
 	   death_with_covid_date death_with_covid_underly_date covid_hosp_outcome_date0T covid_hosp_outcome_date1T covid_hosp_outcome_date2T covid_hosp_discharge_date0T ///
 	   covid_hosp_discharge_date1T covid_hosp_discharge_date2T death_with_covid_dateT  death_with_covid_underly_dateT death_dateT dereg_dateT  ///
@@ -620,13 +656,20 @@ gen rare_neuro_nhsd = min(multiple_sclerosis_nhsd, motor_neurone_disease_nhsd, m
 *high risk group only based on codelists*
 gen downs_syndrome=(downs_syndrome_nhsd<=start_date)
 gen solid_cancer_new=(cancer_opensafely_snomed_new<=start_date)
+tab solid_cancer_new
 gen haema_disease=( haematological_disease_nhsd <=start_date)
+tab haema_disease
+count if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date
 gen renal_disease=( ckd_stage_5_nhsd <=start_date)
 gen liver_disease=( liver_disease_nhsd <=start_date)
 gen imid=( imid_nhsd <=start_date)
+tab imid
 gen immunosupression_new=( immunosupression_nhsd_new <=start_date)
+tab immunosupression_new
 gen hiv_aids=( hiv_aids_nhsd <=start_date)
+tab hiv_aids
 gen solid_organ_new=( solid_organ_transplant_nhsd_new<=start_date)
+tab solid_organ_new
 gen rare_neuro=( rare_neuro_nhsd <=start_date)
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
@@ -793,6 +836,20 @@ drop calendar_day_spline*
 gen fu=_t-_t0
 by drug, sort: sum fu,de
 by drug, sort: sum fu if failure==1,de
+tab drug failure if solid_cancer_new==1,m row
+tab drug failure if haema_disease==1,m row
+tab drug failure if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,m row
+tab drug failure if imid==1,m row
+tab drug failure if immunosupression_new==1,m row
+tab drug failure if hiv_aids==1,m row
+tab drug failure if solid_organ_new==1,m row
+by drug, sort: sum fu if solid_cancer_new==1,de
+by drug, sort: sum fu if haema_disease==1,de
+by drug, sort: sum fu if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,de
+by drug, sort: sum fu if imid==1,de
+by drug, sort: sum fu if immunosupression_new==1,de
+by drug, sort: sum fu if hiv_aids==1,de
+by drug, sort: sum fu if solid_organ_new==1,de
 
 *long-term outcome - 60d post*
 gen start_date_59=start_date+59
@@ -952,6 +1009,20 @@ mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 stcox i.drug calendar_day_spline*
 by drug, sort: sum fu,de
 by drug, sort: sum fu if failure==1,de
+tab drug failure if solid_cancer_new==1,m row
+tab drug failure if haema_disease==1,m row
+tab drug failure if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,m row
+tab drug failure if imid==1,m row
+tab drug failure if immunosupression_new==1,m row
+tab drug failure if hiv_aids==1,m row
+tab drug failure if solid_organ_new==1,m row
+by drug, sort: sum fu if solid_cancer_new==1,de
+by drug, sort: sum fu if haema_disease==1,de
+by drug, sort: sum fu if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,de
+by drug, sort: sum fu if imid==1,de
+by drug, sort: sum fu if immunosupression_new==1,de
+by drug, sort: sum fu if hiv_aids==1,de
+by drug, sort: sum fu if solid_organ_new==1,de
 
 *long-term outcome - 60d post*
 drop if start_date_59>=death_dateT|start_date_59>=dereg_dateT
