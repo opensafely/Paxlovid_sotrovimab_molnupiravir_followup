@@ -243,16 +243,16 @@ drop if start_date_29>=death_date|start_date_29>=dereg_date
 *define outcome and follow-up time*
 gen study_end_date=date("`end_DMY'", "DMY")+61
 count
-count if covid_positive_test_30d_post!=.
-count if death_with_covid_date!=.
-count if AE_covid_30d!=.
-count if covid_hosp_not_primary_30d!=.
-count if covid_hosp_30d!=.
-count if death_with_covid_date!=.|AE_covid_30d!=.|covid_hosp_not_primary_30d!=.
-count if covid_therapeutics_onset_30d!=.
-count if covid_therapeutics_hosp_30d!=.
-count if date_treated!=.
-count if covid_therapeutics_onset_30d!=.|covid_therapeutics_hosp_30d!=.|date_treated!=.
+count if covid_positive_test_30d_post!=.&covid_positive_test_30d_post<=study_end_date
+count if death_with_covid_date!=.&death_with_covid_date<=study_end_date
+count if AE_covid_30d!=.&AE_covid_30d<=study_end_date
+count if covid_hosp_not_primary_30d!=.&covid_hosp_not_primary_30d<=study_end_date
+count if covid_hosp_30d!=.&covid_hosp_30d<=study_end_date
+count if (death_with_covid_date!=.&death_with_covid_date<=study_end_date)|(AE_covid_30d!=.&AE_covid_30d<=study_end_date)|(covid_hosp_not_primary_30d!=.&covid_hosp_not_primary_30d<=study_end_date)
+count if covid_therapeutics_onset_30d!=.&covid_therapeutics_onset_30d<=study_end_date
+count if covid_therapeutics_hosp_30d!=.&covid_therapeutics_hosp_30d<=study_end_date
+count if date_treated!=.&date_treated<=study_end_date
+count if (covid_therapeutics_onset_30d!=.&covid_therapeutics_onset_30d<=study_end_date)|(covid_therapeutics_hosp_30d!=.&covid_therapeutics_hosp_30d<=study_end_date)|(date_treated!=.&date_treated<=study_end_date)
 *primary outcome*
 gen event_date=min( covid_positive_test_30d_post, death_with_covid_date, AE_covid_30d, covid_hosp_not_primary_30d, covid_therapeutics_onset_30d, covid_therapeutics_hosp_30d, date_treated)
 gen failure=(event_date!=.&event_date<=study_end_date)
@@ -270,17 +270,17 @@ preserve
 drop if start_date_59>=death_date|start_date_59>=dereg_date
 *define outcome and follow-up time*
 count
-count if covid_positive_test_60d_post!=.
-count if death_with_covid_date!=.
-count if AE_covid_60d!=.
-count if covid_hosp_not_primary_60d!=.
-count if covid_hosp_60d!=.
-count if death_with_covid_date!=.|AE_covid_60d!=.|covid_hosp_not_primary_60d!=.
-count if covid_therapeutics_onset_60d!=.
-count if covid_therapeutics_hosp_60d!=.
+count if covid_positive_test_60d_post!=.&covid_positive_test_60d_post<=study_end_date
+count if death_with_covid_date!=.&death_with_covid_date<=study_end_date
+count if AE_covid_60d!=.&AE_covid_60d<=study_end_date
+count if covid_hosp_not_primary_60d!=.&covid_hosp_not_primary_60d<=study_end_date
+count if covid_hosp_60d!=.&covid_hosp_60d<=study_end_date
+count if (death_with_covid_date!=.&death_with_covid_date<=study_end_date)|(AE_covid_60d!=.&AE_covid_60d<=study_end_date)|(covid_hosp_not_primary_60d!=.&covid_hosp_not_primary_60d<=study_end_date)
+count if covid_therapeutics_onset_60d!=.&covid_therapeutics_onset_60d<=study_end_date
+count if covid_therapeutics_hosp_60d!=.&covid_therapeutics_hosp_60d<=study_end_date
 replace date_treated=. if date_treated<(start_date+60)
-count if date_treated!=.
-count if covid_therapeutics_onset_60d!=.|covid_therapeutics_hosp_60d!=.|date_treated!=.
+count if date_treated!=.&date_treated<=study_end_date
+count if (covid_therapeutics_onset_60d!=.&covid_therapeutics_onset_60d<=study_end_date)|(covid_therapeutics_hosp_60d!=.&covid_therapeutics_hosp_60d<=study_end_date)|(date_treated!=.&date_treated<=study_end_date)
 *primary outcome*
 gen event_date_60d=min( covid_positive_test_60d_post, death_with_covid_date, AE_covid_60d, covid_hosp_not_primary_60d, covid_therapeutics_onset_60d, covid_therapeutics_hosp_60d, date_treated)
 gen failure_60d=(event_date_60d!=.&event_date_60d<=study_end_date)
@@ -403,16 +403,16 @@ local death_untreated_no=string(r(mean)*100,"%9.2f")
 
 *long-term outcome - 30d post*
 count
-count if covid_positive_test_30d_post!=.
-count if death_with_covid_date!=.
-count if AE_covid_30d!=.
-count if covid_hosp_not_primary_30d!=.
-count if covid_hosp_30d!=.
-count if death_with_covid_date!=.|AE_covid_30d!=.|covid_hosp_not_primary_30d!=.
-count if covid_therapeutics_onset_30d!=.
-count if covid_therapeutics_hosp_30d!=.
-count if date_treated!=.
-count if covid_therapeutics_onset_30d!=.|covid_therapeutics_hosp_30d!=.|date_treated!=.
+count if covid_positive_test_30d_post!=.&covid_positive_test_30d_post<=study_end_date
+count if death_with_covid_date!=.&death_with_covid_date<=study_end_date
+count if AE_covid_30d!=.&AE_covid_30d<=study_end_date
+count if covid_hosp_not_primary_30d!=.&covid_hosp_not_primary_30d<=study_end_date
+count if covid_hosp_30d!=.&covid_hosp_30d<=study_end_date
+count if (death_with_covid_date!=.&death_with_covid_date<=study_end_date)|(AE_covid_30d!=.&AE_covid_30d<=study_end_date)|(covid_hosp_not_primary_30d!=.&covid_hosp_not_primary_30d<=study_end_date)
+count if covid_therapeutics_onset_30d!=.&covid_therapeutics_onset_30d<=study_end_date
+count if covid_therapeutics_hosp_30d!=.&covid_therapeutics_hosp_30d<=study_end_date
+count if date_treated!=.&date_treated<=study_end_date
+count if (covid_therapeutics_onset_30d!=.&covid_therapeutics_onset_30d<=study_end_date)|(covid_therapeutics_hosp_30d!=.&covid_therapeutics_hosp_30d<=study_end_date)|(date_treated!=.&date_treated<=study_end_date)
 *primary outcome*
 tab failure,m
 sum fu,de
@@ -422,17 +422,17 @@ sum fu if failure==1,de
 drop if start_date_59>=death_date|start_date_59>=dereg_date
 *define outcome and follow-up time*
 count
-count if covid_positive_test_60d_post!=.
-count if death_with_covid_date!=.
-count if AE_covid_60d!=.
-count if covid_hosp_not_primary_60d!=.
-count if covid_hosp_60d!=.
-count if death_with_covid_date!=.|AE_covid_60d!=.|covid_hosp_not_primary_60d!=.
-count if covid_therapeutics_onset_60d!=.
-count if covid_therapeutics_hosp_60d!=.
+count if covid_positive_test_60d_post!=.&covid_positive_test_60d_post<=study_end_date
+count if death_with_covid_date!=.&death_with_covid_date<=study_end_date
+count if AE_covid_60d!=.&AE_covid_60d<=study_end_date
+count if covid_hosp_not_primary_60d!=.&covid_hosp_not_primary_60d<=study_end_date
+count if covid_hosp_60d!=.&covid_hosp_60d<=study_end_date
+count if (death_with_covid_date!=.&death_with_covid_date<=study_end_date)|(AE_covid_60d!=.&AE_covid_60d<=study_end_date)|(covid_hosp_not_primary_60d!=.&covid_hosp_not_primary_60d<=study_end_date)
+count if covid_therapeutics_onset_60d!=.&covid_therapeutics_onset_60d<=study_end_date
+count if covid_therapeutics_hosp_60d!=.&covid_therapeutics_hosp_60d<=study_end_date
 replace date_treated=. if date_treated<(start_date+60)
-count if date_treated!=.
-count if covid_therapeutics_onset_60d!=.|covid_therapeutics_hosp_60d!=.|date_treated!=.
+count if date_treated!=.&date_treated<=study_end_date
+count if (covid_therapeutics_onset_60d!=.&covid_therapeutics_onset_60d<=study_end_date)|(covid_therapeutics_hosp_60d!=.&covid_therapeutics_hosp_60d<=study_end_date)|(date_treated!=.&date_treated<=study_end_date)
 *primary outcome*
 gen event_date_60d=min( covid_positive_test_60d_post, death_with_covid_date, AE_covid_60d, covid_hosp_not_primary_60d, covid_therapeutics_onset_60d, covid_therapeutics_hosp_60d, date_treated)
 gen failure_60d=(event_date_60d!=.&event_date_60d<=study_end_date)
@@ -768,16 +768,16 @@ drop if start_date_29>=death_dateT|start_date_29>=dereg_dateT
 *define outcome and follow-up time*
 gen study_end_date=date("`end_DMY'", "DMY")+61
 tab drug
-tab drug if covid_positive_test_30d_postT!=.
-tab drug if death_with_covid_dateT!=.
-tab drug if AE_covid_30dT!=.
-tab drug if covid_hosp_not_primary_30dT!=.
-tab drug if covid_hosp_30dT!=.
-tab drug if death_with_covid_dateT!=.|AE_covid_30dT!=.|covid_hosp_not_primary_30dT!=.
-tab drug if covid_therapeutics_onset_30dT!=.
-tab drug if covid_therapeutics_hosp_30dT!=.
-tab drug if covid_therapeutics_out_30dT!=.
-tab drug if covid_therapeutics_onset_30dT!=.|covid_therapeutics_hosp_30dT!=.|covid_therapeutics_out_30dT!=.
+tab drug if covid_positive_test_30d_postT!=.&covid_positive_test_30d_postT<=study_end_date
+tab drug if death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date
+tab drug if AE_covid_30dT!=.&AE_covid_30dT<=study_end_date
+tab drug if covid_hosp_not_primary_30dT!=.&covid_hosp_not_primary_30dT<=study_end_date
+tab drug if covid_hosp_30dT!=.&covid_hosp_30dT<=study_end_date
+tab drug if (death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date)|(AE_covid_30dT!=.&AE_covid_30dT<=study_end_date)|(covid_hosp_not_primary_30dT!=.&covid_hosp_not_primary_30dT<=study_end_date)
+tab drug if covid_therapeutics_onset_30dT!=.&covid_therapeutics_onset_30dT<=study_end_date
+tab drug if covid_therapeutics_hosp_30dT!=.&covid_therapeutics_hosp_30dT<=study_end_date
+tab drug if covid_therapeutics_out_30dT!=.&covid_therapeutics_out_30dT<=study_end_date
+tab drug if (covid_therapeutics_onset_30dT!=.&covid_therapeutics_onset_30dT<=study_end_date)|(covid_therapeutics_hosp_30dT!=.&covid_therapeutics_hosp_30dT<=study_end_date)|(covid_therapeutics_out_30dT!=.&covid_therapeutics_out_30dT<=study_end_date)
 tab drug covid_therapeutics_out_30d_mT
 *primary outcome*
 gen event_date=min( covid_positive_test_30d_postT, death_with_covid_dateT, AE_covid_30dT, covid_hosp_not_primary_30dT, covid_therapeutics_onset_30dT, covid_therapeutics_hosp_30dT, covid_therapeutics_out_30dT)
@@ -800,16 +800,16 @@ preserve
 drop if start_date_59>=death_dateT|start_date_59>=dereg_dateT
 *define outcome and follow-up time*
 tab drug
-tab drug if covid_positive_test_60d_postT!=.
-tab drug if death_with_covid_dateT!=.
-tab drug if AE_covid_60dT!=.
-tab drug if covid_hosp_not_primary_60dT!=.
-tab drug if covid_hosp_60dT!=.
-tab drug if death_with_covid_dateT!=.|AE_covid_60dT!=.|covid_hosp_not_primary_60dT!=.
-tab drug if covid_therapeutics_onset_60dT!=.
-tab drug if covid_therapeutics_hosp_60dT!=.
-tab drug if covid_therapeutics_out_60dT!=.
-tab drug if covid_therapeutics_onset_60dT!=.|covid_therapeutics_hosp_60dT!=.|covid_therapeutics_out_60dT!=.
+tab drug if covid_positive_test_60d_postT!=.&covid_positive_test_60d_postT<=study_end_date
+tab drug if death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date
+tab drug if AE_covid_60dT!=.&AE_covid_60dT<=study_end_date
+tab drug if covid_hosp_not_primary_60dT!=.&covid_hosp_not_primary_60dT<=study_end_date
+tab drug if covid_hosp_60dT!=.&covid_hosp_60dT<=study_end_date
+tab drug if (death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date)|(AE_covid_60dT!=.&AE_covid_60dT<=study_end_date)|(covid_hosp_not_primary_60dT!=.&covid_hosp_not_primary_60dT<=study_end_date)
+tab drug if covid_therapeutics_onset_60dT!=.&covid_therapeutics_onset_60dT<=study_end_date
+tab drug if covid_therapeutics_hosp_60dT!=.&covid_therapeutics_hosp_60dT<=study_end_date
+tab drug if covid_therapeutics_out_60dT!=.&covid_therapeutics_out_60dT<=study_end_date
+tab drug if (covid_therapeutics_onset_60dT!=.&covid_therapeutics_onset_60dT<=study_end_date)|(covid_therapeutics_hosp_60dT!=.&covid_therapeutics_hosp_60dT<=study_end_date)|(covid_therapeutics_out_60dT!=.&covid_therapeutics_out_60dT<=study_end_date)
 tab drug covid_therapeutics_out_60d_mT
 *primary outcome*
 gen event_date_60d=min( covid_positive_test_60d_postT, death_with_covid_dateT, AE_covid_60dT, covid_hosp_not_primary_60dT, covid_therapeutics_onset_60dT, covid_therapeutics_hosp_60dT, covid_therapeutics_out_60dT)
@@ -934,16 +934,16 @@ local death_sot_no_n=r(N)
 
 *long-term outcome - 30d post*
 tab drug
-tab drug if covid_positive_test_30d_postT!=.
-tab drug if death_with_covid_dateT!=.
-tab drug if AE_covid_30dT!=.
-tab drug if covid_hosp_not_primary_30dT!=.
-tab drug if covid_hosp_30dT!=.
-tab drug if death_with_covid_dateT!=.|AE_covid_30dT!=.|covid_hosp_not_primary_30dT!=.
-tab drug if covid_therapeutics_onset_30dT!=.
-tab drug if covid_therapeutics_hosp_30dT!=.
-tab drug if covid_therapeutics_out_30dT!=.
-tab drug if covid_therapeutics_onset_30dT!=.|covid_therapeutics_hosp_30dT!=.|covid_therapeutics_out_30dT!=.
+tab drug if covid_positive_test_30d_postT!=.&covid_positive_test_30d_postT<=study_end_date
+tab drug if death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date
+tab drug if AE_covid_30dT!=.&AE_covid_30dT<=study_end_date
+tab drug if covid_hosp_not_primary_30dT!=.&covid_hosp_not_primary_30dT<=study_end_date
+tab drug if covid_hosp_30dT!=.&covid_hosp_30dT<=study_end_date
+tab drug if (death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date)|(AE_covid_30dT!=.&AE_covid_30dT<=study_end_date)|(covid_hosp_not_primary_30dT!=.&covid_hosp_not_primary_30dT<=study_end_date)
+tab drug if covid_therapeutics_onset_30dT!=.&covid_therapeutics_onset_30dT<=study_end_date
+tab drug if covid_therapeutics_hosp_30dT!=.&covid_therapeutics_hosp_30dT<=study_end_date
+tab drug if covid_therapeutics_out_30dT!=.&covid_therapeutics_out_30dT<=study_end_date
+tab drug if (covid_therapeutics_onset_30dT!=.&covid_therapeutics_onset_30dT<=study_end_date)|(covid_therapeutics_hosp_30dT!=.&covid_therapeutics_hosp_30dT<=study_end_date)|(covid_therapeutics_out_30dT!=.&covid_therapeutics_out_30dT<=study_end_date)
 tab drug covid_therapeutics_out_30d_mT
 *primary outcome*
 tab drug failure,m row
@@ -957,16 +957,16 @@ by drug, sort: sum fu if failure==1,de
 drop if start_date_59>=death_dateT|start_date_59>=dereg_dateT
 *define outcome and follow-up time*
 tab drug
-tab drug if covid_positive_test_60d_postT!=.
-tab drug if death_with_covid_dateT!=.
-tab drug if AE_covid_60dT!=.
-tab drug if covid_hosp_not_primary_60dT!=.
-tab drug if covid_hosp_60dT!=.
-tab drug if death_with_covid_dateT!=.|AE_covid_60dT!=.|covid_hosp_not_primary_60dT!=.
-tab drug if covid_therapeutics_onset_60dT!=.
-tab drug if covid_therapeutics_hosp_60dT!=.
-tab drug if covid_therapeutics_out_60dT!=.
-tab drug if covid_therapeutics_onset_60dT!=.|covid_therapeutics_hosp_60dT!=.|covid_therapeutics_out_60dT!=.
+tab drug if covid_positive_test_60d_postT!=.&covid_positive_test_60d_postT<=study_end_date
+tab drug if death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date
+tab drug if AE_covid_60dT!=.&AE_covid_60dT<=study_end_date
+tab drug if covid_hosp_not_primary_60dT!=.&covid_hosp_not_primary_60dT<=study_end_date
+tab drug if covid_hosp_60dT!=.&covid_hosp_60dT<=study_end_date
+tab drug if (death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date)|(AE_covid_60dT!=.&AE_covid_60dT<=study_end_date)|(covid_hosp_not_primary_60dT!=.&covid_hosp_not_primary_60dT<=study_end_date)
+tab drug if covid_therapeutics_onset_60dT!=.&covid_therapeutics_onset_60dT<=study_end_date
+tab drug if covid_therapeutics_hosp_60dT!=.&covid_therapeutics_hosp_60dT<=study_end_date
+tab drug if covid_therapeutics_out_60dT!=.&covid_therapeutics_out_60dT<=study_end_date
+tab drug if (covid_therapeutics_onset_60dT!=.&covid_therapeutics_onset_60dT<=study_end_date)|(covid_therapeutics_hosp_60dT!=.&covid_therapeutics_hosp_60dT<=study_end_date)|(covid_therapeutics_out_60dT!=.&covid_therapeutics_out_60dT<=study_end_date)
 tab drug covid_therapeutics_out_60d_mT
 *primary outcome*
 gen event_date_60d=min( covid_positive_test_60d_postT, death_with_covid_dateT, AE_covid_60dT, covid_hosp_not_primary_60dT, covid_therapeutics_onset_60dT, covid_therapeutics_hosp_60dT, covid_therapeutics_out_60dT)
