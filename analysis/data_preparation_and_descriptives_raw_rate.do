@@ -189,6 +189,7 @@ local female_untreated=string(r(mean)*100,"%9.1f")
 
 *vac and variant*
 tab vaccination_status,m
+tab vaccination_status if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,m
 rename vaccination_status vaccination_status_g6
 gen vaccination_status=0 if vaccination_status_g6=="Un-vaccinated"|vaccination_status_g6=="Un-vaccinated (declined)"
 replace vaccination_status=1 if vaccination_status_g6=="One vaccination"
@@ -285,6 +286,9 @@ sum fu if immunosupression_new==1,de
 sum fu if hiv_aids==1,de
 sum fu if solid_organ_new==1,de
 sum fu if failure==1&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date),de
+count if covid_positive_test_30d_post!=.&covid_positive_test_30d_post<=study_end_date&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+count if ((death_with_covid_date!=.&death_with_covid_date<=study_end_date)|(AE_covid_30d!=.&AE_covid_30d<=study_end_date)|(covid_hosp_not_primary_30d!=.&covid_hosp_not_primary_30d<=study_end_date))&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+count if ((covid_therapeutics_onset_30d!=.&covid_therapeutics_onset_30d<=study_end_date)|(covid_therapeutics_hosp_30d!=.&covid_therapeutics_hosp_30d<=study_end_date)|(date_treated!=.&date_treated<=study_end_date))&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
 
 
 *long-term outcome - 60d post*
@@ -455,6 +459,9 @@ sum fu if immunosupression_new==1,de
 sum fu if hiv_aids==1,de
 sum fu if solid_organ_new==1,de
 sum fu if failure==1&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date),de
+count if covid_positive_test_30d_post!=.&covid_positive_test_30d_post<=study_end_date&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+count if ((death_with_covid_date!=.&death_with_covid_date<=study_end_date)|(AE_covid_30d!=.&AE_covid_30d<=study_end_date)|(covid_hosp_not_primary_30d!=.&covid_hosp_not_primary_30d<=study_end_date))&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+count if ((covid_therapeutics_onset_30d!=.&covid_therapeutics_onset_30d<=study_end_date)|(covid_therapeutics_hosp_30d!=.&covid_therapeutics_hosp_30d<=study_end_date)|(date_treated!=.&date_treated<=study_end_date))&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
 
 *long-term outcome - 60d post*
 drop if start_date_59>=death_date|start_date_59>=dereg_date
@@ -723,6 +730,7 @@ local female_sot=string(r(mean)*100,"%9.1f")
 
 *vac and variant*
 tab vaccination_status,m
+tab vaccination_status if haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date,m
 rename vaccination_status vaccination_status_g6
 gen vaccination_status=0 if vaccination_status_g6=="Un-vaccinated"|vaccination_status_g6=="Un-vaccinated (declined)"
 replace vaccination_status=1 if vaccination_status_g6=="One vaccination"
@@ -853,6 +861,10 @@ by drug, sort: sum fu if immunosupression_new==1,de
 by drug, sort: sum fu if hiv_aids==1,de
 by drug, sort: sum fu if solid_organ_new==1,de
 by drug, sort: sum fu if failure==1&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date),de
+tab drug if covid_positive_test_30d_postT!=.&covid_positive_test_30d_postT<=study_end_date&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+tab drug if ((death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date)|(AE_covid_30dT!=.&AE_covid_30dT<=study_end_date)|(covid_hosp_not_primary_30dT!=.&covid_hosp_not_primary_30dT<=study_end_date))&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+tab drug if ((covid_therapeutics_onset_30dT!=.&covid_therapeutics_onset_30dT<=study_end_date)|(covid_therapeutics_hosp_30dT!=.&covid_therapeutics_hosp_30dT<=study_end_date)|(covid_therapeutics_out_30dT!=.&covid_therapeutics_out_30dT<=study_end_date))&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+
 
 *long-term outcome - 60d post*
 gen start_date_59=start_date+59
@@ -1027,6 +1039,9 @@ by drug, sort: sum fu if immunosupression_new==1,de
 by drug, sort: sum fu if hiv_aids==1,de
 by drug, sort: sum fu if solid_organ_new==1,de
 by drug, sort: sum fu if failure==1&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date),de
+tab drug if covid_positive_test_30d_postT!=.&covid_positive_test_30d_postT<=study_end_date&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+tab drug if ((death_with_covid_dateT!=.&death_with_covid_dateT<=study_end_date)|(AE_covid_30dT!=.&AE_covid_30dT<=study_end_date)|(covid_hosp_not_primary_30dT!=.&covid_hosp_not_primary_30dT<=study_end_date))&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
+tab drug if ((covid_therapeutics_onset_30dT!=.&covid_therapeutics_onset_30dT<=study_end_date)|(covid_therapeutics_hosp_30dT!=.&covid_therapeutics_hosp_30dT<=study_end_date)|(covid_therapeutics_out_30dT!=.&covid_therapeutics_out_30dT<=study_end_date))&(haematological_malignancies_snom<=start_date| haematological_malignancies_icd1<=start_date)
 
 *long-term outcome - 60d post*
 drop if start_date_59>=death_dateT|start_date_59>=dereg_dateT
