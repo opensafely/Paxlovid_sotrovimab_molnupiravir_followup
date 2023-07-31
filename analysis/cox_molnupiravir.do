@@ -554,7 +554,6 @@ sum psweight,de
 by drug, sort: sum _pscore ,de
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
-drop _pscore_pax_5 _pscore_mol_95
 *descriptives by PS*
 gen ps=0 if _pscore<=_pscore_pax_5
 replace ps=1 if _pscore>=_pscore_mol_95
@@ -672,6 +671,7 @@ tab ps_mol chronic_respiratory_disease ,row chi
 tab ps_mol vaccination_status ,row chi
 tab ps_mol pre_infection,row chi
 tab ps_mol drugs_consider_risk_contra,row chi
+drop _pscore_pax_5 _pscore_mol_95 ps ps_pax ps_mol
 *ATE additionally adjust for region*
 psmatch2 drug age i.sex i.stp  solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_g3 calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease , logit
 drop psweight
