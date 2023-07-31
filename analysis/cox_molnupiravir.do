@@ -555,6 +555,123 @@ by drug, sort: sum _pscore ,de
 stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug
 drop _pscore_pax_5 _pscore_mol_95
+*descriptives by PS*
+gen ps=0 if _pscore<=_pscore_pax_5
+replace ps=1 if _pscore>=_pscore_mol_95
+by ps,sort: sum age,de
+by ps,sort: sum bmi,de
+by ps,sort: sum d_postest_treat ,de
+by ps,sort: sum week_after_campaign,de
+by ps,sort: sum week_after_vaccinate,de
+tab ps sex,row chi
+tab ps ethnicity,row chi
+tab ps White,row chi
+tab ps imd,row chi
+tab ps rural_urban,row chi
+tab ps region_nhs,row chi
+tab stp if ps==0
+tab stp if ps==1
+tab ps downs_syndrome ,row chi
+tab ps solid_cancer_new ,row chi
+tab ps haema_disease ,row chi
+tab ps renal_disease ,row chi
+tab ps liver_disease ,row chi
+tab ps imid ,row chi
+tab ps immunosupression_new ,row chi
+tab ps hiv_aids ,row chi
+tab ps solid_organ_new ,row chi
+tab ps rare_neuro ,row chi
+tab ps autism_nhsd ,row chi
+tab ps care_home_primis ,row chi
+tab ps dementia_nhsd ,row chi
+tab ps housebound_opensafely ,row chi
+tab ps learning_disability_primis ,row chi
+tab ps serious_mental_illness_nhsd ,row chi
+tab ps bmi_g3 ,row chi
+tab ps diabetes ,row chi
+tab ps chronic_cardiac_disease ,row chi
+tab ps hypertension ,row chi
+tab ps chronic_respiratory_disease ,row chi
+tab ps vaccination_status ,row chi
+tab ps pre_infection,row chi
+tab ps drugs_consider_risk_contra,row chi
+*descriptives by PS and drug*
+gen ps_pax=ps if drug==1
+gen ps_mol=ps if drug==0
+by ps_pax ,sort: sum age,de
+by ps_pax,sort: sum bmi,de
+by ps_pax,sort: sum d_postest_treat ,de
+by ps_pax,sort: sum week_after_campaign,de
+by ps_pax,sort: sum week_after_vaccinate,de
+tab ps_pax sex,row chi
+tab ps_pax ethnicity,row chi
+tab ps_pax White,row chi
+tab ps_pax imd,row chi
+tab ps_pax rural_urban,row chi
+tab ps_pax region_nhs,row chi
+tab stp if ps_pax==0
+tab stp if ps_pax==1
+tab ps_pax downs_syndrome ,row chi
+tab ps_pax solid_cancer_new ,row chi
+tab ps_pax haema_disease ,row chi
+tab ps_pax renal_disease ,row chi
+tab ps_pax liver_disease ,row chi
+tab ps_pax imid ,row chi
+tab ps_pax immunosupression_new ,row chi
+tab ps_pax hiv_aids ,row chi
+tab ps_pax solid_organ_new ,row chi
+tab ps_pax rare_neuro ,row chi
+tab ps_pax autism_nhsd ,row chi
+tab ps_pax care_home_primis ,row chi
+tab ps_pax dementia_nhsd ,row chi
+tab ps_pax housebound_opensafely ,row chi
+tab ps_pax learning_disability_primis ,row chi
+tab ps_pax serious_mental_illness_nhsd ,row chi
+tab ps_pax bmi_g3 ,row chi
+tab ps_pax diabetes ,row chi
+tab ps_pax chronic_cardiac_disease ,row chi
+tab ps_pax hypertension ,row chi
+tab ps_pax chronic_respiratory_disease ,row chi
+tab ps_pax vaccination_status ,row chi
+tab ps_pax pre_infection,row chi
+tab ps_pax drugs_consider_risk_contra,row chi
+by ps_mol ,sort: sum age,de
+by ps_mol,sort: sum bmi,de
+by ps_mol,sort: sum d_postest_treat ,de
+by ps_mol,sort: sum week_after_campaign,de
+by ps_mol,sort: sum week_after_vaccinate,de
+tab ps_mol sex,row chi
+tab ps_mol ethnicity,row chi
+tab ps_mol White,row chi
+tab ps_mol imd,row chi
+tab ps_mol rural_urban,row chi
+tab ps_mol region_nhs,row chi
+tab stp if ps_mol==0
+tab stp if ps_mol==1
+tab ps_mol downs_syndrome ,row chi
+tab ps_mol solid_cancer_new ,row chi
+tab ps_mol haema_disease ,row chi
+tab ps_mol renal_disease ,row chi
+tab ps_mol liver_disease ,row chi
+tab ps_mol imid ,row chi
+tab ps_mol immunosupression_new ,row chi
+tab ps_mol hiv_aids ,row chi
+tab ps_mol solid_organ_new ,row chi
+tab ps_mol rare_neuro ,row chi
+tab ps_mol autism_nhsd ,row chi
+tab ps_mol care_home_primis ,row chi
+tab ps_mol dementia_nhsd ,row chi
+tab ps_mol housebound_opensafely ,row chi
+tab ps_mol learning_disability_primis ,row chi
+tab ps_mol serious_mental_illness_nhsd ,row chi
+tab ps_mol bmi_g3 ,row chi
+tab ps_mol diabetes ,row chi
+tab ps_mol chronic_cardiac_disease ,row chi
+tab ps_mol hypertension ,row chi
+tab ps_mol chronic_respiratory_disease ,row chi
+tab ps_mol vaccination_status ,row chi
+tab ps_mol pre_infection,row chi
+tab ps_mol drugs_consider_risk_contra,row chi
 *ATE additionally adjust for region*
 psmatch2 drug age i.sex i.stp  solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_g3 calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease , logit
 drop psweight
