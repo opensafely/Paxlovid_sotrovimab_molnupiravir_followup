@@ -28,7 +28,7 @@ replace _tn=14 if drug==1&_dn>20&_dn<=25
 replace _tn=20 if drug==1&_dn>25&_dn<=30
 replace _tn=28 if drug==1&_dn>30
 replace _t=_tn
-sts graph, by(drug) ylabel(.95(.01)1)
+sts graph, by(drug) ylabel(.98(.01)1)
 graph export ./output/kmcurve.svg, as(svg) replace
 
 clear
@@ -55,7 +55,7 @@ replace _tn=14 if drug==1&_dn>20&_dn<=25
 replace _tn=20 if drug==1&_dn>25&_dn<=30
 replace _tn=28 if drug==1&_dn>30
 replace _t=_tn
-sts graph, by(drug) ylabel(.95(.01)1)
+sts graph, by(drug) ylabel(.98(.01)1)
 graph export ./output/kmcurve_mol.svg, as(svg) replace
 
 log close
