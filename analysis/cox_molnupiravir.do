@@ -547,13 +547,13 @@ sum _pscore if drug==1,de
 gen _pscore_pax_5=r(p5)
 stset end_date if _pscore>_pscore_pax_5 & _pscore<_pscore_mol_95 [pwei=psweight],  origin(start_date) failure(failure==1)
 stcox i.drug 
-psmatch2 drug age i.sex i.stp  solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_g3 calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if _st==1, logit 
-drop psweight
-gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
-sum psweight,de
-by drug, sort: sum _pscore ,de
-stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
-stcox i.drug
+*psmatch2 drug age i.sex i.stp  solid_cancer_new haema_disease   imid immunosupression_new   rare_neuro  b1.White_with_missing b5.imd_with_missing i.vaccination_g3 calendar_day_spline* b1.bmi_g3_with_missing diabetes chronic_cardiac_disease hypertension chronic_respiratory_disease if _st==1, logit 
+*drop psweight
+*gen psweight=cond( drug ==1,1/_pscore,1/(1-_pscore)) if _pscore!=.
+*sum psweight,de
+*by drug, sort: sum _pscore ,de
+*stset end_date [pwei=psweight],  origin(start_date) failure(failure==1)
+*stcox i.drug
 *descriptives by PS*
 gen ps=0 if _pscore<=_pscore_pax_5
 replace ps=1 if _pscore>=_pscore_mol_95
