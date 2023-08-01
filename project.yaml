@@ -56,6 +56,14 @@ actions:
         log: logs/cox_mol.log
         figure1: output/psgraph_mol.svg 
 
+  plot:
+    run: stata-mp:latest analysis/plot.do
+    needs: [data_preparation, data_preparation_molnupiravir]
+    outputs:
+      moderately_sensitive:
+        log: logs/plot.log
+        figure1: output/kmcurve.svg 
+        figure2: output/kmcurve_mol.svg 
 
   generate_study_population_update:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_update
