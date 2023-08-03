@@ -52,7 +52,8 @@ foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeu
 	   multiple_sclerosis_nhsd motor_neurone_disease_nhsd myasthenia_gravis_nhsd huntingtons_disease_nhsd sickle_cell_disease_nhsd advanced_decompensated_cirrhosis decompensated_cirrhosis_icd10 ///
 	   ascitic_drainage_snomed ascitic_drainage_snomed_pre ckd_stages_3_5 ckd_primis_stage_date ckd3_icd10 ckd4_icd10 ckd5_icd10 dialysis dialysis_icd10 dialysis_procedure kidney_transplant kidney_transplant_icd10 ///
 	   kidney_transplant_procedure RRT RRT_icd10 RRT_procedure creatinine_ctv3_date creatinine_snomed_date creatinine_short_snomed_date eGFR_record_date eGFR_short_record_date ///
-	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk  {
+	   solid_organ_transplant_snomed drugs_do_not_use drugs_consider_risk cancer_opensafely_snomed_ever haematological_disease_nhsd_ever immunosuppresant_drugs_nhsd_ever oral_steroid_drugs_nhsd_ever ///
+	   hosp_outcome_pre3m_admission hosp_outcome_pre6m_admission hosp_outcome_pre3m_discharge hosp_outcome_pre6m_discharge {
   capture confirm string variable `var'
   if _rc==0 {
   rename `var' a
@@ -88,7 +89,7 @@ tab covid_test_positive covid_positive_previous_30_days,m
 *keep if covid_test_positive==1 & covid_positive_previous_30_days==0
 *restrict start_date to 2022Feb10 to now*
 *loose this restriction to increase N?*
-keep if start_date>=mdy(02,11,2022)&start_date<=mdy(10,01,2022)
+keep if start_date>=mdy(02,10,2022)&start_date<=mdy(11,27,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
 drop if sotrovimab_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
@@ -163,7 +164,7 @@ drop if start_date>=covid_hospitalisation_outcome_da| start_date>=death_with_cov
 
 
 *define outcome and follow-up time*
-gen study_end_date=mdy(12,22,2022)
+gen study_end_date=mdy(8,3,2023)
 gen start_date_29=start_date+28
 by drug, sort: count if covid_hospitalisation_outcome_da!=.
 by drug, sort: count if death_with_covid_on_the_death_ce!=.
@@ -416,24 +417,32 @@ gen rare_neuro_nhsd = min(multiple_sclerosis_nhsd, motor_neurone_disease_nhsd, m
 gen downs_syndrome=(downs_syndrome_nhsd<=start_date)
 gen solid_cancer=(cancer_opensafely_snomed<=start_date)
 gen solid_cancer_new=(cancer_opensafely_snomed_new<=start_date)
+gen solid_cancer_ever=(cancer_opensafely_snomed_ever<=start_date)
 gen haema_disease=( haematological_disease_nhsd <=start_date)
+gen haema_disease_ever=( haematological_disease_nhsd_ever <=start_date)
 gen renal_disease=( ckd_stage_5_nhsd <=start_date)
 gen liver_disease=( liver_disease_nhsd <=start_date)
 gen imid=( imid_nhsd <=start_date)
+gen imid_ever=((immunosuppresant_drugs_nhsd_ever <=start_date&immunosuppresant_drugs_nhsd_ever>start_date-365)|(oral_steroid_drugs_nhsd_ever <=start_date&oral_steroid_drugs_nhsd_ever>start_date-365))
 gen immunosupression=( immunosupression_nhsd <=start_date)
 gen immunosupression_new=( immunosupression_nhsd_new <=start_date)
 gen hiv_aids=( hiv_aids_nhsd <=start_date)
 gen solid_organ=( solid_organ_transplant_nhsd<=start_date)
 gen solid_organ_new=( solid_organ_transplant_nhsd_new<=start_date)
 gen rare_neuro=( rare_neuro_nhsd <=start_date)
-gen high_risk_group=(( downs_syndrome + solid_cancer + haema_disease + renal_disease + liver_disease + imid + immunosupression + hiv_aids + solid_organ + rare_neuro )>0)
-tab high_risk_group,m
 gen high_risk_group_new=(( downs_syndrome + solid_cancer_new + haema_disease + renal_disease + liver_disease + imid + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
 tab high_risk_group_new,m
+gen high_risk_group_ever=(( downs_syndrome + solid_cancer_ever + haema_disease_ever + renal_disease + liver_disease + imid_ever + immunosupression_new + hiv_aids + solid_organ_new + rare_neuro )>0)
+tab high_risk_group_ever,m
 
 *Time between positive test and treatment*
 gen d_postest_treat=start_date - covid_test_positive_date
 tab d_postest_treat,m
+by drug,sort: tab d_postest_treat,m
+gen month_after_campaign=ceil((start_date-mdy(12,15,2021))/30)
+by month_after_campaign,sort: tab d_postest_treat,m
+by month_after_campaign,sort: tab d_postest_treat if drug==0,m
+by month_after_campaign,sort: tab d_postest_treat if drug==1,m
 replace d_postest_treat=. if d_postest_treat<0|d_postest_treat>7
 gen d_postest_treat_g2=(d_postest_treat>=3) if d_postest_treat<=5
 label define d_postest_treat_g2_Pax 0 "<3 days" 1 "3-5 days" 
@@ -566,7 +575,6 @@ tab month_after_vaccinate,m
 gen week_after_vaccinate=ceil(d_vaccinate_treat/7)
 tab week_after_vaccinate,m
 *calendar time*
-gen month_after_campaign=ceil((start_date-mdy(12,15,2021))/30)
 tab month_after_campaign,m
 gen week_after_campaign=ceil((start_date-mdy(12,15,2021))/7)
 tab week_after_campaign,m
@@ -637,10 +645,12 @@ tab drug if drugs_do_not_use<=start_date
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-3*365.25)
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
+tab drug if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-90)
 tab drug if drugs_consider_risk<=start_date
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-3*365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+tab drug if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-90)
 gen drugs_do_not_use_contra=(drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180))
 gen drugs_consider_risk_contra=(drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180))
 
@@ -655,7 +665,7 @@ drop if (egfr_creatinine_ctv3<60&creatinine_operator_ctv3!="<")|(egfr_creatinine
 *drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-365.25)
 *drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-365.25)
 drop if drugs_do_not_use<=start_date&drugs_do_not_use>=(start_date-180)
-drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
+*drop if drugs_consider_risk<=start_date&drugs_consider_risk>=(start_date-180)
 
 tab drug if liver_disease_nhsd_snomed<=start_date
 tab drug if liver_disease==1
@@ -729,7 +739,6 @@ tab drug hiv_aids ,row chi
 tab drug solid_organ ,row chi
 tab drug solid_organ_new ,row chi
 tab drug rare_neuro ,row chi
-tab drug high_risk_group ,row chi
 tab drug high_risk_group_new ,row chi
 tab drug autism_nhsd ,row chi
 tab drug care_home_primis ,row chi
@@ -873,7 +882,88 @@ tab drug hiv_aids ,row chi
 tab drug solid_organ ,row chi
 tab drug solid_organ_new ,row chi
 tab drug rare_neuro ,row chi
-tab drug high_risk_group ,row chi
+tab drug autism_nhsd ,row chi
+tab drug care_home_primis ,row chi
+tab drug dementia_nhsd ,row chi
+tab drug housebound_opensafely ,row chi
+tab drug learning_disability_primis ,row chi
+tab drug serious_mental_illness_nhsd ,row chi
+tab drug bmi_group4 ,row chi
+tab drug bmi_g3 ,row chi
+tab drug diabetes ,row chi
+tab drug chronic_cardiac_disease ,row chi
+tab drug hypertension ,row chi
+tab drug chronic_respiratory_disease ,row chi
+tab drug vaccination_status ,row chi
+tab drug month_after_vaccinate,row chi
+tab drug month_after_campaign,row chi
+tab drug sgtf ,row chi
+tab drug sgtf_new ,row chi
+tab drug pre_infection,row chi
+tab drug drugs_consider_risk_contra,row chi
+*tab drug variant_recorded ,row chi
+tab drug if covid_test_positive_pre_date!=.
+stset end_date ,  origin(start_date) failure(failure==1)
+stcox drug
+
+
+drop if d_postest_treat<0|d_postest_treat>7
+*clean covariates*
+*combine stps with low N (<100) as "Other"*
+drop stp_N
+by stp, sort: gen stp_N=_N if stp!=.
+replace stp=99 if stp_N<100
+tab stp ,m
+*descriptives by drug groups*
+by drug,sort: sum age,de
+ttest age , by( drug )
+by drug,sort: sum bmi,de
+ttest bmi, by( drug )
+sum d_postest_treat ,de
+by drug,sort: sum d_postest_treat ,de
+ttest d_postest_treat , by( drug )
+ranksum d_postest_treat,by(drug)
+sum week_after_campaign,de
+by drug,sort: sum week_after_campaign,de
+ttest week_after_campaign , by( drug )
+ranksum week_after_campaign,by(drug)
+sum week_after_vaccinate,de
+by drug,sort: sum week_after_vaccinate,de
+ttest week_after_vaccinate , by( drug )
+ranksum week_after_vaccinate,by(drug)
+sum d_vaccinate_treat,de
+by drug,sort: sum d_vaccinate_treat,de
+ttest d_vaccinate_treat , by( drug )
+ranksum d_vaccinate_treat,by(drug)
+
+tab drug sex,row chi
+tab drug ethnicity,row chi
+tab drug White,row chi
+tab drug imd,row chi
+ranksum imd,by(drug)
+tab drug rural_urban,row chi
+ranksum rural_urban,by(drug)
+tab drug region_nhs,row chi
+tab drug region_covid_therapeutics,row chi
+*need to address the error of "too many values"*
+tab stp if drug==0
+tab stp if drug==1
+tab drug age_group3 ,row chi
+tab drug d_postest_treat_g2 ,row chi
+tab drug d_postest_treat ,row
+tab drug downs_syndrome ,row chi
+tab drug solid_cancer ,row chi
+tab drug solid_cancer_new ,row chi
+tab drug haema_disease ,row chi
+tab drug renal_disease ,row chi
+tab drug liver_disease ,row chi
+tab drug imid ,row chi
+tab drug immunosupression ,row chi
+tab drug immunosupression_new ,row chi
+tab drug hiv_aids ,row chi
+tab drug solid_organ ,row chi
+tab drug solid_organ_new ,row chi
+tab drug rare_neuro ,row chi
 tab drug autism_nhsd ,row chi
 tab drug care_home_primis ,row chi
 tab drug dementia_nhsd ,row chi
@@ -906,6 +996,11 @@ label values drug drug_Paxlovid2
 mkspline age_spline = age, cubic nknots(4)
 mkspline calendar_day_spline = day_after_campaign, cubic nknots(4)
 
+*count pre-covid hosp*
+replace hosp_outcome_pre3m_admission=. if hosp_outcome_pre3m_admission==hosp_outcome_pre3m_discharge&hosp_outcome_pre3m_admission!=.
+replace hosp_outcome_pre6m_admission=. if hosp_outcome_pre6m_admission==hosp_outcome_pre6m_discharge&hosp_outcome_pre6m_admission!=.
+by drug, sort: count if hosp_outcome_pre3m_admission!=.
+by drug, sort: count if hosp_outcome_pre6m_admission!=.
 
 save ./output/main_update.dta, replace
 
