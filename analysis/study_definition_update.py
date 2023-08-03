@@ -1966,6 +1966,153 @@ study = StudyDefinition(
             "incidence": 0.95,
       }
   ),
+  # vac type
+  pfizer_most_recent_cov_vac=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Comirnaty 30micrograms/0.3ml dose conc for susp for inj MDV (Pfizer)",
+    between=["last_vaccination_date", "last_vaccination_date"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.4
+    },
+  ), 
+
+  az_most_recent_cov_vac=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 Vaccine Vaxzevria 0.5ml inj multidose vials (AstraZeneca)",
+    between=["last_vaccination_date", "last_vaccination_date"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.5
+    },
+  ),
+
+  moderna_most_recent_cov_vac=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Spikevax (nucleoside modified) 0.1mg/0.5mL dose disp for inj MDV (Moderna)",
+    between=["last_vaccination_date", "last_vaccination_date"],
+    find_last_match_in_period=True,
+      returning="binary_flag",
+      return_expectations={
+        "incidence": 0.5
+      },
+  ),
+  pfizer_cov_vac_1=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Comirnaty 30micrograms/0.3ml dose conc for susp for inj MDV (Pfizer)",
+    between=["covid_vax_1", "covid_vax_1"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.4
+    },
+  ), 
+
+  az_cov_vac_1=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 Vaccine Vaxzevria 0.5ml inj multidose vials (AstraZeneca)",
+    between=["covid_vax_1", "covid_vax_1"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.5
+    },
+  ),
+
+  moderna_cov_vac_1=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Spikevax (nucleoside modified) 0.1mg/0.5mL dose disp for inj MDV (Moderna)",
+    between=["covid_vax_1", "covid_vax_1"],
+    find_last_match_in_period=True,
+      returning="binary_flag",
+      return_expectations={
+        "incidence": 0.5
+      },
+  ),
+  pfizer_cov_vac_2=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Comirnaty 30micrograms/0.3ml dose conc for susp for inj MDV (Pfizer)",
+    between=["covid_vax_2", "covid_vax_2"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.4
+    },
+  ), 
+
+  az_cov_vac_2=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 Vaccine Vaxzevria 0.5ml inj multidose vials (AstraZeneca)",
+    between=["covid_vax_2", "covid_vax_2"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.5
+    },
+  ),
+
+  moderna_cov_vac_2=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Spikevax (nucleoside modified) 0.1mg/0.5mL dose disp for inj MDV (Moderna)",
+    between=["covid_vax_2", "covid_vax_2"],
+    find_last_match_in_period=True,
+      returning="binary_flag",
+      return_expectations={
+        "incidence": 0.5
+      },
+  ),
+  pfizer_cov_vac_3=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Comirnaty 30micrograms/0.3ml dose conc for susp for inj MDV (Pfizer)",
+    between=["covid_vax_3", "covid_vax_3"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.4
+    },
+  ), 
+
+  az_cov_vac_3=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 Vaccine Vaxzevria 0.5ml inj multidose vials (AstraZeneca)",
+    between=["covid_vax_3", "covid_vax_3"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.5
+    },
+  ),
+
+  moderna_cov_vac_3=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Spikevax (nucleoside modified) 0.1mg/0.5mL dose disp for inj MDV (Moderna)",
+    between=["covid_vax_3", "covid_vax_3"],
+    find_last_match_in_period=True,
+      returning="binary_flag",
+      return_expectations={
+        "incidence": 0.5
+      },
+  ),
+  pfizer_cov_vac_4=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Comirnaty 30micrograms/0.3ml dose conc for susp for inj MDV (Pfizer)",
+    between=["covid_vax_4", "covid_vax_4"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.4
+    },
+  ), 
+
+  az_cov_vac_4=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 Vaccine Vaxzevria 0.5ml inj multidose vials (AstraZeneca)",
+    between=["covid_vax_4", "covid_vax_4"],
+    find_last_match_in_period=True,
+    returning="binary_flag",
+    return_expectations={
+      "incidence": 0.5
+    },
+  ),
+
+  moderna_cov_vac_4=patients.with_tpp_vaccination_record(
+    product_name_matches="COVID-19 mRNA Vaccine Spikevax (nucleoside modified) 0.1mg/0.5mL dose disp for inj MDV (Moderna)",
+    between=["covid_vax_4", "covid_vax_4"],
+    find_last_match_in_period=True,
+      returning="binary_flag",
+      return_expectations={
+        "incidence": 0.5
+      },
+  ),
+
 
   # CLINICAL CO-MORBIDITIES TBC ----
   #BMI, diabetes, hypertension, chronic heart diseases, Chronic respiratory disease, SGTF indicator
@@ -2541,7 +2688,63 @@ study = StudyDefinition(
       "incidence": 0.1
     },
   ),  
-
+  # pre-covid hosp
+  hosp_outcome_pre3m_admission = patients.admitted_to_hospital(
+    returning = "date_admitted",
+    with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
+    # see https://docs.opensafely.org/study-def-variables/#sus for more info
+    # with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
+    between = ["covid_test_positive_date - 90 days", "covid_test_positive_date - 63 days"],
+    find_first_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+    return_expectations = {
+      "date": {"earliest": "2022-02-16"},
+      "rate": "uniform",
+      "incidence": 0.2
+    },
+  ),
+  hosp_outcome_pre3m_discharge = patients.admitted_to_hospital(
+    returning = "date_discharged",
+    with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
+    # see https://docs.opensafely.org/study-def-variables/#sus for more info
+    # with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
+    on_or_after = "hosp_outcome_pre3m_admission",
+    find_first_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+    return_expectations = {
+      "date": {"earliest": "2022-02-16"},
+      "rate": "uniform",
+      "incidence": 0.2
+    },
+  ),  
+  hosp_outcome_pre6m_admission = patients.admitted_to_hospital(
+    returning = "date_admitted",
+    with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
+    # see https://docs.opensafely.org/study-def-variables/#sus for more info
+    # with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
+    between = ["covid_test_positive_date - 180 days", "covid_test_positive_date - 153 days"],
+    find_first_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+    return_expectations = {
+      "date": {"earliest": "2022-02-16"},
+      "rate": "uniform",
+      "incidence": 0.2
+    },
+  ),
+  hosp_outcome_pre6m_discharge = patients.admitted_to_hospital(
+    returning = "date_discharged",
+    with_patient_classification = ["1"], # ordinary admissions only - exclude day cases and regular attenders
+    # see https://docs.opensafely.org/study-def-variables/#sus for more info
+    # with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
+    on_or_after = "hosp_outcome_pre6m_admission",
+    find_first_match_in_period = True,
+    date_format = "YYYY-MM-DD",
+    return_expectations = {
+      "date": {"earliest": "2022-02-16"},
+      "rate": "uniform",
+      "incidence": 0.2
+    },
+  ),  
 
 #safety outcomes? 
 )
