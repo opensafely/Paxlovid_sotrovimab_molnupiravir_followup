@@ -847,7 +847,7 @@ clear
 use ./output/sensitivity.dta
 *recode Paxlovid as 1*
 replace drug=1-drug
-label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
+label define drug_Paxlovid2 0 "sotrovimab" 1 "nirmatrelvir/ritonavir"
 label values drug drug_Paxlovid2
 drop if high_risk_group_new==0
 drop if d_postest_treat<0|d_postest_treat>7
@@ -903,7 +903,7 @@ clear
 use ./output/sensitivity.dta
 *recode Paxlovid as 1*
 replace drug=1-drug
-label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
+label define drug_Paxlovid2 0 "sotrovimab" 1 "nirmatrelvir/ritonavir"
 label values drug drug_Paxlovid2
 drop if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
 drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
@@ -934,7 +934,7 @@ clear
 use ./output/sensitivity.dta
 *recode Paxlovid as 1*
 replace drug=1-drug
-label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
+label define drug_Paxlovid2 0 "sotrovimab" 1 "nirmatrelvir/ritonavir"
 label values drug drug_Paxlovid2
 drop if solid_organ_new==1|solid_organ_therapeutics==1|solid_organ_transplant_snomed<=start_date
 drop if advanced_decompensated_cirrhosis<=start_date|decompensated_cirrhosis_icd10<=start_date|ascitic_drainage_snomed<=start_date|liver_disease_nhsd_icd10<=start_date
