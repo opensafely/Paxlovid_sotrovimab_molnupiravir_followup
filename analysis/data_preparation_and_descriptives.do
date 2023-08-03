@@ -102,7 +102,7 @@ drop if sotrovimab_covid_therapeutics==paxlovid_covid_therapeutics
 describe
 gen drug=1 if sotrovimab_covid_therapeutics==start_date
 replace drug=0 if paxlovid_covid_therapeutics ==start_date
-label define drug_Paxlovid 1 "sotrovimab" 0 "Paxlovid"
+label define drug_Paxlovid 1 "sotrovimab" 0 "nirmatrelvir/ritonavir"
 label values drug drug_Paxlovid
 tab drug,m
 
@@ -989,7 +989,7 @@ stcox drug
 
 *recode Paxlovid as 1*
 replace drug=1-drug
-label define drug_Paxlovid2 0 "sotrovimab" 1 "Paxlovid"
+label define drug_Paxlovid2 0 "sotrovimab" 1 "nirmatrelvir/ritonavir"
 label values drug drug_Paxlovid2
 *gen splines*
 mkspline age_spline = age, cubic nknots(4)
