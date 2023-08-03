@@ -15,17 +15,15 @@ tab failure drug,m col
 *K-M curve*
 sort drug _t
 by drug, sort: gen _dn=sum(_d)
-gen _tn=1 if drug==0&_dn<=5
-replace _tn=1 if drug==1&_dn<=5
-replace _tn=4 if drug==0&_dn>5&_dn<=10
-replace _tn=2 if drug==1&_dn>5&_dn<=10
-replace _tn=8 if drug==0&_dn>10&_dn<=15
-replace _tn=4 if drug==1&_dn>10&_dn<=15
-replace _tn=12 if drug==0&_dn>15&_dn<=20
-replace _tn=7 if drug==1&_dn>15&_dn<=20
-replace _tn=28 if drug==0&_dn>20
-replace _tn=14 if drug==1&_dn>20&_dn<=25
-replace _tn=20 if drug==1&_dn>25&_dn<=30
+gen _tn=2 if drug==0&_dn<=6
+replace _tn=1 if drug==1&_dn<=6
+replace _tn=5 if drug==0&_dn>6&_dn<=12
+replace _tn=3 if drug==1&_dn>6&_dn<=12
+replace _tn=9 if drug==0&_dn>12&_dn<=18
+replace _tn=5 if drug==1&_dn>12&_dn<=18
+replace _tn=28 if drug==0&_dn>18
+replace _tn=13 if drug==1&_dn>18&_dn<=24
+replace _tn=20 if drug==1&_dn>24&_dn<=30
 replace _tn=28 if drug==1&_dn>30
 replace _t=_tn
 sts graph, by(drug) ylabel(.98(.01)1) xtitle("Days since treatment initiation")
@@ -48,15 +46,14 @@ tab failure drug,m col
 *K-M curve*
 sort drug _t
 by drug, sort: gen _dn=sum(_d)
-gen _tn=4 if drug==0&_dn<=5
-replace _tn=1 if drug==1&_dn<=5
-replace _tn=8 if drug==0&_dn>5&_dn<=10
-replace _tn=2 if drug==1&_dn>5&_dn<=10
-replace _tn=28 if drug==0&_dn>10
-replace _tn=4 if drug==1&_dn>10&_dn<=15
-replace _tn=7 if drug==1&_dn>15&_dn<=20
-replace _tn=14 if drug==1&_dn>20&_dn<=25
-replace _tn=20 if drug==1&_dn>25&_dn<=30
+gen _tn=4 if drug==0&_dn<=6
+replace _tn=1 if drug==1&_dn<=6
+replace _tn=20 if drug==0&_dn>6&_dn<=12
+replace _tn=3 if drug==1&_dn>6&_dn<=12
+replace _tn=28 if drug==0&_dn>12
+replace _tn=5 if drug==1&_dn>12&_dn<=18
+replace _tn=13 if drug==1&_dn>18&_dn<=24
+replace _tn=20 if drug==1&_dn>24&_dn<=30
 replace _tn=28 if drug==1&_dn>30
 replace _t=_tn
 sts graph, by(drug) ylabel(.98(.01)1) xtitle("Days since treatment initiation")
