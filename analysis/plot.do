@@ -30,6 +30,10 @@ replace _tn=28 if drug==1&_dn>30
 replace _t=_tn
 sts graph, by(drug) ylabel(.98(.01)1)
 graph export ./output/kmcurve.svg, as(svg) replace
+*monthly count*
+gen month=month(start_date)
+tab month drug, col
+
 
 clear
 use ./output/main_mol.dta
@@ -57,5 +61,9 @@ replace _tn=28 if drug==1&_dn>30
 replace _t=_tn
 sts graph, by(drug) ylabel(.98(.01)1)
 graph export ./output/kmcurve_mol.svg, as(svg) replace
+*monthly count*
+gen month=month(start_date)
+tab month drug, col
+
 
 log close
