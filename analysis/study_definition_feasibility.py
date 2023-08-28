@@ -36,7 +36,134 @@ study = StudyDefinition(
   #AND NOT pregnancy (sensitivity analysis)
   #AND NOT (casirivimab_covid_therapeutics OR remdesivir_covid_therapeutics) (sensitivity analysis)
   
-  index_date = "2021-07-01",
+  index_date = "2023-01-01",
+
+  ## Ethnicity
+  ethnicity = patients.categorised_as(
+            {"Missing": "DEFAULT",
+            "White": "eth='1' OR (NOT eth AND ethnicity_sus='1')", 
+            "Mixed": "eth='2' OR (NOT eth AND ethnicity_sus='2')", 
+            "South Asian": "eth='3' OR (NOT eth AND ethnicity_sus='3')", 
+            "Black": "eth='4' OR (NOT eth AND ethnicity_sus='4')",  
+            "Other": "eth='5' OR (NOT eth AND ethnicity_sus='5')",
+            }, 
+            return_expectations={
+            "category": {"ratios": {"White": 0.6, "Mixed": 0.1, "South Asian": 0.1, "Black": 0.1, "Other": 0.1}},
+            "incidence": 0.4,
+            },
+
+            ethnicity_sus = patients.with_ethnicity_from_sus(
+                returning="group_6",  
+                use_most_frequent_code=True,
+                return_expectations={
+                    "category": {"ratios": {"1": 0.6, "2": 0.1, "3": 0.1, "4": 0.1, "5": 0.1}},
+                    "incidence": 0.4,
+                    },
+            ),
+
+            eth=patients.with_these_clinical_events(
+                ethnicity_primis_snomed_codes,
+                returning="category",
+                find_last_match_in_period=True,
+                on_or_before="today",
+                return_expectations={
+                    "category": {"ratios": {"1": 0.6, "2": 0.1, "3": 0.1, "4":0.1,"5": 0.1}},
+                    "incidence": 0.75,
+                },
+            ),
+    ),
+  
+  ## Index of multiple deprivation
+  imd = patients.categorised_as(
+    {     "0": "DEFAULT",
+          "1": "index_of_multiple_deprivation >= 0 AND index_of_multiple_deprivation < 32800*1/5",
+          "2": "index_of_multiple_deprivation >= 32800*1/5 AND index_of_multiple_deprivation < 32800*2/5",
+          "3": "index_of_multiple_deprivation >= 32800*2/5 AND index_of_multiple_deprivation < 32800*3/5",
+          "4": "index_of_multiple_deprivation >= 32800*3/5 AND index_of_multiple_deprivation < 32800*4/5",
+          "5": "index_of_multiple_deprivation >= 32800*4/5 AND index_of_multiple_deprivation <= 32800",
+    },
+    index_of_multiple_deprivation = patients.address_as_of(
+      "index_date",
+      returning = "index_of_multiple_deprivation",
+      round_to_nearest = 100,
+    ),
+    return_expectations = {
+      "rate": "universal",
+      "category": {
+        "ratios": {
+          "0": 0.01,
+          "1": 0.20,
+          "2": 0.20,
+          "3": 0.20,
+          "4": 0.20,
+          "5": 0.19,
+        }},
+    },
+  ),
+  
+  ## Region - NHS England 9 regions
+  region_nhs = patients.registered_practice_as_of(
+    "index_date",
+    returning = "nuts1_region_name",
+    return_expectations = {
+      "rate": "universal",
+      "category": {
+        "ratios": {
+          "North East": 0.1,
+          "North West": 0.1,
+          "Yorkshire and The Humber": 0.1,
+          "East Midlands": 0.1,
+          "West Midlands": 0.1,
+          "East": 0.1,
+          "London": 0.2,
+          "South West": 0.1,
+          "South East": 0.1,},},
+    },
+  ),
+  
+  region_covid_therapeutics = patients.with_covid_therapeutics(
+    #with_these_statuses = ["Approved", "Treatment Complete"],
+    on_or_after = "index_date",
+    find_first_match_in_period = True,
+    returning = "region",
+    return_expectations = {
+      "rate": "universal",
+      "category": {
+        "ratios": {
+          "North East": 0.1,
+          "North West": 0.1,
+          "Yorkshire and The Humber": 0.1,
+          "East Midlands": 0.1,
+          "West Midlands": 0.1,
+          "East": 0.1,
+          "London": 0.2,
+          "South West": 0.1,
+          "South East": 0.1,},},
+    },
+  ),
+  
+  # STP (NHS administration region based on geography, currently closest match to CMDU)
+  stp = patients.registered_practice_as_of(
+    "index_date",
+    returning = "stp_code",
+    return_expectations = {
+      "rate": "universal",
+      "category": {
+        "ratios": {
+          "STP1": 0.1,
+          "STP2": 0.1,
+          "STP3": 0.1,
+          "STP4": 0.1,
+          "STP5": 0.1,
+          "STP6": 0.1,
+          "STP7": 0.1,
+          "STP8": 0.1,
+          "STP9": 0.1,
+          "STP10": 0.1,
+        }
+      },
+    },
+  ),
 
   # TREATMENT - NEUTRALISING MONOCLONAL ANTIBODIES OR ANTIVIRALS ----
   ## hospital-onset COVID
