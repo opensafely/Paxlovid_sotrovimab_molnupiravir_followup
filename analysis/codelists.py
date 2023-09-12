@@ -10,6 +10,30 @@ from cohortextractor import (codelist, codelist_from_csv, combine_codelists)
 mabs_procedure_codes = codelist(
   ["X891", "X892"], system="opcs4"
 )
+# sotrovimab_GP
+sotrovimab_GP_codes = codelist_from_csv(
+  "codelists/bangzheng-sotrovimab-dmd.csv", 
+  system = "snomed", 
+  column = "dmd_id"
+)
+# paxlovid_GP
+paxlovid_GP_codes = codelist_from_csv(
+  "codelists/bangzheng-paxlovid-dmd-0964dee3.csv", 
+  system = "snomed", 
+  column = "dmd_id"
+)
+# molnupiravir_GP
+molnupiravir_GP_codes = codelist_from_csv(
+  "codelists/bangzheng-molnupiravir-06b21eed-dmd.csv", 
+  system = "snomed", 
+  column = "dmd_id"
+)
+# remdesivir_GP
+remdesivir_GP_codes = codelist_from_csv(
+  "codelists/bangzheng-remdesivir-dmd.csv", 
+  system = "snomed", 
+  column = "dmd_id"
+)
 # advanced decompensated liver cirrhosis
 advanced_decompensated_cirrhosis_snomed_codes = codelist_from_csv(
     "codelists/opensafely-condition-advanced-decompensated-cirrhosis-of-the-liver.csv",
