@@ -144,3 +144,8 @@ actions:
       moderately_sensitive:
         log: logs/data_preparation_feasibility.log
 
+  generate_study_population_feasibility_update:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_feasibility_update
+    outputs:
+      highly_sensitive:
+        cohort: output/input_feasibility_update.csv
