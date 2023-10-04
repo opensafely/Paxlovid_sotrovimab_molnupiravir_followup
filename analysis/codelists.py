@@ -22,9 +22,21 @@ paxlovid_GP_codes = codelist_from_csv(
   system = "snomed", 
   column = "dmd_id"
 )
+# paxlovid_GP2
+paxlovid_GP_codes2 = codelist_from_csv(
+  "codelists/bangzheng-paxlovid-dmd.csv", 
+  system = "snomed", 
+  column = "dmd_id"
+)
 # molnupiravir_GP
 molnupiravir_GP_codes = codelist_from_csv(
   "codelists/bangzheng-molnupiravir-06b21eed-dmd.csv", 
+  system = "snomed", 
+  column = "dmd_id"
+)
+# molnupiravir_GP2
+molnupiravir_GP_codes2 = codelist_from_csv(
+  "codelists/bangzheng-molnupiravir-dmd.csv", 
   system = "snomed", 
   column = "dmd_id"
 )
