@@ -82,7 +82,7 @@ dialysis_codes = codelist_from_csv(
   column = "CTV3ID"
 )
 dialysis_icd10_codelist = codelist_from_csv(
-    "codelists/ukrr-dialysis.csv",
+    "codelists/ukrr-dialysis-icd10.csv",
     system="icd10",
     column="code"
 )
