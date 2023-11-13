@@ -128,8 +128,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/data_preparation_raw_rate.log
-        table1: output/table.dta
-        table2: output/table.csv
+        table1: output/table.csv
 
   generate_study_population_feasibility:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_feasibility
