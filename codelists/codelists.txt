@@ -8,7 +8,7 @@ user/Louis/ckd-stage/77b93e93/
 opensafely/renal-replacement-therapy/2020-04-14
 user/viyaasan/kidney-transplant-opcs-4/18d788ae/
 ukrr/dialysis-opcs-4/505bef04
-ukrr/dialysis/66b8a243
+ukrr/dialysis-icd10/2a5cf9a2
 opensafely/solid-organ-transplantation-snomed/2020-04-10
 user/bangzheng/creatinine-value-shortlist/60eb1411
 user/bangzheng/creatinine-value/58285b97
