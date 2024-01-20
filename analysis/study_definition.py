@@ -515,6 +515,10 @@ study = StudyDefinition(
     returning = "date",
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
+    return_expectations={  ##added-qw
+            "rate": "uniform", ##added-qw
+            "date": {"earliest": "1900-01-01", "latest": "today"},##added-qw
+        },##added-qw
   ),
   decompensated_cirrhosis_icd10 = patients.admitted_to_hospital(
         returning="date_admitted",
