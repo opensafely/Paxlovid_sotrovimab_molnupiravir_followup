@@ -515,10 +515,10 @@ study = StudyDefinition(
     returning = "date",
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
-    return_expectations={  ##added-qw
-            "rate": "uniform", ##added-qw
-            "date": {"earliest": "1900-01-01", "latest": "today"},##added-qw
-        },##added-qw
+    return_expectations={  ##added
+            "incidence": 0.2, ##added
+            "date": {"earliest": "1900-01-01", "latest": "today"},##added.
+        },##added
   ),
   decompensated_cirrhosis_icd10 = patients.admitted_to_hospital(
         returning="date_admitted",
@@ -532,20 +532,28 @@ study = StudyDefinition(
         },
   ),
   #  regular ascitic drainage (opcs4_codes in hospital??)
-  ascitic_drainage_snomed = patients.with_these_clinical_events(
-    ascitic_drainage_snomed_codes,
-    on_or_before = "start_date",
-    returning = "date",
-    date_format = "YYYY-MM-DD",
-    find_last_match_in_period = True,
-  ), 
-  ascitic_drainage_snomed_pre = patients.with_these_clinical_events(
-    ascitic_drainage_snomed_codes,
-    on_or_before = "ascitic_drainage_snomed - 1 day",
-    returning = "date",
-    date_format = "YYYY-MM-DD",
-    find_last_match_in_period = True,
-  ),    
+  # ascitic_drainage_snomed = patients.with_these_clinical_events(  ##. commented out 535-545
+  #   ascitic_drainage_snomed_codes,
+  #   on_or_before = "start_date",
+  #   returning = "date",
+  #   date_format = "YYYY-MM-DD",
+  #   find_last_match_in_period = True,
+  #           return_expectations={  ##.added
+  #           "incidence": 0.2,      ##added
+  #           "date": {"earliest": "1900-01-01", "latest": "today"},##.added
+  #       },##.added
+  #), 
+  # ascitic_drainage_snomed_pre = patients.with_these_clinical_events(  ##. commented out 546-556
+  #   ascitic_drainage_snomed_codes,
+  #   on_or_before = "ascitic_drainage_snomed - 1 day",
+  #   returning = "date",
+  #   date_format = "YYYY-MM-DD",
+  #   find_last_match_in_period = True,
+  #           return_expectations={  ##.added
+  #           "incidence": 0.2,      ##added
+  #           "date": {"earliest": "1900-01-01", "latest": "today"},##.added
+  #       }, ##.added
+  # ),    
 
   #  hospital admission with liver disease (see below?)
 
@@ -558,6 +566,7 @@ study = StudyDefinition(
     date_format = "YYYY-MM-DD",
     find_last_match_in_period = True,
   ),
+  
   ckd_primis_stage=patients.with_these_clinical_events(
         codelist=primis_ckd_stage,
         on_or_before = "start_date",
