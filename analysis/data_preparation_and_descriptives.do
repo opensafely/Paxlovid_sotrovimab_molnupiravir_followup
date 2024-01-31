@@ -19,6 +19,8 @@
 *            variables by drug groups.
 *  
 ********************************************************************************
+/* remdesivir_covid_therapeutics
+casirivimab_covid_therapeutics #qw*/
 
 * Open a log file
 cap log close
@@ -31,8 +33,8 @@ describe
 codebook
 
 *  Convert strings to dates  *
-foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics remdesivir_covid_therapeutics	///
-        casirivimab_covid_therapeutics sotrovimab_covid_approved sotrovimab_covid_complete sotrovimab_covid_not_start sotrovimab_covid_stopped ///
+foreach var of varlist sotrovimab_covid_therapeutics molnupiravir_covid_therapeutics paxlovid_covid_therapeutics 	///
+        sotrovimab_covid_approved sotrovimab_covid_complete sotrovimab_covid_not_start sotrovimab_covid_stopped ///
 		paxlovid_covid_approved paxlovid_covid_complete paxlovid_covid_not_start paxlovid_covid_stopped covid_test_positive_pre_date ///
         covid_test_positive_date covid_test_positive_date2 covid_symptoms_snomed last_vaccination_date primary_covid_hospital_discharge primary_covid_hospital_admission ///
 	   any_covid_hospital_discharge_dat preg_36wks_date death_date dereg_date downs_syndrome_nhsd_snomed downs_syndrome_nhsd_icd10 cancer_opensafely_snomed ///
@@ -91,8 +93,8 @@ tab covid_test_positive covid_positive_previous_30_days,m
 keep if start_date>=mdy(02,10,2022)&start_date<=mdy(11,27,2022)
 drop if stp==""
 *exclude those with other drugs before sotro or Paxlovid, and those receiving sotro and Paxlovid on the same day*
-drop if sotrovimab_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<=sotrovimab_covid_therapeutics| remdesivir_covid_therapeutics<=sotrovimab_covid_therapeutics| casirivimab_covid_therapeutics<=sotrovimab_covid_therapeutics)
-drop if paxlovid_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<= paxlovid_covid_therapeutics | remdesivir_covid_therapeutics<= paxlovid_covid_therapeutics | casirivimab_covid_therapeutics<= paxlovid_covid_therapeutics )
+drop if sotrovimab_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<=sotrovimab_covid_therapeutics)
+drop if paxlovid_covid_therapeutics!=. & ( molnupiravir_covid_therapeutics<= paxlovid_covid_therapeutics)
 count if sotrovimab_covid_therapeutics!=. & paxlovid_covid_therapeutics!=.
 drop if sotrovimab_covid_therapeutics==paxlovid_covid_therapeutics
 *exclude those hospitalised after test positive and before treatment?
@@ -171,12 +173,12 @@ by drug, sort: count if covid_hospitalisation_outcome_da==.&death_with_covid_on_
 by drug, sort: count if death_with_covid_on_the_death_ce==.&covid_hospitalisation_outcome_da!=.
 *primary outcome*
 gen event_date=min( covid_hospitalisation_outcome_da, death_with_covid_on_the_death_ce )
-gen failure=(event_date!=.&event_date<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==1
-replace failure=(event_date!=.&event_date<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==0
+gen failure=(event_date!=.&event_date<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)) if drug==1
+replace failure=(event_date!=.&event_date<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)) if drug==0
 tab failure,m
 gen end_date=event_date if failure==1
-replace end_date=min(death_date, dereg_date, study_end_date, start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure==0&drug==1
-replace end_date=min(death_date, dereg_date, study_end_date, start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure==0&drug==0
+replace end_date=min(death_date, dereg_date, study_end_date, start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure==0&drug==1
+replace end_date=min(death_date, dereg_date, study_end_date, start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure==0&drug==0
 format %td event_date end_date study_end_date start_date_29
 
 stset end_date ,  origin(start_date) failure(failure==1)
@@ -184,12 +186,12 @@ stcox drug
 
 *secondary outcome: within 2 months*
 gen start_date_2m=start_date+60
-gen failure_2m=(event_date!=.&event_date<=min(study_end_date,start_date_2m,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==1
-replace failure_2m=(event_date!=.&event_date<=min(study_end_date,start_date_2m,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==0
+gen failure_2m=(event_date!=.&event_date<=min(study_end_date,start_date_2m,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)) if drug==1
+replace failure_2m=(event_date!=.&event_date<=min(study_end_date,start_date_2m,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)) if drug==0
 tab failure_2m,m
 gen end_date_2m=event_date if failure_2m==1
-replace end_date_2m=min(death_date, dereg_date, study_end_date, start_date_2m,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure_2m==0&drug==1
-replace end_date_2m=min(death_date, dereg_date, study_end_date, start_date_2m,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure_2m==0&drug==0
+replace end_date_2m=min(death_date, dereg_date, study_end_date, start_date_2m,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure_2m==0&drug==1
+replace end_date_2m=min(death_date, dereg_date, study_end_date, start_date_2m,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure_2m==0&drug==0
 format %td end_date_2m start_date_2m
 
 stset end_date_2m ,  origin(start_date) failure(failure_2m==1)
@@ -197,12 +199,12 @@ stcox drug
 
 *secondary outcome: within 3 months*
 gen start_date_3m=start_date+90
-gen failure_3m=(event_date!=.&event_date<=min(study_end_date,start_date_3m,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==1
-replace failure_3m=(event_date!=.&event_date<=min(study_end_date,start_date_3m,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==0
+gen failure_3m=(event_date!=.&event_date<=min(study_end_date,start_date_3m,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)) if drug==1
+replace failure_3m=(event_date!=.&event_date<=min(study_end_date,start_date_3m,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)) if drug==0
 tab failure_3m,m
 gen end_date_3m=event_date if failure_3m==1
-replace end_date_3m=min(death_date, dereg_date, study_end_date, start_date_3m,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure_3m==0&drug==1
-replace end_date_3m=min(death_date, dereg_date, study_end_date, start_date_3m,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure_3m==0&drug==0
+replace end_date_3m=min(death_date, dereg_date, study_end_date, start_date_3m,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure_3m==0&drug==1
+replace end_date_3m=min(death_date, dereg_date, study_end_date, start_date_3m,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,covid_hosp_date_day_cases_mab) if failure_3m==0&drug==0
 format %td end_date_3m start_date_3m
 
 stset end_date_3m ,  origin(start_date) failure(failure_3m==1)
@@ -245,12 +247,12 @@ replace hospitalisation_outcome_date=. if hospitalisation_outcome_date2==hosp_di
 replace hospitalisation_outcome_date=. if hospitalisation_outcome_date2==covid_hosp_date_mabs_all_cause&covid_hosp_date_mabs_all_cause!=.&drug==1&(hosp_discharge_date2-hospitalisation_outcome_date2)<=1&hospitalisation_outcome_date0==.&hospitalisation_outcome_date1==.
 
 gen event_date_allcause=min( death_date, hospitalisation_outcome_date,covid_hospitalisation_outcome_da )
-gen failure_allcause=(event_date_allcause!=.&event_date_allcause<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==1
-replace failure_allcause=(event_date_allcause!=.&event_date_allcause<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==0
+gen failure_allcause=(event_date_allcause!=.&event_date_allcause<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)) if drug==1
+replace failure_allcause=(event_date_allcause!=.&event_date_allcause<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)) if drug==0
 tab failure_allcause,m
 gen end_date_allcause=event_date_allcause if failure_allcause==1
-replace end_date_allcause=min(death_date, dereg_date, study_end_date, start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,hosp_date_day_cases_mab) if failure_allcause==0&drug==1
-replace end_date_allcause=min(death_date, dereg_date, study_end_date, start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,hosp_date_day_cases_mab) if failure_allcause==0&drug==0
+replace end_date_allcause=min(death_date, dereg_date, study_end_date, start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,hosp_date_day_cases_mab) if failure_allcause==0&drug==1
+replace end_date_allcause=min(death_date, dereg_date, study_end_date, start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,hosp_date_day_cases_mab) if failure_allcause==0&drug==0
 format %td event_date_allcause end_date_allcause  
 
 stset end_date_allcause ,  origin(start_date) failure(failure_allcause==1)
@@ -282,12 +284,12 @@ replace covid_hosp_date_emergency=. if covid_hosp_date_emergency2==covid_emerg_d
 replace covid_hosp_date_emergency=. if covid_hosp_date_emergency2==covid_hosp_date_mabs_procedure&covid_hosp_date_mabs_procedure!=.&drug==1&(covid_emerg_discharge_date2-covid_hosp_date_emergency2)<=1&covid_hosp_date_emergency0==.&covid_hosp_date_emergency1==.
 
 gen event_date_emergency=min( covid_hosp_date_emergency, death_with_covid_on_the_death_ce )
-gen failure_emergency=(event_date_emergency!=.&event_date_emergency<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==1
-replace failure_emergency=(event_date_emergency!=.&event_date_emergency<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==0
+gen failure_emergency=(event_date_emergency!=.&event_date_emergency<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)) if drug==1
+replace failure_emergency=(event_date_emergency!=.&event_date_emergency<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)) if drug==0
 tab failure_emergency,m
 gen end_date_emergency=event_date_emergency if failure_emergency==1
-replace end_date_emergency=min(death_date, dereg_date, study_end_date, start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,hosp_emergency_day_cases_mab) if failure_emergency==0&drug==1
-replace end_date_emergency=min(death_date, dereg_date, study_end_date, start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,hosp_emergency_day_cases_mab) if failure_emergency==0&drug==0
+replace end_date_emergency=min(death_date, dereg_date, study_end_date, start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,hosp_emergency_day_cases_mab) if failure_emergency==0&drug==1
+replace end_date_emergency=min(death_date, dereg_date, study_end_date, start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,hosp_emergency_day_cases_mab) if failure_emergency==0&drug==0
 format %td event_date_emergency end_date_emergency  
 
 stset end_date_emergency ,  origin(start_date) failure(failure_emergency==1)
@@ -330,32 +332,32 @@ replace covid_hosp_date_not_primary=. if covid_hosp_date2_not_primary==covid_dis
 replace covid_hosp_date_not_primary=. if covid_hosp_date2_not_primary==covid_hosp_date_mabs_not_pri&covid_hosp_date_mabs_not_pri!=.&drug==1&covid_hosp_date0_not_primary==.&covid_hosp_date1_not_primary==.&(covid_discharge_date2_not_pri-covid_hosp_date2_not_primary)<=1
 
 gen event_date_not_primary=min( covid_hosp_date_not_primary, death_with_covid_on_the_death_ce,covid_hospitalisation_outcome_da )
-gen failure_not_primary=(event_date_not_primary!=.&event_date_not_primary<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==1
-replace failure_not_primary=(event_date_not_primary!=.&event_date_not_primary<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)) if drug==0
+gen failure_not_primary=(event_date_not_primary!=.&event_date_not_primary<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)) if drug==1
+replace failure_not_primary=(event_date_not_primary!=.&event_date_not_primary<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)) if drug==0
 tab failure_not_primary,m
 gen end_date_not_primary=event_date_not_primary if failure_not_primary==1
-replace end_date_not_primary=min(death_date, dereg_date, study_end_date, start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,covid_day_cases_mab_not_pri) if failure_not_primary==0&drug==1
-replace end_date_not_primary=min(death_date, dereg_date, study_end_date, start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics,covid_day_cases_mab_not_pri) if failure_not_primary==0&drug==0
+replace end_date_not_primary=min(death_date, dereg_date, study_end_date, start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,covid_day_cases_mab_not_pri) if failure_not_primary==0&drug==1
+replace end_date_not_primary=min(death_date, dereg_date, study_end_date, start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,covid_day_cases_mab_not_pri) if failure_not_primary==0&drug==0
 format %td event_date_not_primary end_date_not_primary  
 
 stset end_date_not_primary ,  origin(start_date) failure(failure_not_primary==1)
 stcox drug
 
 *count censored due to second therapy*
-count if failure==0&drug==1&min(molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)==end_date
-count if failure==0&drug==0&min(molnupiravir_covid_therapeutics,sotrovimab_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)==end_date
+count if failure==0&drug==1&min(molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)==end_date
+count if failure==0&drug==0&min(molnupiravir_covid_therapeutics,sotrovimab_covid_therapeutics)==end_date
 *count covid death during day1-28 and before censor*
-count if failure==1&drug==1&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
-count if failure==1&drug==0&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
-count if failure==1&drug==1&death_with_covid_underlying_date<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
-count if failure==1&drug==0&death_with_covid_underlying_date<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
+count if failure==1&drug==1&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)
+count if failure==1&drug==0&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)
+count if failure==1&drug==1&death_with_covid_underlying_date<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)
+count if failure==1&drug==0&death_with_covid_underlying_date<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)
 *count covid hosp during day1-28 and before censor*
 by drug, sort: count if failure==1&covid_hospitalisation_outcome_da==end_date
 *count covid death after covid hosp during day1-28 and before censor*
-count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==1&death_with_covid_on_the_death_ce>=covid_hospitalisation_outcome_da&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
-count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==0&death_with_covid_on_the_death_ce>=covid_hospitalisation_outcome_da&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
-count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==1&death_with_covid_underlying_date>=covid_hospitalisation_outcome_da&death_with_covid_underlying_date<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
-count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==0&death_with_covid_underlying_date>=covid_hospitalisation_outcome_da&death_with_covid_underlying_date<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics,remdesivir_covid_therapeutics,casirivimab_covid_therapeutics)
+count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==1&death_with_covid_on_the_death_ce>=covid_hospitalisation_outcome_da&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)
+count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==0&death_with_covid_on_the_death_ce>=covid_hospitalisation_outcome_da&death_with_covid_on_the_death_ce<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)
+count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==1&death_with_covid_underlying_date>=covid_hospitalisation_outcome_da&death_with_covid_underlying_date<=min(study_end_date,start_date_29,molnupiravir_covid_therapeutics,paxlovid_covid_therapeutics)
+count if failure==1&covid_hospitalisation_outcome_da==end_date&drug==0&death_with_covid_underlying_date>=covid_hospitalisation_outcome_da&death_with_covid_underlying_date<=min(study_end_date,start_date_29,sotrovimab_covid_therapeutics,molnupiravir_covid_therapeutics)
 *count critical care within day1-28*
 tab drug covid_hosp_critical_care,m row
 tab drug covid_hosp_critical_care if failure==1&covid_hospitalisation_outcome_da==end_date,m row
