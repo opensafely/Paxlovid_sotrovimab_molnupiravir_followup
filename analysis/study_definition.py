@@ -565,11 +565,11 @@ study = StudyDefinition(
         returning="category",   
         find_last_match_in_period = True,
         include_date_of_match=True,
-        # date_format = "YYYY-MM-DD", #commented out-qw
+        # date_format = "YYYY-MM-DD", #commented out-q
         return_expectations={
         #     "rate": "universal",
             "category": {"ratios": {"1": 0.5, "2": 0.5}},
-            "incidence": 0.2,   ##added  -qw
+            "incidence": 0.2,   ##added  -q
          },
   ),
   ckd3_icd10 = patients.admitted_to_hospital(
