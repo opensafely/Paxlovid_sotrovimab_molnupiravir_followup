@@ -2137,7 +2137,8 @@ study = StudyDefinition(
     test_result = "positive",
     returning = "date",
     date_format = "YYYY-MM-DD",
-    on_or_after = "start_date + 60 days", ## old code: (+ 30 days)
+    #on_or_after = "start_date + 60 days", ## old code: (+ 30 days)#-between(start_date + 60 days,start_date + 60 days+6 months,)
+    between=["start_date + 60 days","start_date + 240 days"] ##
     find_first_match_in_period = True,
     restrict_to_earliest_specimen_date = False,
     return_expectations = {
@@ -2187,6 +2188,7 @@ study = StudyDefinition(
     # see https://docs.opensafely.org/study-def-variables/#sus for more info
     # with_admission_method=["21", "22", "23", "24", "25", "2A", "2B", "2C", "2D", "28"], # emergency admissions only to exclude incidental COVID
     on_or_after = "start_date + 60 days",  # .-#old: on_or_after = "start_date + 2 days",
+    
     find_first_match_in_period = True,
     date_format = "YYYY-MM-DD",
     return_expectations = {
