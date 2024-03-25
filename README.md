@@ -1,12 +1,10 @@
 # Paxlovid_sotrovimab_molnupiravir_followup
 
-This repo <Paxlovid_sotrovimab_molnupiravir_followup> was created for training purpose only. 
-[View on OpenSAFELY] (https://github.com/opensafely/Paxlovid_sotrovimab_molnupiravir_followup) 
+[View on OpenSAFELY](https://jobs.opensafely.org/coverage-effectiveness-and-safety-of-neutralising-monoclonal-antibodies-or-antivirals-for-non-hospitalised-patients-with-covid-19/) 
 
-It was cloned from the repo:<Paxlovid-and-sotrovimab> (https://jobs.opensafely.org/datalab/antibody-and-antiviral-deployment/paxlovid_sotrovimab/). 
+Details of the purpose and any published outputs from this project can be found at the link above.
 
-
-#Details of the purpose and any published outputs from this project can be found at the link above.
+Please note, this repository was cloned from: [Paxlovid-and-sotrovimab](https://jobs.opensafely.org/datalab/antibody-and-antiviral-deployment/paxlovid_sotrovimab/). 
 
 The contents of this repository MUST NOT be considered an accurate or valid representation of the study or its purpose. 
 This repository may reflect an incomplete or incorrect analysis with no further ongoing work.
